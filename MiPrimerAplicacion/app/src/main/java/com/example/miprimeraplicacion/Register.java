@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class Register extends AppCompatActivity {
@@ -49,9 +50,14 @@ public class Register extends AppCompatActivity {
                 MainActivity.checkSocketStatus();
                 MainActivity.sendUserData("register",firstName, lastName, address, nickname, password, hobby, card, houseStyle, transport);
                 Toast.makeText(Register.this, "Registro enviado: " + nickname, Toast.LENGTH_SHORT).show();
+
+                // Redirigir a la pantalla de inicio (LoginActivity)
+                Intent intent = new Intent(Register.this, LoginActivity.class);
+                startActivity(intent);
+                finish(); // Finaliza la actividad actual para que no se pueda volver con el botón atrás
             }
         });
-        
+
     }
 
     // Visa o Mastercard validacion

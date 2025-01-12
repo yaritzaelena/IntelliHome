@@ -1,0 +1,10 @@
+firstName: Olman
+lastName: Rodriguez
+address: Alajuala
+username: Olman2020
+password: 1234
+hobby: Estudiante
+card: 4589564578891223
+houseStyle: Apartamento
+transport: Particular
+--------------------
