@@ -5,6 +5,10 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.json.JSONObject;
+
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
@@ -22,80 +26,119 @@ public class MainActivity extends AppCompatActivity {
 
     private EditText editTextMessage;
     private TextView textViewChat;
-    private Socket socket;
-    private PrintWriter out;
-    private Scanner in;
+    private static Socket socket;
+    public static PrintWriter out;
+    public static Scanner in;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        editTextMessage = findViewById(R.id.editTextMessage);
-        textViewChat = findViewById(R.id.textViewChat);
-        Button buttonSend = findViewById(R.id.buttonSend);
-        Button buttonExit = findViewById(R.id.buttonExit);
 
         // Iniciar el hilo para conectarse al servidor y recibir mensajes
         new Thread(() -> {
             try {
-                // Cambiar a la dirección IP de su servidor
-                socket = new Socket("172.17.53.129", 1717);
+                socket = new Socket("192.168.0.152", 1717);
                 out = new PrintWriter(socket.getOutputStream(), true);
                 in = new Scanner(socket.getInputStream());
-                new Thread(() -> {
-                    while (true) {
-                        // Escuchar continuamente los mensajes del servidor
-                        if (in.hasNextLine()) {
-                            String message = in.nextLine();
-                            runOnUiThread(() -> { // actualiza el la gui en un hilo
-                                textViewChat.append("Servidor: " + message + "\n");
-                            });
-                        }
-                    }
 
+                System.out.println("Estado del socket al conectar:");
+                checkSocketStatus();
 
-                }).start();
+                runOnUiThread(() -> {
+                    Toast.makeText(MainActivity.this, "Conectado al servidor", Toast.LENGTH_SHORT).show();
+                    // Redirigir a LoginActivity
+                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    startActivity(intent);
 
+                });
             } catch (Exception e) {
                 e.printStackTrace();
+                runOnUiThread(() -> Toast.makeText(MainActivity.this, "Error de conexión: " + e.getMessage(), Toast.LENGTH_LONG).show());
             }
         }).start();
 
-        buttonSend.setOnClickListener(view -> { // mapeo del boton enviar
-            String message = editTextMessage.getText().toString();
-            sendMessage(message); // Llama a la función para enviar el mensaje
-            textViewChat.append("Yo: " + message + "\n");
-            editTextMessage.setText("");
-        });
 
-        buttonExit.setOnClickListener(view -> { // mapeo del boton exit
-            Intent intent = new Intent(MainActivity.this, ExitActivity.class);
-            startActivity(intent);
-        });
+
     }
 
-    private void sendMessage(String message) {
-        new Thread(() -> { // un hilo por a parte
+    public static void sendUserData(String action, String firstName, String lastName, String address, String username, String password, String hobby, String card, String houseStyle, String transport) {
+        new Thread(() -> {
             try {
-                if (out != null) {
-                    out.println(message);
+                if (socket == null || socket.isClosed()) {
+                    System.err.println("Error: El socket no está inicializado o está cerrado.");
+                    return;
                 }
+
+                if (out == null) {
+                    System.err.println("Error: `out` no está inicializado.");
+                    return;
+                }
+
+                // Construir el JSON
+                JSONObject json = new JSONObject();
+                json.put("action", action);
+                json.put("firstName", firstName);
+                json.put("lastName", lastName);
+                json.put("address", address);
+                json.put("username", username);
+                json.put("password", password);
+                json.put("hobby", hobby);
+                json.put("card", card);
+                json.put("houseStyle", houseStyle);
+                json.put("transport", transport);
+
+
+                // Convertir a cadena y enviar
+                String jsonString = json.toString();
+                System.out.println("Preparando mensaje JSON para enviar: " + jsonString);
+
+                out.println(jsonString);
+                out.flush();
+                System.out.println("Mensaje JSON enviado: " + jsonString);
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }).start();
     }
+
+
+
+
+    public static void checkSocketStatus() {
+        if (socket == null) {
+            System.out.println("Socket no inicializado.");
+        } else if (socket.isClosed()) {
+            System.out.println("Socket está cerrado.");
+        } else if (!socket.isConnected()) {
+            System.out.println("Socket no está conectado.");
+        } else {
+            System.out.println("Socket está abierto y conectado.");
+        }
+    }
+
+
+
 
     @Override
-    protected void onDestroy() { // lo que se ejecuta cuando termina, se sale de la aplicación
+    protected void onDestroy() {
         super.onDestroy();
         try {
-            if (out != null) out.close();
-            if (in != null) in.close();
-            if (socket != null) socket.close();
+            if (out != null) {
+                out.close();
+                System.out.println("Salida (`out`) cerrada.");
+            }
+            if (in != null) {
+                in.close();
+                System.out.println("Entrada (`in`) cerrada.");
+            }
+            if (socket != null) {
+                socket.close();
+                System.out.println("Socket cerrado.");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 }

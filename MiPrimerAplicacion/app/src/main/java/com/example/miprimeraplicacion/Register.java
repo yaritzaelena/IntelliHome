@@ -26,6 +26,7 @@ public class Register extends AppCompatActivity {
         Button registerButton = findViewById(R.id.buttonRegister);
 
         // acciones
+
         registerButton.setOnClickListener(v -> {
             String firstName = firstNameEditText.getText().toString().trim();
             String lastName = lastNameEditText.getText().toString().trim();
@@ -44,10 +45,13 @@ public class Register extends AppCompatActivity {
             } else if (!isVisaOrMastercard(card)) {
                 Toast.makeText(Register.this, "El número de tarjeta no es válido. Debe ser Visa o Mastercard.", Toast.LENGTH_SHORT).show();
             } else {
-                // PROXIMAMENTE CAMBIAREMOS AL ARCHIVO DE JSON COMO DIJIMOS
-                Toast.makeText(Register.this, "Usuario registrado con éxito: Nombre: " + firstName + " " + lastName, Toast.LENGTH_LONG).show();
+                System.out.println("Estado del socket antes de enviar datos:");
+                MainActivity.checkSocketStatus();
+                MainActivity.sendUserData("register",firstName, lastName, address, nickname, password, hobby, card, houseStyle, transport);
+                Toast.makeText(Register.this, "Registro enviado: " + nickname, Toast.LENGTH_SHORT).show();
             }
         });
+        
     }
 
     // Visa o Mastercard validacion
