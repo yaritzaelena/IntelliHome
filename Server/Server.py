@@ -2,6 +2,7 @@ import os
 import json
 import socket
 import threading
+import json
 import tkinter as tk
 from tkinter import scrolledtext
 
@@ -22,7 +23,6 @@ class ChatServer:
             print(f"Conexión aceptada de {addr}")  # Confirmar conexión
             threading.Thread(target=self.handle_client, args=(client_socket,)).start()# Para que sea en hilo separado
 
-    import json
 
     def handle_client(self, client_socket):
         while True:
@@ -56,16 +56,49 @@ class ChatServer:
                     else:
                         response = {"status": "error", "message": "Acción no válida"}
 
+                    # Enviar la respuesta al cliente
+                    response_json = json.dumps(response) +"/n"
+                    client_socket.send(response_json.encode('utf-8'))
+                    print(f"Respuesta enviada al cliente: {response_json}")
+
                 except json.JSONDecodeError as e:
                     print(f"Error al decodificar JSON: {e}")
                     response = {"status": "error", "message": "Formato JSON inválido"}
-
-                # Enviar respuesta al cliente
-                client_socket.send(json.dumps(response).encode('utf-8'))
+                    client_socket.send(json.dumps(response).encode('utf-8'))
+                    
             except Exception as e:
                 print(f"Error al manejar cliente: {e}")
                 break
         client_socket.close()
+
+    def login_user(self, username, password):
+        print(f"Intentando iniciar sesión: {username}")
+        try:
+            with open("database.txt", "r") as db_file:
+                user_data = {}
+                lines = db_file.readlines()
+
+                for i in range(0, len(lines), 3):  # Leer bloques de 3 líneas (username, password, separador)
+                    if lines[i].startswith("username:") and lines[i + 1].startswith("password:"):
+                        db_username = lines[i].split(":", 1)[1].strip()
+                        db_password = lines[i + 1].split(":", 1)[1].strip()  # Aquí está la corrección
+                        user_data[db_username] = db_password
+
+                # Verificar credenciales
+                if username in user_data and user_data[username] == password:
+                    print(f"Inicio de sesión exitoso para: {username}")
+                    return {"status": "success", "message": "Login exitoso"}
+                else:
+                    print(f"Credenciales incorrectas para: {username}")
+                    return {"status": "error", "message": "Credenciales incorrectas"}
+        except FileNotFoundError:
+            print("Base de datos no encontrada.")
+            return {"status": "error", "message": "Base de datos no encontrada"}
+        except Exception as e:
+            print(f"Error al manejar login: {e}")
+            return {"status": "error", "message": "Error interno del servidor"}
+
+
 
 
 

@@ -103,6 +103,45 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    public static void sendLoginData(String username, String password, LoginResponseCallback callback) {
+        new Thread(() -> {
+            try {
+                if (out == null || socket == null || socket.isClosed()) {
+                    callback.onError("No hay conexión con el servidor.");
+                    return;
+                }
+
+                // Enviar mensaje de login
+                String loginMessage = "{\"action\":\"login\",\"username\":\"" + username + "\",\"password\":\"" + password + "\"}";
+                System.out.println("Enviando mensaje: " + loginMessage);
+
+                out.println(loginMessage);
+                out.flush();
+
+                // Leer respuesta del servidor
+                if (in.hasNextLine()) {
+                    String response = in.nextLine();
+                    System.out.println("Respuesta recibida del servidor: " + response);
+                    callback.onSuccess(response); // Envía la respuesta directamente al callback
+                } else {
+                    callback.onError("No se recibió una respuesta del servidor.");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                callback.onError("Error al comunicarse con el servidor: " + e.getMessage());
+            }
+        }).start();
+    }
+
+
+
+
+
+
+    public interface LoginResponseCallback {
+        void onSuccess(String response);
+        void onError(String error);
+    }
 
 
     public static void checkSocketStatus() {
