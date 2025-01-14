@@ -8,3 +8,13 @@ card: 4589564578891223
 houseStyle: Apartamento
 transport: Particular
 --------------------
+firstName: Yaritza
+lastName: Lopez
+address: San Jose
+username: Yari
+password: yaritza
+hobby: Jugar
+card: 4555555555555555
+houseStyle: Blanca
+transport: Carro
+--------------------

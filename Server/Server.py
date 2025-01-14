@@ -57,9 +57,10 @@ class ChatServer:
                         response = {"status": "error", "message": "Acción no válida"}
 
                     # Enviar la respuesta al cliente
-                    response_json = json.dumps(response) +"/n"
+                    response_json = json.dumps(response) +"\n"
                     client_socket.send(response_json.encode('utf-8'))
                     print(f"Respuesta enviada al cliente: {response_json}")
+      
 
                 except json.JSONDecodeError as e:
                     print(f"Error al decodificar JSON: {e}")
@@ -71,6 +72,7 @@ class ChatServer:
                 break
         client_socket.close()
 
+    '''
     def login_user(self, username, password):
         print(f"Intentando iniciar sesión: {username}")
         try:
@@ -97,10 +99,35 @@ class ChatServer:
         except Exception as e:
             print(f"Error al manejar login: {e}")
             return {"status": "error", "message": "Error interno del servidor"}
+    '''
+    def login_user(self, username, password):
+        print(f"Intentando iniciar sesión: {username}")
+        try:
+            with open("database.txt", "r") as db_file:
+                user_data = {}
+                lines = db_file.readlines()
 
+                for i in range(0, len(lines), 3):  # Leer bloques de 3 líneas (username, password, separador)
+                    if lines[i].startswith("username:") and lines[i + 1].startswith("password:"):
+                        db_username = lines[i].split(":", 1)[1].strip()
+                        db_password = lines[i + 1].split(":", 1)[1].strip()
+                        user_data[db_username] = db_password
 
+                # Verificar credenciales
+                if username in user_data and user_data[username] == password:
+                    print(f"Inicio de sesión exitoso para: {username}")
+                    return {"status": True, "message": "Login exitoso"}
+                else:
+                    print(f"Credenciales incorrectas para: {username}")
+                    return {"status": False, "message": "Credenciales incorrectas"}
+        except FileNotFoundError:
+            print("Base de datos no encontrada.")
+            return {"status": False, "message": "Base de datos no encontrada"}
+        except Exception as e:
+            print(f"Error al manejar login: {e}")
+            return {"status": False, "message": "Error interno del servidor"}
 
-
+    
 
     def register_user(self, firstName, lastName, address, username, password, hobby, card, houseStyle, transport):
         print(f"Intentando registrar usuario: {username}, {password}")

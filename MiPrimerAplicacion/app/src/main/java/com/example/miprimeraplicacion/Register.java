@@ -6,7 +6,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
-
+//192.168.0.106
 public class Register extends AppCompatActivity {
 
     @Override

@@ -13,6 +13,10 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+
 
 // Recordar que dar los permisos del HW para utilizar los componentes por ejemplo la red
 // Esto se hace en el archivo AndroidManifest
@@ -37,7 +41,8 @@ public class MainActivity extends AppCompatActivity {
         // Iniciar el hilo para conectarse al servidor y recibir mensajes
         new Thread(() -> {
             try {
-                socket = new Socket("192.168.0.152", 1717);
+                //socket = new Socket("192.168.0.152", 1717); //Olman
+                socket = new Socket("192.168.0.106", 1717); //Yaritza
                 out = new PrintWriter(socket.getOutputStream(), true);
                 in = new Scanner(socket.getInputStream());
 
@@ -102,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
-
+/*
     public static void sendLoginData(String username, String password, LoginResponseCallback callback) {
         new Thread(() -> {
             try {
@@ -111,28 +116,81 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
 
-                // Enviar mensaje de login
+                // Construir el mensaje
                 String loginMessage = "{\"action\":\"login\",\"username\":\"" + username + "\",\"password\":\"" + password + "\"}";
                 System.out.println("Enviando mensaje: " + loginMessage);
 
+                // Enviar mensaje
                 out.println(loginMessage);
                 out.flush();
 
                 // Leer respuesta del servidor
-                if (in.hasNextLine()) {
-                    String response = in.nextLine();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                String response = reader.readLine(); // Leer una línea completa
+
+                if (response != null) {
                     System.out.println("Respuesta recibida del servidor: " + response);
-                    callback.onSuccess(response); // Envía la respuesta directamente al callback
+                    callback.onSuccess(response);
                 } else {
                     callback.onError("No se recibió una respuesta del servidor.");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                callback.onError("Error al comunicarse con el servidor: " + e.getMessage());
+                callback.onError("Error: " + e.getMessage());
             }
         }).start();
     }
 
+
+*/
+    public static void sendAndReceive(String username, String password, LoginResponseCallback callback) {
+        new Thread(() -> {
+            try {
+                if (socket == null || socket.isClosed()) {
+                    callback.onError("Socket no inicializado o cerrado.");
+                    return;
+                }
+
+                // Construir y enviar los datos
+                String loginMessage = "{\"action\":\"login\",\"username\":\"" + username + "\",\"password\":\"" + password + "\"}";
+                out.println(loginMessage);
+                out.flush();
+                System.out.println("LOG: Datos enviados: " + loginMessage);
+
+                // Recibir la respuesta
+                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                String response = reader.readLine();
+
+                if (response != null) {
+                    System.out.println("LOG: Respuesta recibida: " + response);
+
+                    // Validar el JSON recibido
+                    try {
+                        JSONObject jsonResponse = new JSONObject(response);
+                        boolean status = jsonResponse.optBoolean("status", false); // Default a false si no está el campo
+                        String message = jsonResponse.optString("message", "Sin mensaje");
+
+                        if (status) {
+                            // Éxito
+                            callback.onSuccess(message);
+                        } else {
+                            // Error
+                            callback.onError(message);
+                        }
+                    } catch (Exception e) {
+                        System.err.println("LOG: Error al analizar el JSON: " + e.getMessage());
+                        callback.onError("Respuesta inválida del servidor.");
+                    }
+                } else {
+                    System.err.println("LOG: Respuesta nula o vacía del servidor.");
+                    callback.onError("No se recibió respuesta del servidor.");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                callback.onError("Error: " + e.getMessage());
+            }
+        }).start();
+    }
 
 
 
