@@ -29,103 +29,118 @@
             android:textSize="18sp"
             android:layout_marginBottom="8dp"
             android:textColor="#000000" />
+
+        <!-- Vista previa de la foto circular -->
+        <ImageView
+            android:id="@+id/imageViewPhoto"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center"
+            android:background="@drawable/circular_image"
+            android:contentDescription="Vista previa de la foto"
+            android:layout_marginBottom="8dp"
+            android:scaleType="centerCrop"
+            android:clipToOutline="true" />
+
+        <!-- Botón para cargar o tomar foto -->
         <Button
             android:id="@+id/buttonUploadPhoto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Seleccionar Foto"
-            android:background="#D3D3D3"
-            android:textColor="#000000"
+            android:background="#9370DB"
+            android:textColor="#FFFFFF"
             android:layout_marginBottom="16dp" />
 
-        <!-- Nombre -->
+        <!-- Campos de registro -->
         <EditText
             android:id="@+id/editTextFirstName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Nombre"
+            android:textColorHint="@color/hint_color"
             android:padding="12dp"
             android:background="@drawable/edittext_background"
             android:layout_marginBottom="8dp" />
 
-        <!-- Apellido -->
         <EditText
             android:id="@+id/editTextLastName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Apellido"
+            android:textColorHint="@color/hint_color"
             android:padding="12dp"
             android:background="@drawable/edittext_background"
             android:layout_marginBottom="8dp" />
 
-        <!-- Domicilio -->
         <EditText
             android:id="@+id/editTextAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Domicilio"
+            android:textColorHint="@color/hint_color"
             android:padding="12dp"
             android:background="@drawable/edittext_background"
             android:layout_marginBottom="8dp" />
 
-        <!-- Nickname -->
         <EditText
             android:id="@+id/editTextNickname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Nickname"
+            android:textColorHint="@color/hint_color"
             android:padding="12dp"
             android:background="@drawable/edittext_background"
             android:layout_marginBottom="8dp" />
 
-        <!-- Contraseña -->
         <EditText
             android:id="@+id/editTextPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Contraseña"
+            android:textColorHint="@color/hint_color"
             android:padding="12dp"
             android:background="@drawable/edittext_background"
             android:layout_marginBottom="8dp"
             android:inputType="textPassword" />
 
-        <!-- Hobby -->
         <EditText
             android:id="@+id/editTextHobby"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Hobby"
+            android:textColorHint="@color/hint_color"
             android:padding="12dp"
             android:background="@drawable/edittext_background"
             android:layout_marginBottom="8dp" />
 
-        <!-- Tarjeta -->
         <EditText
             android:id="@+id/editTextCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Número de Tarjeta"
+            android:textColorHint="@color/hint_color"
             android:padding="12dp"
             android:background="@drawable/edittext_background"
             android:layout_marginBottom="8dp"
             android:inputType="number" />
 
-        <!-- Estilo de casa -->
         <EditText
             android:id="@+id/editTextHouseStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Estilo de Casa"
+            android:textColorHint="@color/hint_color"
             android:padding="12dp"
             android:background="@drawable/edittext_background"
             android:layout_marginBottom="8dp" />
 
-        <!-- Transporte -->
         <EditText
             android:id="@+id/editTextTransport"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Transporte"
+            android:textColorHint="@color/hint_color"
             android:padding="12dp"
             android:background="@drawable/edittext_background"
             android:layout_marginBottom="8dp" />

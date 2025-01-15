@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         new Thread(() -> {
             try {
                 //socket = new Socket("192.168.0.152", 1717); //Olman
-                socket = new Socket("192.168.0.152", 1717); //Yaritza
+                socket = new Socket("192.168.0.106", 1717); //Yaritza
                 out = new PrintWriter(socket.getOutputStream(), true);
                 in = new Scanner(socket.getInputStream());
 

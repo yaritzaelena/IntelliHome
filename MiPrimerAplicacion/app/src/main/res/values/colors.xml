@@ -7,4 +7,6 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="hint_color">#808080</color> <!-- Color gris claro para los hints -->
+    <color name="hint_color_night">#FFFFFF</color> <!-- Color blanco para modo oscuro -->
 </resources>
