@@ -18,3 +18,13 @@ card: 4555555555555555
 houseStyle: Blanca
 transport: Carro
 --------------------
+firstName: Mayling
+lastName: Hernandez
+address: Alajuela
+username: Mayling16
+password: 1234
+hobby: Oficinista
+card: 4546484545454545
+houseStyle: Apartamento
+transport: Partivular
+--------------------

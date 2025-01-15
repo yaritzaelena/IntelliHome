@@ -127,8 +127,19 @@ class ChatServer:
     
 
     def register_user(self, firstName, lastName, address, username, password, hobby, card, houseStyle, transport):
-        print(f"Intentando registrar usuario: {username}, {password}")
+        print(f"Intentando registrar usuario: {username}")
         try:
+            # Verificar si el usuario ya existe
+            if os.path.exists("database.txt"):
+                with open("database.txt", "r") as db_file:
+                    lines = db_file.read().split("--------------------")
+                    for block in lines:
+                        if f"username: {username}" in block:
+                            print(f"El usuario {username} ya existe.")
+                            return {"status": "false", "message": "El nombre de usuario ya está en uso"}
+
+
+            # Si no existe, proceder con el registro
             with open("database.txt", "a") as db_file:
                 db_file.write(f"firstName: {firstName}\n")
                 db_file.write(f"lastName: {lastName}\n")
@@ -140,11 +151,17 @@ class ChatServer:
                 db_file.write(f"houseStyle: {houseStyle}\n")
                 db_file.write(f"transport: {transport}\n")
                 db_file.write(f"{'-'*20}\n")  # Línea separadora para mayor claridad
+
             print(f"Usuario registrado: {username}")
-            return {"status": "success", "message": "Usuario registrado exitosamente"}
+            return {"status": "true", "message": "Usuario registrado exitosamente"}
+
+        except FileNotFoundError:
+            print("Base de datos no encontrada. Creando una nueva.")
+            return {"status": "error", "message": "Base de datos no encontrada"}
         except Exception as e:
             print(f"Error al guardar en el archivo: {e}")
             return {"status": "error", "message": "Error al guardar los datos"}
+
 
 
 

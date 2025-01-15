@@ -39,25 +39,38 @@ public class Register extends AppCompatActivity {
             String houseStyle = houseStyleEditText.getText().toString().trim();
             String transport = transportEditText.getText().toString().trim();
 
-            // validar campos - falta contraseña
             if (firstName.isEmpty() || lastName.isEmpty() || address.isEmpty() || nickname.isEmpty() ||
                     password.isEmpty() || hobby.isEmpty() || card.isEmpty() || houseStyle.isEmpty() || transport.isEmpty()) {
-                Toast.makeText(Register.this, "Por favor, complete todos los campos.", Toast.LENGTH_SHORT).show();
-            } else if (!isVisaOrMastercard(card)) {
-                Toast.makeText(Register.this, "El número de tarjeta no es válido. Debe ser Visa o Mastercard.", Toast.LENGTH_SHORT).show();
-            } else {
-                System.out.println("Estado del socket antes de enviar datos:");
-                MainActivity.checkSocketStatus();
-                MainActivity.sendUserData("register",firstName, lastName, address, nickname, password, hobby, card, houseStyle, transport);
-                Toast.makeText(Register.this, "Registro enviado: " + nickname, Toast.LENGTH_SHORT).show();
-
-                // Redirigir a la pantalla de inicio (LoginActivity)
-                Intent intent = new Intent(Register.this, LoginActivity.class);
-                startActivity(intent);
-                finish(); // Finaliza la actividad actual para que no se pueda volver con el botón atrás
+                Toast.makeText(Register.this, "Por favor, completa todos los campos.", Toast.LENGTH_SHORT).show();
+                return;
             }
-        });
 
+            if (!isVisaOrMastercard(card)) {
+                Toast.makeText(Register.this, "El número de tarjeta no es válido. Debe ser Visa o Mastercard.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Enviar los datos de registro al servidor
+            MainActivity.sendAndReceiveRegister(
+                    firstName, lastName, address, nickname, password, hobby, card, houseStyle, transport,
+                    new MainActivity.RegisterResponseCallback() {
+                        @Override
+                        public void onSuccess(String response) {
+                            runOnUiThread(() -> {
+                                Toast.makeText(Register.this, "Registro exitoso", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(Register.this, LoginActivity.class);
+                                startActivity(intent);
+                                finish();
+                            });
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                            runOnUiThread(() -> Toast.makeText(Register.this, "Error: " + error, Toast.LENGTH_SHORT).show());
+                        }
+                    }
+            );
+        });
     }
 
     // Visa o Mastercard validacion

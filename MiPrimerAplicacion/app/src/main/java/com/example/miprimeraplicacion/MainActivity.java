@@ -66,22 +66,17 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public static void sendUserData(String action, String firstName, String lastName, String address, String username, String password, String hobby, String card, String houseStyle, String transport) {
+    public static void sendAndReceiveRegister(String firstName, String lastName, String address, String username, String password, String hobby, String card, String houseStyle, String transport, RegisterResponseCallback callback) {
         new Thread(() -> {
             try {
                 if (socket == null || socket.isClosed()) {
-                    System.err.println("Error: El socket no está inicializado o está cerrado.");
+                    callback.onError("Socket no inicializado o cerrado.");
                     return;
                 }
 
-                if (out == null) {
-                    System.err.println("Error: `out` no está inicializado.");
-                    return;
-                }
-
-                // Construir el JSON
+                // Construir y enviar los datos
                 JSONObject json = new JSONObject();
-                json.put("action", action);
+                json.put("action", "register");
                 json.put("firstName", firstName);
                 json.put("lastName", lastName);
                 json.put("address", address);
@@ -92,20 +87,51 @@ public class MainActivity extends AppCompatActivity {
                 json.put("houseStyle", houseStyle);
                 json.put("transport", transport);
 
-
-                // Convertir a cadena y enviar
-                String jsonString = json.toString();
-                System.out.println("Preparando mensaje JSON para enviar: " + jsonString);
-
-                out.println(jsonString);
+                String registerMessage = json.toString();
+                out.println(registerMessage);
                 out.flush();
-                System.out.println("Mensaje JSON enviado: " + jsonString);
+                System.out.println("LOG: Datos de registro enviados: " + registerMessage);
 
+                // Recibir la respuesta
+                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                String response = reader.readLine();
+
+                if (response != null) {
+                    System.out.println("LOG: Respuesta recibida: " + response);
+
+                    // Validar el JSON recibido
+                    try {
+                        JSONObject jsonResponse = new JSONObject(response);
+                        boolean status = jsonResponse.optBoolean("status", false); // Default a false si no está el campo
+                        String message = jsonResponse.optString("message", "Sin mensaje");
+
+                        if (status) {
+                            // Éxito
+                            callback.onSuccess(message);
+                        } else {
+                            // Error
+                            callback.onError(message);
+                        }
+                    } catch (Exception e) {
+                        System.err.println("LOG: Error al analizar el JSON: " + e.getMessage());
+                        callback.onError("Respuesta inválida del servidor.");
+                    }
+                } else {
+                    System.err.println("LOG: Respuesta nula o vacía del servidor.");
+                    callback.onError("No se recibió respuesta del servidor.");
+                }
             } catch (Exception e) {
                 e.printStackTrace();
+                callback.onError("Error: " + e.getMessage());
             }
         }).start();
     }
+
+    public interface RegisterResponseCallback {
+        void onSuccess(String response);
+        void onError(String error);
+    }
+
 
 
     public static void sendAndReceive(String username, String password, LoginResponseCallback callback) {
@@ -156,9 +182,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
     }
-
-
-
 
 
     public interface LoginResponseCallback {
