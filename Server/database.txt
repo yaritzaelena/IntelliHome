@@ -12,7 +12,7 @@ firstName: Yaritza
 lastName: Lopez
 address: San Jose
 username: Yari
-password: yaritza
+password: 1234
 hobby: Jugar
 card: 4555555555555555
 houseStyle: Blanca

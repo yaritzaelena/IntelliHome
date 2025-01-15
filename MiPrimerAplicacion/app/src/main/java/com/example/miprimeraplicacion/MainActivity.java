@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         new Thread(() -> {
             try {
                 //socket = new Socket("192.168.0.152", 1717); //Olman
-                socket = new Socket("192.168.0.106", 1717); //Yaritza
+                socket = new Socket("192.168.0.152", 1717); //Yaritza
                 out = new PrintWriter(socket.getOutputStream(), true);
                 in = new Scanner(socket.getInputStream());
 
@@ -107,42 +107,7 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
-/*
-    public static void sendLoginData(String username, String password, LoginResponseCallback callback) {
-        new Thread(() -> {
-            try {
-                if (out == null || socket == null || socket.isClosed()) {
-                    callback.onError("No hay conexión con el servidor.");
-                    return;
-                }
 
-                // Construir el mensaje
-                String loginMessage = "{\"action\":\"login\",\"username\":\"" + username + "\",\"password\":\"" + password + "\"}";
-                System.out.println("Enviando mensaje: " + loginMessage);
-
-                // Enviar mensaje
-                out.println(loginMessage);
-                out.flush();
-
-                // Leer respuesta del servidor
-                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                String response = reader.readLine(); // Leer una línea completa
-
-                if (response != null) {
-                    System.out.println("Respuesta recibida del servidor: " + response);
-                    callback.onSuccess(response);
-                } else {
-                    callback.onError("No se recibió una respuesta del servidor.");
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                callback.onError("Error: " + e.getMessage());
-            }
-        }).start();
-    }
-
-
-*/
     public static void sendAndReceive(String username, String password, LoginResponseCallback callback) {
         new Thread(() -> {
             try {

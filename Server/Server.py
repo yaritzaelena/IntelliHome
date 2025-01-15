@@ -2,9 +2,8 @@ import os
 import json
 import socket
 import threading
-import json
-import tkinter as tk
-from tkinter import scrolledtext
+import time
+
 
 class ChatServer:
     def __init__(self, host='0.0.0.0', port=1717):
@@ -12,6 +11,8 @@ class ChatServer:
         self.server_socket.bind((host, port))
         self.server_socket.listen(5)
         self.clients = []
+        self.failed_attempts = {}  # Dictionary to track failed attempts and block time
+        self.block_duration = 120  # Block duration in seconds
 
         print("Servidor iniciado y esperando conexiones...")
 
@@ -72,60 +73,56 @@ class ChatServer:
                 break
         client_socket.close()
 
-    '''
+
     def login_user(self, username, password):
         print(f"Intentando iniciar sesión: {username}")
+        current_time = time.time()
+
+        # Verificar bloqueo
+        if username in self.failed_attempts:
+            attempts, block_time = self.failed_attempts[username]
+            if attempts >= 3 and current_time - block_time < self.block_duration:
+                remaining_time = self.block_duration - (current_time - block_time)
+                print(f"Cuenta bloqueada para {username}. Tiempo restante: {remaining_time:.0f} segundos")
+                return {
+                    "status": "error",
+                    "message": f"Cuenta bloqueada. Intente nuevamente en {remaining_time:.0f} segundos."
+                }
+
+        # Validar credenciales
         try:
             with open("database.txt", "r") as db_file:
                 user_data = {}
-                lines = db_file.readlines()
+                lines = db_file.read().split("--------------------")  # Dividir por separadores de usuario
 
-                for i in range(0, len(lines), 3):  # Leer bloques de 3 líneas (username, password, separador)
-                    if lines[i].startswith("username:") and lines[i + 1].startswith("password:"):
-                        db_username = lines[i].split(":", 1)[1].strip()
-                        db_password = lines[i + 1].split(":", 1)[1].strip()  # Aquí está la corrección
-                        user_data[db_username] = db_password
+                for block in lines:
+                    block_lines = block.strip().split("\n")
+                    user_info = {}
+                    for line in block_lines:
+                        if ":" in line:
+                            key, value = line.split(":", 1)
+                            user_info[key.strip()] = value.strip()
 
-                # Verificar credenciales
+                    if "username" in user_info and "password" in user_info:
+                        user_data[user_info["username"]] = user_info["password"]
+
                 if username in user_data and user_data[username] == password:
                     print(f"Inicio de sesión exitoso para: {username}")
-                    return {"status": "success", "message": "Login exitoso"}
+                    if username in self.failed_attempts:
+                        del self.failed_attempts[username]  # Restablecer intentos fallidos
+                    return {"status": "true", "message": "Login exitoso"}
                 else:
                     print(f"Credenciales incorrectas para: {username}")
-                    return {"status": "error", "message": "Credenciales incorrectas"}
+                    self.record_failed_attempt(username)
+                    return {"status": "false", "message": "Credenciales incorrectas"}
+
         except FileNotFoundError:
             print("Base de datos no encontrada.")
             return {"status": "error", "message": "Base de datos no encontrada"}
         except Exception as e:
             print(f"Error al manejar login: {e}")
             return {"status": "error", "message": "Error interno del servidor"}
-    '''
-    def login_user(self, username, password):
-        print(f"Intentando iniciar sesión: {username}")
-        try:
-            with open("database.txt", "r") as db_file:
-                user_data = {}
-                lines = db_file.readlines()
 
-                for i in range(0, len(lines), 3):  # Leer bloques de 3 líneas (username, password, separador)
-                    if lines[i].startswith("username:") and lines[i + 1].startswith("password:"):
-                        db_username = lines[i].split(":", 1)[1].strip()
-                        db_password = lines[i + 1].split(":", 1)[1].strip()
-                        user_data[db_username] = db_password
-
-                # Verificar credenciales
-                if username in user_data and user_data[username] == password:
-                    print(f"Inicio de sesión exitoso para: {username}")
-                    return {"status": True, "message": "Login exitoso"}
-                else:
-                    print(f"Credenciales incorrectas para: {username}")
-                    return {"status": False, "message": "Credenciales incorrectas"}
-        except FileNotFoundError:
-            print("Base de datos no encontrada.")
-            return {"status": False, "message": "Base de datos no encontrada"}
-        except Exception as e:
-            print(f"Error al manejar login: {e}")
-            return {"status": False, "message": "Error interno del servidor"}
 
     
 
@@ -149,6 +146,23 @@ class ChatServer:
             print(f"Error al guardar en el archivo: {e}")
             return {"status": "error", "message": "Error al guardar los datos"}
 
+
+
+    def record_failed_attempt(self, username):
+        current_time = time.time()
+        if username not in self.failed_attempts:
+            self.failed_attempts[username] = [1, current_time]
+        else:
+            attempts, block_time = self.failed_attempts[username]
+            if current_time - block_time > self.block_duration:
+                # Reinicia el contador si el bloqueo expiró
+                self.failed_attempts[username] = [1, current_time]
+            else:
+                # Incrementa los intentos y bloquea si es necesario
+                self.failed_attempts[username][0] += 1
+                if self.failed_attempts[username][0] >= 3:
+                    self.failed_attempts[username][1] = current_time  # Actualiza el tiempo de bloqueo
+        print(f"LOG: {username} - Intentos fallidos: {self.failed_attempts[username][0]}")
 
 
     def load_users(self):
