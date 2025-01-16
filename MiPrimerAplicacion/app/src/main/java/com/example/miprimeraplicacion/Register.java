@@ -49,19 +49,6 @@ public class Register extends AppCompatActivity {
 
     private Button cancelButton;
 
-    private TextView coordinatesTextView;
-
-    // Manejar el resultado de la actividad del mapa
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1 && resultCode == RESULT_OK) {
-            double latitude = data.getDoubleExtra("latitude", 0);
-            double longitude = data.getDoubleExtra("longitude", 0);
-            coordinatesTextView.setText("Coordenadas: " + latitude + ", " + longitude);
-        }
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +57,7 @@ public class Register extends AppCompatActivity {
         // Inicializar los elementos de la vista
         EditText firstNameEditText = findViewById(R.id.editTextFirstName);
         EditText lastNameEditText = findViewById(R.id.editTextLastName);
+        EditText addressEditText = findViewById(R.id.editTextAddress);
         EditText nicknameEditText = findViewById(R.id.editTextNickname);
         EditText passwordEditText = findViewById(R.id.editTextPassword);
         EditText hobbyEditText = findViewById(R.id.editTextHobby);
@@ -82,15 +70,6 @@ public class Register extends AppCompatActivity {
         buttonUploadPhoto = findViewById(R.id.buttonUploadPhoto);
         checkBoxTerms = findViewById(R.id.checkBoxTerms);
         registerButton = findViewById(R.id.buttonRegister);
-        coordinatesTextView = findViewById(R.id.textViewCoordinates);
-
-        // Botón para abrir el mapa
-        Button openMapButton = findViewById(R.id.buttonOpenMap);
-
-        openMapButton.setOnClickListener(v -> {
-            Intent mapIntent = new Intent(Register.this, MapActivity.class);
-            startActivityForResult(mapIntent, 1); // El código 1 es un identificador para esta solicitud
-        });
 
 
         EditText expirationDateField = findViewById(R.id.editTextCardExpiry);
@@ -208,7 +187,7 @@ public class Register extends AppCompatActivity {
         registerButton.setOnClickListener(v -> {
             String firstName = firstNameEditText.getText().toString().trim();
             String lastName = lastNameEditText.getText().toString().trim();
-            String address = coordinatesTextView.getText().toString().trim();
+            String address = addressEditText.getText().toString().trim();
             String nickname = nicknameEditText.getText().toString().trim();
             String password = passwordEditText.getText().toString().trim();
             String hobby = hobbyEditText.getText().toString().trim();
@@ -423,6 +402,4 @@ public class Register extends AppCompatActivity {
         }
         return false;
     }
-
-
 }

@@ -76,6 +76,33 @@
             android:padding="12dp"
             android:textColorHint="@color/text_color" />
 
+        <TextView
+
+            android:layout_width="296dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingBottom="16dp"
+            android:text="La contraseña debe tener al menos 8 caracteres.
+                            Debe contener al menos 2 tipos de caracteres:
+                                    Letras y números.
+Letras y símbolos especiales.
+
+                                                                                    Los caracteres pueden repetirse.
+             "
+            android:textColor="@color/primary_color"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editTextConfirm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/rounded_edittext"
+            android:hint="Confirmar contraseña"
+            android:inputType="textPassword"
+            android:padding="12dp"
+            android:textColorHint="@color/text_color" />
         <EditText
             android:id="@+id/editTextFirstName"
             android:layout_width="match_parent"
