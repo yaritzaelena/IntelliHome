@@ -1,1 +1,14 @@
 
+firstName: Olman
+lastName: Rodríguez
+address: Coordenadas: 10.010186170313295, -84.20815519988537
+username: Olman2020
+password: 1234
+hobby: Estudiante
+cardnumber: 4555555555555555
+cardexpiry: 01/28
+cardcvv: 555
+houseStyle: Mansion
+transport: Sedan
+birthDate: 20/10/2000
+--------------------

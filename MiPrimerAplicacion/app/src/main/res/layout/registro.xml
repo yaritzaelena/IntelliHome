@@ -109,16 +109,6 @@
             android:textColorHint="@color/text_color" />
 
         <EditText
-            android:id="@+id/editTextAddress"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Domicilio"
-            android:textColorHint="@color/text_color"
-            android:padding="12dp"
-            android:background="@drawable/rounded_edittext"
-            android:layout_marginBottom="8dp" />
-
-        <EditText
             android:id="@+id/editTextHobby"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -186,6 +176,33 @@
             android:padding="12dp"
             android:hint="Selecciona Transporte" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp">
+
+            <!-- Botón para abrir el mapa -->
+            <Button
+                android:id="@+id/buttonOpenMap"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Seleccionar ubicación en el mapa"
+                android:background="@drawable/rounded_button"
+                android:textColor="@color/white"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Texto para mostrar la dirección o coordenadas -->
+            <TextView
+                android:id="@+id/textViewCoordinates"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:background="@drawable/rounded_edittext"
+                android:text="Coordenadas: (latitud, longitud)"
+                android:textColor="@color/text_color"
+                android:layout_marginBottom="8dp" />
+        </LinearLayout>
 
         <!-- CheckBox para Términos y Condiciones -->
         <CheckBox
