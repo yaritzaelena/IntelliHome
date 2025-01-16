@@ -147,9 +147,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Fecha de Expiración (MM/AA)"
-            android:textColorHint="@color/hint_color"
+            android:textColorHint="@color/text_color"
             android:padding="12dp"
-            android:background="@drawable/edittext_background"
+            android:background="@drawable/rounded_edittext"
             android:layout_marginBottom="8dp"
             android:maxLength="5"
             android:inputType="date" />
@@ -160,9 +160,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="CVV"
-            android:textColorHint="@color/hint_color"
+            android:textColorHint="@color/text_color"
             android:padding="12dp"
-            android:background="@drawable/edittext_background"
+            android:background="@drawable/rounded_edittext"
             android:layout_marginBottom="8dp"
             android:inputType="numberPassword"
             android:maxLength="3" />
@@ -182,7 +182,7 @@
             android:layout_height="wrap_content"
 
             android:layout_marginBottom="8dp"
-            android:background="@drawable/edittext_background"
+            android:background="@drawable/rounded_edittext"
             android:padding="12dp"
             android:hint="Selecciona Transporte" />
 
