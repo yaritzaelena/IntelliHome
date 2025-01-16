@@ -48,9 +48,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Seleccionar Foto"
-            android:background="#9370DB"
+            android:background="#6A5ACD"
             android:textColor="#FFFFFF"
             android:layout_marginBottom="16dp" />
+
 
         <!-- Campos de registro -->
         <EditText
@@ -144,6 +145,16 @@
             android:padding="12dp"
             android:background="@drawable/edittext_background"
             android:layout_marginBottom="8dp" />
+
+        <!-- CheckBox para Términos y Condiciones -->
+        <CheckBox
+            android:id="@+id/checkBoxTerms"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:enabled="true"
+            android:focusable="true"
+            android:text="Aceptar términos y condiciones" />
+
 
         <!-- Botón de registro -->
         <Button

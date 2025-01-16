@@ -1,4 +1,10 @@
 package com.example.miprimeraplicacion;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import android.content.res.Resources;
+import java.io.InputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -8,10 +14,13 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.widget.CompoundButton;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -26,6 +35,8 @@ public class Register extends AppCompatActivity {
     private static final int CAMERA_PERMISSION_CODE = 100;
     private ImageView imageViewPhoto;
     private Button buttonUploadPhoto;
+    private CheckBox checkBoxTerms;
+    private Button registerButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,12 +53,29 @@ public class Register extends AppCompatActivity {
         EditText cardEditText = findViewById(R.id.editTextCard);
         EditText houseStyleEditText = findViewById(R.id.editTextHouseStyle);
         EditText transportEditText = findViewById(R.id.editTextTransport);
-        Button registerButton = findViewById(R.id.buttonRegister);
         imageViewPhoto = findViewById(R.id.imageViewPhoto);
         buttonUploadPhoto = findViewById(R.id.buttonUploadPhoto);
+        checkBoxTerms = findViewById(R.id.checkBoxTerms);
+        registerButton = findViewById(R.id.buttonRegister);
+
+        // Deshabilitar el botón de registro inicialmente
+        registerButton.setEnabled(false);
 
         // Manejar el clic del botón "Seleccionar Foto"
         buttonUploadPhoto.setOnClickListener(v -> showPhotoOptions());
+
+        // Manejar el CheckBox de términos y condiciones
+        // Configurar el OnCheckedChangeListener
+        CheckBox checkBoxTerms = findViewById(R.id.checkBoxTerms);
+        if (checkBoxTerms == null) {
+            Log.e("CheckBox", "El CheckBox es nulo. Revisa el ID en el diseño XML.");
+            return;
+        }
+
+        checkBoxTerms.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            Log.d("CheckBox", "onCheckedChanged: CheckBox cambiado a " + isChecked);
+            showTermsDialog(checkBoxTerms, isChecked, registerButton);
+        });
 
         // Manejar el clic del botón de registro
         registerButton.setOnClickListener(v -> {
@@ -60,7 +88,7 @@ public class Register extends AppCompatActivity {
             String card = cardEditText.getText().toString().trim();
             String houseStyle = houseStyleEditText.getText().toString().trim();
             String transport = transportEditText.getText().toString().trim();
-            
+
             if (firstName.isEmpty() || lastName.isEmpty() || address.isEmpty() || nickname.isEmpty() ||
                     password.isEmpty() || hobby.isEmpty() || card.isEmpty() || houseStyle.isEmpty() || transport.isEmpty()) {
                 Toast.makeText(Register.this, "Por favor, completa todos los campos.", Toast.LENGTH_SHORT).show();
@@ -95,6 +123,44 @@ public class Register extends AppCompatActivity {
 
         });
     }
+    private void openGallery() {
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        galleryLauncher.launch(galleryIntent);
+    }
+
+    private void checkAndRequestCameraPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            openCamera();
+        } else {
+            requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
+        }
+    }
+
+    private void openCamera() {
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        cameraLauncher.launch(cameraIntent);
+    }
+
+    // Lanzadores para manejar resultados de actividad
+    private final ActivityResultLauncher<Intent> galleryLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    Uri selectedImage = result.getData().getData();
+                    Glide.with(this).load(selectedImage).into(imageViewPhoto);
+                }
+            }
+    );
+
+    private final ActivityResultLauncher<Intent> cameraLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    Bitmap photo = (Bitmap) result.getData().getExtras().get("data");
+                    imageViewPhoto.setImageBitmap(photo);
+                }
+            }
+    );
 
     /**
      * Mostrar opciones al usuario: "Cargar desde galería" o "Tomar una foto"
@@ -119,73 +185,106 @@ public class Register extends AppCompatActivity {
     }
 
     /**
-     * Abrir la galería para seleccionar una foto
+     * Mostrar el cuadro de diálogo de términos y condiciones
      */
-    private void openGallery() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        galleryLauncher.launch(intent);
-    }
 
-    /**
-     * Verificar y solicitar permiso para la cámara
-     */
-    private void checkAndRequestCameraPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
-        } else {
-            openCamera();
-        }
-    }
+   /**  private void showTermsDialog(CheckBox checkBox, boolean isChecked, Button registerButton) {
+        Log.d("Dialog", "showTermsDialog: Mostrando diálogo de términos y condiciones.");
 
-    /**
-     * Abrir la cámara para tomar una foto
-     */
-    private void openCamera() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            cameraLauncher.launch(intent);
-        } else {
-            Toast.makeText(this, "No se puede abrir la cámara", Toast.LENGTH_SHORT).show();
-        }
-    }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Términos y Condiciones");
+        builder.setMessage("Estos son los términos y condiciones de la aplicación...\n\nAcepta para continuar.");
+        builder.setCancelable(false);
 
-    /**
-     * Manejar el resultado de la galería
-     */
-    private final ActivityResultLauncher<Intent> galleryLauncher =
-            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    Uri selectedImageUri = result.getData().getData();
-                    Glide.with(this)
-                            .load(selectedImageUri)
-                            .circleCrop()
-                            .placeholder(R.drawable.circular_image)
-                            .into(imageViewPhoto);
-
-                    Toast.makeText(this, "Foto cargada desde la galería", Toast.LENGTH_SHORT).show();
-                }
+        builder.setPositiveButton("Aceptar", (dialog, which) -> {
+            Log.d("Dialog", "showTermsDialog: El usuario aceptó los términos.");
+            checkBox.setOnCheckedChangeListener(null); // Desactiva temporalmente el listener
+            checkBox.setChecked(true); // Marca el CheckBox
+            registerButton.setEnabled(true); // Habilita el botón Register
+            checkBox.setOnCheckedChangeListener((buttonView, checked) -> {
+                showTermsDialog(checkBox, checked, registerButton);
             });
+        });
 
-    /**
-     * Manejar el resultado de la cámara
-     */
-    private final ActivityResultLauncher<Intent> cameraLauncher =
-            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    Bitmap photo = (Bitmap) result.getData().getExtras().get("data");
-                    Glide.with(this)
-                            .load(photo)
-                            .circleCrop()
-                            .placeholder(R.drawable.circular_image)
-                            .into(imageViewPhoto);
-
-                    Toast.makeText(this, "Foto capturada", Toast.LENGTH_SHORT).show();
-                }
+        builder.setNegativeButton("Cancelar", (dialog, which) -> {
+            Log.d("Dialog", "showTermsDialog: El usuario canceló los términos.");
+            checkBox.setOnCheckedChangeListener(null); // Desactiva temporalmente el listener
+            checkBox.setChecked(false); // Desmarca el CheckBox
+            registerButton.setEnabled(false); // Desactiva el botón Register
+            checkBox.setOnCheckedChangeListener((buttonView, checked) -> {
+                showTermsDialog(checkBox, checked, registerButton);
             });
+        });
 
-    /**
-     * Validar si el número de tarjeta es Visa o Mastercard
-     */
+        builder.show();
+    }
+
+    */
+   private void showTermsDialog(CheckBox checkBox, boolean isChecked, Button registerButton) {
+       Log.d("Dialog", "showTermsDialog: Mostrando diálogo de términos y condiciones.");
+
+       // Leer el contenido del archivo
+       String terms = readTermsFromFile();
+
+       AlertDialog.Builder builder = new AlertDialog.Builder(this);
+       builder.setTitle("Términos y Condiciones");
+
+       // Crear un ScrollView para manejar términos largos
+       ScrollView scrollView = new ScrollView(this);
+       TextView termsTextView = new TextView(this);
+       termsTextView.setText(terms);
+       termsTextView.setPadding(32, 32, 32, 32); // Margen para mejorar legibilidad
+       termsTextView.setTextSize(16); // Tamaño de fuente
+       termsTextView.setLineSpacing(1.2f, 1.2f); // Espaciado entre líneas
+       scrollView.addView(termsTextView);
+
+       builder.setView(scrollView);
+       builder.setCancelable(false);
+
+       builder.setPositiveButton("Aceptar", (dialog, which) -> {
+           Log.d("Dialog", "showTermsDialog: El usuario aceptó los términos.");
+           checkBox.setOnCheckedChangeListener(null); // Desactiva temporalmente el listener
+           checkBox.setChecked(true); // Marca el CheckBox
+           registerButton.setEnabled(true); // Habilita el botón Register
+           checkBox.setOnCheckedChangeListener((buttonView, checked) -> {
+               showTermsDialog(checkBox, checked, registerButton);
+           });
+       });
+
+       builder.setNegativeButton("Cancelar", (dialog, which) -> {
+           Log.d("Dialog", "showTermsDialog: El usuario canceló los términos.");
+           checkBox.setOnCheckedChangeListener(null); // Desactiva temporalmente el listener
+           checkBox.setChecked(false); // Desmarca el CheckBox
+           registerButton.setEnabled(false); // Desactiva el botón Register
+           checkBox.setOnCheckedChangeListener((buttonView, checked) -> {
+               showTermsDialog(checkBox, checked, registerButton);
+           });
+       });
+
+       builder.show();
+   }
+
+    private String readTermsFromFile() {
+        InputStream inputStream = getResources().openRawResource(R.raw.terms_conditions);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+        try {
+            int i;
+            while ((i = inputStream.read()) != -1) {
+                byteArrayOutputStream.write(i);
+            }
+            inputStream.close();
+        } catch (IOException e) {
+            Log.e("FileError", "Error al leer el archivo: " + e.getMessage());
+            return "Error al cargar los términos y condiciones.";
+        }
+
+        return byteArrayOutputStream.toString();
+    }
+
+
+    // Métodos adicionales (openGallery, checkAndRequestCameraPermission, openCamera, etc.) permanecen sin cambios
+
     private boolean isVisaOrMastercard(String cardNumber) {
         if (cardNumber.length() == 16) {
             if (cardNumber.startsWith("4")) {
@@ -196,20 +295,5 @@ public class Register extends AppCompatActivity {
             }
         }
         return false;
-    }
-
-    /**
-     * Manejar la respuesta del usuario a los permisos solicitados
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == CAMERA_PERMISSION_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                openCamera();
-            } else {
-                Toast.makeText(this, "Permiso de cámara denegado", Toast.LENGTH_SHORT).show();
-            }
-        }
     }
 }
