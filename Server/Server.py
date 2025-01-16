@@ -1,9 +1,9 @@
+from cryptography.fernet import Fernet
 import os
 import json
 import socket
 import threading
 import time
-
 
 class ChatServer:
     def __init__(self, host='0.0.0.0', port=1717):
@@ -11,20 +11,44 @@ class ChatServer:
         self.server_socket.bind((host, port))
         self.server_socket.listen(5)
         self.clients = []
-        self.failed_attempts = {}  # Dictionary to track failed attempts and block time
-        self.block_duration = 120  # Block duration in seconds
-        
+        self.failed_attempts = {}  # Diccionario de intentos fallidos
+        self.block_duration = 120  # Tiempo de bloqueo en segundos
+
+        # Generar clave de encriptación si no existe
+        if not os.path.exists("secret.key"):
+            self.generate_key()
+        self.key = self.load_key()
+        self.cipher = Fernet(self.key)
 
         print("Servidor iniciado y esperando conexiones...")
-
         threading.Thread(target=self.accept_connections).start()
+
+    def generate_key(self):
+        """ Genera una clave de cifrado y la guarda en un archivo. """
+        key = Fernet.generate_key()
+        with open("secret.key", "wb") as key_file:
+            key_file.write(key)
+
+    def load_key(self):
+        """ Carga la clave de cifrado desde el archivo. """
+        return open("secret.key", "rb").read()
+
+    def encrypt(self, data):
+        """ Encripta los datos con la clave de cifrado. """
+        return self.cipher.encrypt(data.encode()).decode()
+
+    def decrypt(self, encrypted_data):
+        """ Desencripta los datos cifrados con la clave. """
+        try:
+            return self.cipher.decrypt(encrypted_data.encode()).decode()
+        except:
+            return encrypted_data  # Si los datos no están cifrados, los devuelve tal cual
 
     def accept_connections(self):
         while True:
             client_socket, addr = self.server_socket.accept()
-            print(f"Conexión aceptada de {addr}")  # Confirmar conexión
-            threading.Thread(target=self.handle_client, args=(client_socket,)).start()# Para que sea en hilo separado
-
+            print(f"Conexión aceptada de {addr}")
+            threading.Thread(target=self.handle_client, args=(client_socket,)).start()
 
     def handle_client(self, client_socket):
         while True:
@@ -37,35 +61,20 @@ class ChatServer:
                 message = raw_data.decode('utf-8')
                 print(f"Mensaje recibido (JSON crudo): {message}")
 
-                # Intentar procesar como JSON
                 try:
                     data = json.loads(message)
                     action = data.get("action")
-                    firstName = data.get("firstName")
-                    lastName = data.get("lastName")
-                    address = data.get("address")
-                    username = data.get("username")
-                    password = data.get("password")
-                    hobby = data.get("hobby")
-                    cardnumber = data.get("cardnumber")
-                    cardexpiry = data.get("cardexpiry")
-                    cardcvv = data.get("cardcvv")
-                    houseStyle = data.get("houseStyle")
-                    transport = data.get("transport")
-                    birthDate = data.get("birthDate")
 
                     if action == "register":
-                        response = self.register_user(firstName, lastName, address, username, password, hobby, cardnumber, cardexpiry, cardcvv, houseStyle, transport, birthDate)
+                        response = self.register_user(data)
                     elif action == "login":
-                        response = self.login_user(username, password)
+                        response = self.login_user(data["username"], data["password"])
                     else:
                         response = {"status": "error", "message": "Acción no válida"}
 
-                    # Enviar la respuesta al cliente
-                    response_json = json.dumps(response) +"\n"
+                    response_json = json.dumps(response) + "\n"
                     client_socket.send(response_json.encode('utf-8'))
                     print(f"Respuesta enviada al cliente: {response_json}")
-      
 
                 except json.JSONDecodeError as e:
                     print(f"Error al decodificar JSON: {e}")
@@ -77,116 +86,97 @@ class ChatServer:
                 break
         client_socket.close()
 
+    def register_user(self, data):
+        """ Registra un usuario en la base de datos con encriptación. """
+        username = data["username"]
+        print(f"Intentando registrar usuario: {username}")
+
+        try:
+            if os.path.exists("database.txt"):
+                with open("database.txt", "r") as db_file:
+                    lines = db_file.read().split("--------------------")
+                    for block in lines:
+                        if f"username: {username}" in block:  # No ciframos usernames
+                            print(f"El usuario {username} ya existe.")
+                            return {"status": "false", "message": "El nombre de usuario ya está en uso"}
+
+            with open("database.txt", "a") as db_file:
+                db_file.write(f"firstName: {self.encrypt(data['firstName'])}\n")
+                db_file.write(f"lastName: {self.encrypt(data['lastName'])}\n")
+                db_file.write(f"address: {self.encrypt(data['address'])}\n")
+                db_file.write(f"username: {username}\n")  # Username en texto plano
+                db_file.write(f"password: {self.encrypt(data['password'])}\n")
+                db_file.write(f"hobby: {self.encrypt(data['hobby'])}\n")
+                db_file.write(f"cardnumber: {self.encrypt(data['cardnumber'])}\n")
+                db_file.write(f"cardexpiry: {self.encrypt(data['cardexpiry'])}\n")
+                db_file.write(f"cardcvv: {self.encrypt(data['cardcvv'])}\n")
+                db_file.write(f"houseStyle: {self.encrypt(data['houseStyle'])}\n")
+                db_file.write(f"transport: {self.encrypt(data['transport'])}\n")
+                db_file.write(f"birthDate: {self.encrypt(data['birthDate'])}\n")
+                db_file.write(f"{'-' * 20}\n")
+
+            print(f"Usuario registrado: {username}")
+            return {"status": "true", "message": "Usuario registrado exitosamente"}
+
+        except Exception as e:
+            print(f"Error al guardar en el archivo: {e}")
+            return {"status": "error", "message": "Error al guardar los datos"}
 
     def login_user(self, username, password):
+        """ Verifica si un usuario puede iniciar sesión. """
         print(f"Intentando iniciar sesión: {username}")
         current_time = time.time()
 
-        # Verificar bloqueo
+        # Verificar si el usuario está bloqueado
         if username in self.failed_attempts:
             attempts, block_time = self.failed_attempts[username]
             if attempts >= 5 and current_time - block_time < self.block_duration:
                 remaining_time = self.block_duration - (current_time - block_time)
                 print(f"Cuenta bloqueada para {username}. Tiempo restante: {remaining_time:.0f} segundos")
-                return {
-                    "status": "error",
-                    "message": f"Cuenta bloqueada. Intente nuevamente en {remaining_time:.0f} segundos."
-                }
+                return {"status": "error", "message": f"Cuenta bloqueada. Intente nuevamente en {remaining_time:.0f} segundos."}
 
-        # Validar credenciales
         try:
             with open("database.txt", "r") as db_file:
-                user_data = {}
-                lines = db_file.read().split("--------------------")  # Dividir por separadores de usuario
-
+                lines = db_file.read().split("--------------------")
                 for block in lines:
-                    block_lines = block.strip().split("\n")
                     user_info = {}
-                    for line in block_lines:
+                    for line in block.strip().split("\n"):
                         if ":" in line:
                             key, value = line.split(":", 1)
-                            user_info[key.strip()] = value.strip()
+                            if key.strip() == "password":
+                                user_info[key.strip()] = self.decrypt(value.strip())
+                            else:
+                                user_info[key.strip()] = value.strip()
 
                     if "username" in user_info and "password" in user_info:
-                        user_data[user_info["username"]] = user_info["password"]
+                        if user_info["username"] == username and user_info["password"] == password:
+                            print(f"Inicio de sesión exitoso para: {username}")
+                            self.failed_attempts.pop(username, None)  # Reset de intentos
+                            return {"status": "true", "message": "Login exitoso"}
 
-                if username in user_data and user_data[username] == password:
-                    print(f"Inicio de sesión exitoso para: {username}")
-                    if username in self.failed_attempts:
-                        del self.failed_attempts[username]  # Restablecer intentos fallidos
-                    return {"status": "true", "message": "Login exitoso"}
-                else:
-                    print(f"Credenciales incorrectas para: {username}")
-                    self.record_failed_attempt(username)
-                    return {"status": "false", "message": "Credenciales incorrectas"}
+            print(f"Credenciales incorrectas para: {username}")
+            self.record_failed_attempt(username)
+            return {"status": "false", "message": "Credenciales incorrectas"}
 
         except FileNotFoundError:
             print("Base de datos no encontrada.")
             return {"status": "error", "message": "Base de datos no encontrada"}
-        except Exception as e:
-            print(f"Error al manejar login: {e}")
-            return {"status": "error", "message": "Error interno del servidor"}
-
-
-    
-
-    def register_user(self, firstName, lastName, address, username, password, hobby, cardnumber, cardexpiry, cardcvv, houseStyle, transport, birthDate):
-        print(f"Intentando registrar usuario: {username}")
-        try:
-            # Verificar si el usuario ya existe
-            if os.path.exists("database.txt"):
-                with open("database.txt", "r") as db_file:
-                    lines = db_file.read().split("--------------------")
-                    for block in lines:
-                        if f"username: {username}" in block:
-                            print(f"El usuario {username} ya existe.")
-                            return {"status": "false", "message": "El nombre de usuario ya está en uso"}
-
-
-            # Si no existe, proceder con el registro
-            with open("database.txt", "a") as db_file:
-                db_file.write(f"firstName: {firstName}\n")
-                db_file.write(f"lastName: {lastName}\n")
-                db_file.write(f"address: {address}\n")
-                db_file.write(f"username: {username}\n")
-                db_file.write(f"password: {password}\n")
-                db_file.write(f"hobby: {hobby}\n")
-                db_file.write(f"cardnumber: {cardnumber}\n")
-                db_file.write(f"cardexpiry: {cardexpiry}\n")
-                db_file.write(f"cardcvv: {cardcvv}\n")
-                db_file.write(f"houseStyle: {houseStyle}\n")
-                db_file.write(f"transport: {transport}\n")
-                db_file.write(f"birthDate: {birthDate}\n")
-                db_file.write(f"{'-'*20}\n")  # Línea separadora para mayor claridad
-
-            print(f"Usuario registrado: {username}")
-            return {"status": "true", "message": "Usuario registrado exitosamente"}
-
-        except FileNotFoundError:
-            print("Base de datos no encontrada. Creando una nueva.")
-            return {"status": "error", "message": "Base de datos no encontrada"}
-        except Exception as e:
-            print(f"Error al guardar en el archivo: {e}")
-            return {"status": "error", "message": "Error al guardar los datos"}
-
-
-
 
     def record_failed_attempt(self, username):
+        """ Registra intentos fallidos de inicio de sesión. """
         current_time = time.time()
         if username not in self.failed_attempts:
             self.failed_attempts[username] = [1, current_time]
         else:
             attempts, block_time = self.failed_attempts[username]
             if current_time - block_time > self.block_duration:
-                # Reinicia el contador si el bloqueo expiró
                 self.failed_attempts[username] = [1, current_time]
             else:
-                # Incrementa los intentos y bloquea si es necesario
                 self.failed_attempts[username][0] += 1
                 if self.failed_attempts[username][0] >= 5:
-                    self.failed_attempts[username][1] = current_time  # Actualiza el tiempo de bloqueo
+                    self.failed_attempts[username][1] = current_time
         print(f"LOG: {username} - Intentos fallidos: {self.failed_attempts[username][0]}")
+
 
 
     def load_users(self):
@@ -209,3 +199,5 @@ class ChatServer:
 
 if __name__ == "__main__":
     ChatServer()
+
+
