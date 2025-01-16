@@ -51,9 +51,10 @@ class ChatServer:
                     cardcvv = data.get("cardcvv")
                     houseStyle = data.get("houseStyle")
                     transport = data.get("transport")
+                    birthDate = data.get("birthDate")
 
                     if action == "register":
-                        response = self.register_user(firstName, lastName, address, username, password, hobby, cardnumber, cardexpiry, cardcvv, houseStyle, transport)
+                        response = self.register_user(firstName, lastName, address, username, password, hobby, cardnumber, cardexpiry, cardcvv, houseStyle, transport, birthDate)
                     elif action == "login":
                         response = self.login_user(username, password)
                     else:
@@ -128,7 +129,7 @@ class ChatServer:
 
     
 
-    def register_user(self, firstName, lastName, address, username, password, hobby, cardnumber, cardexpiry, cardcvv, houseStyle, transport):
+    def register_user(self, firstName, lastName, address, username, password, hobby, cardnumber, cardexpiry, cardcvv, houseStyle, transport, birthDate):
         print(f"Intentando registrar usuario: {username}")
         try:
             # Verificar si el usuario ya existe
@@ -154,6 +155,7 @@ class ChatServer:
                 db_file.write(f"cardcvv: {cardcvv}\n")
                 db_file.write(f"houseStyle: {houseStyle}\n")
                 db_file.write(f"transport: {transport}\n")
+                db_file.write(f"birthDate: {birthDate}\n")
                 db_file.write(f"{'-'*20}\n")  # Línea separadora para mayor claridad
 
             print(f"Usuario registrado: {username}")
