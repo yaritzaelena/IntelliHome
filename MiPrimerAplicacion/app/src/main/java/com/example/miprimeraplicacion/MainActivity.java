@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public static void sendAndReceiveRegister(String firstName, String lastName, String address, String username, String password, String hobby, String card, String houseStyle, String transport, RegisterResponseCallback callback) {
+    public static void sendAndReceiveRegister(String firstName, String lastName, String address, String username, String password, String hobby, String card, String houseStyle, String transport, String birthDate, RegisterResponseCallback callback) {
         new Thread(() -> {
             try {
                 if (socket == null || socket.isClosed()) {

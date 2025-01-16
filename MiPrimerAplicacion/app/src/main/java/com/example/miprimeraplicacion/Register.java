@@ -28,6 +28,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import com.bumptech.glide.Glide;
+import android.app.DatePickerDialog;
+import java.util.Calendar;
 
 public class Register extends AppCompatActivity {
 
@@ -59,12 +61,35 @@ public class Register extends AppCompatActivity {
         checkBoxTerms = findViewById(R.id.checkBoxTerms);
         registerButton = findViewById(R.id.buttonRegister);
         cancelButton = findViewById(R.id.buttonCancel);
+        EditText birthDateEditText = findViewById(R.id.editTextBirthDate);
 
         // Botón de Cancelar
         cancelButton.setOnClickListener(v -> {
             // Acción para el botón de Cancelar
             Intent intent = new Intent(Register.this, Login.class);
             startActivity(intent);
+        });
+
+        birthDateEditText.setOnClickListener(v -> {
+            // Obtener la fecha actual
+            final Calendar calendar = Calendar.getInstance();
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH);
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+            // Mostrar el DatePickerDialog
+            DatePickerDialog datePickerDialog = new DatePickerDialog(
+                    Register.this,
+                    (view, year1, month1, dayOfMonth) -> {
+                        // Actualizar el campo con la fecha seleccionada
+                        String selectedDate = dayOfMonth + "/" + (month1 + 1) + "/" + year1;
+                        birthDateEditText.setText(selectedDate);
+                    },
+                    year,
+                    month,
+                    day
+            );
+            datePickerDialog.show();
         });
 
         // Deshabilitar el botón de registro inicialmente
@@ -121,9 +146,10 @@ public class Register extends AppCompatActivity {
             String card = cardEditText.getText().toString().trim();
             String houseStyle = spinnerHouseStyle.getSelectedItem().toString();
             String transport = transportEditText.getText().toString().trim();
+            String birthDate = birthDateEditText.getText().toString().trim();
 
             if (firstName.isEmpty() || lastName.isEmpty() || address.isEmpty() || nickname.isEmpty() ||
-                    password.isEmpty() || hobby.isEmpty() || card.isEmpty() || houseStyle.isEmpty() || transport.isEmpty()) {
+                    password.isEmpty() || hobby.isEmpty() || card.isEmpty() || houseStyle.isEmpty() || transport.isEmpty() || birthDate.isEmpty()) {
                 Toast.makeText(Register.this, "Por favor, completa todos los campos.", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -136,7 +162,7 @@ public class Register extends AppCompatActivity {
 
             // Enviar los datos de registro al servidor
             MainActivity.sendAndReceiveRegister(
-                    firstName, lastName, address, nickname, password, hobby, card, houseStyle, transport,
+                    firstName, lastName, address, nickname, password, hobby, card, houseStyle, transport, birthDate,
                     new MainActivity.RegisterResponseCallback() {
                         @Override
                         public void onSuccess(String response) {
