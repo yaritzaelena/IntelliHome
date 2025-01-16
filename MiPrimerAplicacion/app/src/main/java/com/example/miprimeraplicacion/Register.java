@@ -84,6 +84,8 @@ public class Register extends AppCompatActivity {
         checkBoxTerms = findViewById(R.id.checkBoxTerms);
         registerButton = findViewById(R.id.buttonRegister);
 
+        passwordEditText.setTransformationMethod(new DiamondTransformationMethod());
+        confirmPasswordEditText.setTransformationMethod(new DiamondTransformationMethod());
 
         EditText expirationDateField = findViewById(R.id.editTextCardExpiry);
         cancelButton = findViewById(R.id.buttonCancel);
