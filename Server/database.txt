@@ -88,3 +88,39 @@ card: 4444444444444444
 houseStyle: Aventurera
 transport: Carro
 --------------------
+firstName: Yaritza
+lastName: Lopez
+address: San Jose
+username: yari2000
+password: 123
+hobby: Jugar
+cardnumber: None
+cardexpiry: None
+cardcvv: None
+houseStyle: Mansion
+transport: Bus
+--------------------
+firstName: Yaritza
+lastName: Lopez
+address: San Jose
+username: Yari2025
+password: 12
+hobby: Jugar
+cardnumber: 4444444444444444
+cardexpiry: 12/25
+cardcvv: 554
+houseStyle: Costera
+transport: Carro
+--------------------
+firstName: Elena
+lastName: Lopez
+address: San Jose
+username: elenita
+password: 123
+hobby: jugar
+cardnumber: 4444444444444444
+cardexpiry: 54/86
+cardcvv: 253
+houseStyle: Aventurera
+transport: 4x4
+--------------------

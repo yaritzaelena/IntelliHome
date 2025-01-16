@@ -7,4 +7,10 @@
         <item>Costera</item>
     </string-array>
 
+    <string-array name="transport_styles">
+        <item>Seda</item>
+        <item>4x4</item>
+        <item>Moto</item>
+    </string-array>
+
 </resources>

@@ -46,12 +46,14 @@ class ChatServer:
                     username = data.get("username")
                     password = data.get("password")
                     hobby = data.get("hobby")
-                    card = data.get("card")
+                    cardnumber = data.get("cardnumber")
+                    cardexpiry = data.get("cardexpiry")
+                    cardcvv = data.get("cardcvv")
                     houseStyle = data.get("houseStyle")
                     transport = data.get("transport")
 
                     if action == "register":
-                        response = self.register_user(firstName, lastName, address, username, password, hobby, card, houseStyle, transport)
+                        response = self.register_user(firstName, lastName, address, username, password, hobby, cardnumber, cardexpiry, cardcvv, houseStyle, transport)
                     elif action == "login":
                         response = self.login_user(username, password)
                     else:
@@ -126,7 +128,7 @@ class ChatServer:
 
     
 
-    def register_user(self, firstName, lastName, address, username, password, hobby, card, houseStyle, transport):
+    def register_user(self, firstName, lastName, address, username, password, hobby, cardnumber, cardexpiry, cardcvv, houseStyle, transport):
         print(f"Intentando registrar usuario: {username}")
         try:
             # Verificar si el usuario ya existe
@@ -147,7 +149,9 @@ class ChatServer:
                 db_file.write(f"username: {username}\n")
                 db_file.write(f"password: {password}\n")
                 db_file.write(f"hobby: {hobby}\n")
-                db_file.write(f"card: {card}\n")
+                db_file.write(f"cardnumber: {cardnumber}\n")
+                db_file.write(f"cardexpiry: {cardexpiry}\n")
+                db_file.write(f"cardcvv: {cardcvv}\n")
                 db_file.write(f"houseStyle: {houseStyle}\n")
                 db_file.write(f"transport: {transport}\n")
                 db_file.write(f"{'-'*20}\n")  # Línea separadora para mayor claridad

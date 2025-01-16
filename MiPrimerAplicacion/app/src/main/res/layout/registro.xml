@@ -115,8 +115,9 @@
             android:background="@drawable/edittext_background"
             android:layout_marginBottom="8dp" />
 
+        <!-- Campo para el Número de Tarjeta -->
         <EditText
-            android:id="@+id/editTextCard"
+            android:id="@+id/editTextCardNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Número de Tarjeta"
@@ -125,6 +126,33 @@
             android:background="@drawable/edittext_background"
             android:layout_marginBottom="8dp"
             android:inputType="number" />
+
+        <!-- Campo para la Fecha de Expiración -->
+        <EditText
+            android:id="@+id/editTextCardExpiry"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Fecha de Expiración (MM/AA)"
+            android:textColorHint="@color/hint_color"
+            android:padding="12dp"
+            android:background="@drawable/edittext_background"
+            android:layout_marginBottom="8dp"
+            android:maxLength="5"
+            android:inputType="date" />
+
+        <!-- Campo para el CVV -->
+        <EditText
+            android:id="@+id/editTextCardCVV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="CVV"
+            android:textColorHint="@color/hint_color"
+            android:padding="12dp"
+            android:background="@drawable/edittext_background"
+            android:layout_marginBottom="8dp"
+            android:inputType="numberPassword"
+            android:maxLength="3" />
+
 
 
         <Spinner
@@ -135,15 +163,15 @@
             android:background="@drawable/edittext_background"
             android:padding="12dp" />
 
-        <EditText
-            android:id="@+id/editTextTransport"
+        <Spinner
+            android:id="@+id/spinnerTransportStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Transporte"
-            android:textColorHint="@color/hint_color"
-            android:padding="12dp"
+            android:layout_marginBottom="8dp"
             android:background="@drawable/edittext_background"
-            android:layout_marginBottom="8dp" />
+            android:padding="12dp"
+            android:hint="Selecciona Transporte" />
+
 
         <!-- CheckBox para Términos y Condiciones -->
         <CheckBox

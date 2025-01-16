@@ -6,6 +6,12 @@ import java.io.InputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import android.Manifest;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.widget.EditText;
+
+
+
 import android.widget.ArrayAdapter;
 import android.widget.AdapterView;
 import android.view.View;
@@ -49,13 +55,51 @@ public class Register extends AppCompatActivity {
         EditText nicknameEditText = findViewById(R.id.editTextNickname);
         EditText passwordEditText = findViewById(R.id.editTextPassword);
         EditText hobbyEditText = findViewById(R.id.editTextHobby);
-        EditText cardEditText = findViewById(R.id.editTextCard);
+        EditText cardnumberEditText = findViewById(R.id.editTextCardNumber);
+        EditText cardexpiryEditText = findViewById(R.id.editTextCardExpiry);
+        EditText cardcvvEditText = findViewById(R.id.editTextCardCVV);
         Spinner spinnerHouseStyle = findViewById(R.id.spinnerHouseStyle);
-        EditText transportEditText = findViewById(R.id.editTextTransport);
+        Spinner spinnerTransportStyle = findViewById(R.id.spinnerTransportStyle);
         imageViewPhoto = findViewById(R.id.imageViewPhoto);
         buttonUploadPhoto = findViewById(R.id.buttonUploadPhoto);
         checkBoxTerms = findViewById(R.id.checkBoxTerms);
         registerButton = findViewById(R.id.buttonRegister);
+        EditText expirationDateField = findViewById(R.id.editTextCardExpiry);
+        expirationDateField.addTextChangedListener(new TextWatcher() {
+            private String current = "";
+            private boolean isDeleting;
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                isDeleting = count > after; // Detecta si el usuario está borrando texto
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (!isDeleting) {
+                    String input = s.toString().replaceAll("[^\\d]", ""); // Solo deja números
+
+                    // Formatea como MM/AA
+                    if (input.length() >= 2) {
+                        String month = input.substring(0, 2);
+                        String year = input.length() > 2 ? input.substring(2) : "";
+
+                        // Construye el formato final
+                        String formatted = month + (year.isEmpty() ? "" : "/" + year);
+
+                        // Evita actualizaciones infinitas
+                        if (!formatted.equals(current)) {
+                            current = formatted;
+                            expirationDateField.setText(formatted);
+                            expirationDateField.setSelection(formatted.length()); // Coloca el cursor al final
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
 
         // Deshabilitar el botón de registro inicialmente
         registerButton.setEnabled(false);
@@ -65,25 +109,18 @@ public class Register extends AppCompatActivity {
                 R.array.house_styles,
                 android.R.layout.simple_spinner_item
         );
+        ArrayAdapter<CharSequence> adapt = ArrayAdapter.createFromResource(
+                this,
+                R.array.transport_styles,
+                android.R.layout.simple_spinner_item
+        );
+
 
 // Estilo del Spinner desplegable
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerHouseStyle.setAdapter(adapter);
+        spinnerTransportStyle.setAdapter(adapt);
 
-// Manejar la selección del Spinner
-        spinnerHouseStyle.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedStyle = parent.getItemAtPosition(position).toString();
-                Log.d("Spinner", "Estilo de Casa seleccionado: " + selectedStyle);
-                // Puedes guardar el valor seleccionado si es necesario
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // Manejar el caso cuando no se selecciona nada (opcional)
-            }
-        });
         // Manejar el clic del botón "Seleccionar Foto"
         buttonUploadPhoto.setOnClickListener(v -> showPhotoOptions());
 
@@ -108,17 +145,19 @@ public class Register extends AppCompatActivity {
             String nickname = nicknameEditText.getText().toString().trim();
             String password = passwordEditText.getText().toString().trim();
             String hobby = hobbyEditText.getText().toString().trim();
-            String card = cardEditText.getText().toString().trim();
+            String cardnumber = cardnumberEditText.getText().toString().trim();
+            String cardexpiry = cardexpiryEditText.getText().toString().trim();
+            String cardcvv = cardcvvEditText.getText().toString().trim();
             String houseStyle = spinnerHouseStyle.getSelectedItem().toString();
-            String transport = transportEditText.getText().toString().trim();
+            String transportStyle = spinnerTransportStyle.getSelectedItem().toString();
 
             if (firstName.isEmpty() || lastName.isEmpty() || address.isEmpty() || nickname.isEmpty() ||
-                    password.isEmpty() || hobby.isEmpty() || card.isEmpty() || houseStyle.isEmpty() || transport.isEmpty()) {
+                    password.isEmpty() || hobby.isEmpty() ||  cardnumber.isEmpty() ||cardexpiry.isEmpty() ||cardcvv.isEmpty() ||houseStyle.isEmpty() || transportStyle.isEmpty()) {
                 Toast.makeText(Register.this, "Por favor, completa todos los campos.", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            if (!isVisaOrMastercard(card)) {
+            if (!isVisaOrMastercard(cardnumber)) {
                 Toast.makeText(Register.this, "El número de tarjeta no es válido. Debe ser Visa o Mastercard.", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -126,7 +165,7 @@ public class Register extends AppCompatActivity {
 
             // Enviar los datos de registro al servidor
             MainActivity.sendAndReceiveRegister(
-                    firstName, lastName, address, nickname, password, hobby, card, houseStyle, transport,
+                    firstName, lastName, address, nickname, password, hobby, cardnumber, cardexpiry, cardcvv, houseStyle, transportStyle,
                     new MainActivity.RegisterResponseCallback() {
                         @Override
                         public void onSuccess(String response) {
