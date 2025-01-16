@@ -222,6 +222,11 @@ public class Register extends AppCompatActivity {
             String transportStyle = spinnerTransportStyle.getSelectedItem().toString();
             String birthDate = birthDateEditText.getText().toString().trim();
 
+            // Verificar si el nickname contiene palabras prohibidas
+            if (containsRestrictedWords(nickname)) {
+                Toast.makeText(Register.this, "El nombre de usuario contiene palabras inapropiadas.", Toast.LENGTH_LONG).show();
+                return;
+            }
             if (firstName.isEmpty() || lastName.isEmpty() || address.isEmpty() || nickname.isEmpty() ||
                     password.isEmpty() || confirmPassword.isEmpty() || hobby.isEmpty() ||  cardnumber.isEmpty() ||cardexpiry.isEmpty() ||cardcvv.isEmpty() ||houseStyle.isEmpty() || transportStyle.isEmpty()|| birthDate.isEmpty()) {
 
@@ -457,6 +462,39 @@ public class Register extends AppCompatActivity {
         if (hasSpecialChars) typeCount++;
 
         return typeCount >= 2;
+    }
+
+    // Método para verificar si el username contiene palabras prohibidas
+    private boolean containsRestrictedWords(String username) {
+        String[] restrictedWords = {
+                // Inglés
+                "sex", "porn", "xxx", "adult", "escort", "prostitute", "nude", "playboy", "stripper", "fetish",
+                "bdsm", "erotic", "nsfw", "hooker", "lust", "swinger", "camgirl", "sugarbaby", "dildo", "orgy",
+                "deepthroat", "hentai", "milf", "creampie", "bareback", "threesome", "gangbang", "cumshot", "bukkake",
+                "blowjob", "handjob", "tits", "boobs", "ass", "butt", "pussy", "dick", "cock", "vagina", "penis",
+                "anal", "lesbian", "gayporn", "slut", "whore", "naughty", "playmate", "lingerie", "hardcore",
+                "softcore", "voyeur", "incest", "taboo", "pegging", "dominatrix", "submission", "spanking", "shemale",
+                "transsexual", "bisexual", "orgasm", "climax", "penetration", "cuckold", "sissy", "squirting", "strapon",
+                "fellatio", "cunnilingus", "voyeur", "peeping", "exhibitionist", "masochist", "sadist", "dominant",
+                "submissive", "gagging", "kink", "bondage", "genitals",
+
+                // Español
+                "sexo", "porno", "xxx", "adulto", "escort", "prostituta", "nudista", "desnudo", "playboy", "striper",
+                "fetiche", "bdsm", "erótico", "travesti", "lujuria", "swinger", "pornografía", "dildo", "orgía",
+                "trío", "orgasmo", "eyaculación", "corrida", "beso negro", "felación", "cunnilingus", "masturbación",
+                "pene", "vagina", "ano", "clítoris", "senos", "tetas", "nalgas", "trasero", "culo", "pecho", "dominación",
+                "sumisión", "esclava", "sadomasoquismo", "voyeurismo", "exhibicionismo", "dominatrix", "sadista",
+                "masoquista", "bondage", "orgasmar", "sumiso", "pecho desnudo", "azotes", "pegging", "sexo grupal",
+                "zoofilia", "incesto", "tabú", "sado", "latigazo", "porno gay", "travesti", "chica cam", "chico cam",
+                "película porno", "sexo en vivo", "chat erótico", "deseo carnal"
+        };
+
+        for (String word : restrictedWords) {
+            if (username.toLowerCase().contains(word)) {
+                return true; // Contiene una palabra prohibida
+            }
+        }
+        return false; // Username válido
     }
 
 }
