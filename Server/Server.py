@@ -13,6 +13,7 @@ class ChatServer:
         self.clients = []
         self.failed_attempts = {}  # Dictionary to track failed attempts and block time
         self.block_duration = 120  # Block duration in seconds
+        
 
         print("Servidor iniciado y esperando conexiones...")
 
@@ -84,7 +85,7 @@ class ChatServer:
         # Verificar bloqueo
         if username in self.failed_attempts:
             attempts, block_time = self.failed_attempts[username]
-            if attempts >= 3 and current_time - block_time < self.block_duration:
+            if attempts >= 5 and current_time - block_time < self.block_duration:
                 remaining_time = self.block_duration - (current_time - block_time)
                 print(f"Cuenta bloqueada para {username}. Tiempo restante: {remaining_time:.0f} segundos")
                 return {
@@ -183,7 +184,7 @@ class ChatServer:
             else:
                 # Incrementa los intentos y bloquea si es necesario
                 self.failed_attempts[username][0] += 1
-                if self.failed_attempts[username][0] >= 3:
+                if self.failed_attempts[username][0] >= 5:
                     self.failed_attempts[username][1] = current_time  # Actualiza el tiempo de bloqueo
         print(f"LOG: {username} - Intentos fallidos: {self.failed_attempts[username][0]}")
 
