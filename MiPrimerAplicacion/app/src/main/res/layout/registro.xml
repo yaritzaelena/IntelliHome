@@ -126,15 +126,14 @@
             android:layout_marginBottom="8dp"
             android:inputType="number" />
 
-        <EditText
-            android:id="@+id/editTextHouseStyle"
+
+        <Spinner
+            android:id="@+id/spinnerHouseStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Estilo de Casa"
-            android:textColorHint="@color/hint_color"
-            android:padding="12dp"
+            android:layout_marginBottom="8dp"
             android:background="@drawable/edittext_background"
-            android:layout_marginBottom="8dp" />
+            android:padding="12dp" />
 
         <EditText
             android:id="@+id/editTextTransport"

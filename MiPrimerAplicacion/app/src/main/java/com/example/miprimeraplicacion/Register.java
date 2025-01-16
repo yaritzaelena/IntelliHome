@@ -1,13 +1,13 @@
 package com.example.miprimeraplicacion;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.content.res.Resources;
 import java.io.InputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
 import android.Manifest;
-import android.content.DialogInterface;
+import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
+import android.view.View;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -20,8 +20,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-import android.widget.CompoundButton;
-
+import android.widget.Spinner;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
@@ -51,7 +50,7 @@ public class Register extends AppCompatActivity {
         EditText passwordEditText = findViewById(R.id.editTextPassword);
         EditText hobbyEditText = findViewById(R.id.editTextHobby);
         EditText cardEditText = findViewById(R.id.editTextCard);
-        EditText houseStyleEditText = findViewById(R.id.editTextHouseStyle);
+        Spinner spinnerHouseStyle = findViewById(R.id.spinnerHouseStyle);
         EditText transportEditText = findViewById(R.id.editTextTransport);
         imageViewPhoto = findViewById(R.id.imageViewPhoto);
         buttonUploadPhoto = findViewById(R.id.buttonUploadPhoto);
@@ -60,7 +59,31 @@ public class Register extends AppCompatActivity {
 
         // Deshabilitar el botón de registro inicialmente
         registerButton.setEnabled(false);
+        // Cargar las opciones en el Spinner
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                this,
+                R.array.house_styles,
+                android.R.layout.simple_spinner_item
+        );
 
+// Estilo del Spinner desplegable
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerHouseStyle.setAdapter(adapter);
+
+// Manejar la selección del Spinner
+        spinnerHouseStyle.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedStyle = parent.getItemAtPosition(position).toString();
+                Log.d("Spinner", "Estilo de Casa seleccionado: " + selectedStyle);
+                // Puedes guardar el valor seleccionado si es necesario
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Manejar el caso cuando no se selecciona nada (opcional)
+            }
+        });
         // Manejar el clic del botón "Seleccionar Foto"
         buttonUploadPhoto.setOnClickListener(v -> showPhotoOptions());
 
@@ -86,7 +109,7 @@ public class Register extends AppCompatActivity {
             String password = passwordEditText.getText().toString().trim();
             String hobby = hobbyEditText.getText().toString().trim();
             String card = cardEditText.getText().toString().trim();
-            String houseStyle = houseStyleEditText.getText().toString().trim();
+            String houseStyle = spinnerHouseStyle.getSelectedItem().toString();
             String transport = transportEditText.getText().toString().trim();
 
             if (firstName.isEmpty() || lastName.isEmpty() || address.isEmpty() || nickname.isEmpty() ||
@@ -99,6 +122,7 @@ public class Register extends AppCompatActivity {
                 Toast.makeText(Register.this, "El número de tarjeta no es válido. Debe ser Visa o Mastercard.", Toast.LENGTH_SHORT).show();
                 return;
             }
+
 
             // Enviar los datos de registro al servidor
             MainActivity.sendAndReceiveRegister(
@@ -187,39 +211,6 @@ public class Register extends AppCompatActivity {
     /**
      * Mostrar el cuadro de diálogo de términos y condiciones
      */
-
-   /**  private void showTermsDialog(CheckBox checkBox, boolean isChecked, Button registerButton) {
-        Log.d("Dialog", "showTermsDialog: Mostrando diálogo de términos y condiciones.");
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Términos y Condiciones");
-        builder.setMessage("Estos son los términos y condiciones de la aplicación...\n\nAcepta para continuar.");
-        builder.setCancelable(false);
-
-        builder.setPositiveButton("Aceptar", (dialog, which) -> {
-            Log.d("Dialog", "showTermsDialog: El usuario aceptó los términos.");
-            checkBox.setOnCheckedChangeListener(null); // Desactiva temporalmente el listener
-            checkBox.setChecked(true); // Marca el CheckBox
-            registerButton.setEnabled(true); // Habilita el botón Register
-            checkBox.setOnCheckedChangeListener((buttonView, checked) -> {
-                showTermsDialog(checkBox, checked, registerButton);
-            });
-        });
-
-        builder.setNegativeButton("Cancelar", (dialog, which) -> {
-            Log.d("Dialog", "showTermsDialog: El usuario canceló los términos.");
-            checkBox.setOnCheckedChangeListener(null); // Desactiva temporalmente el listener
-            checkBox.setChecked(false); // Desmarca el CheckBox
-            registerButton.setEnabled(false); // Desactiva el botón Register
-            checkBox.setOnCheckedChangeListener((buttonView, checked) -> {
-                showTermsDialog(checkBox, checked, registerButton);
-            });
-        });
-
-        builder.show();
-    }
-
-    */
    private void showTermsDialog(CheckBox checkBox, boolean isChecked, Button registerButton) {
        Log.d("Dialog", "showTermsDialog: Mostrando diálogo de términos y condiciones.");
 

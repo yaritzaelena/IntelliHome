@@ -1,3 +1,10 @@
 <resources>
-    <string name="app_name">Chat Curso Modelado</string>
+    <string name="app_name">IntelliHome</string>
+    <!-- Otras cadenas -->
+    <string-array name="house_styles">
+        <item>Aventurera</item>
+        <item>Mansion</item>
+        <item>Costera</item>
+    </string-array>
+
 </resources>
