@@ -12,3 +12,16 @@ houseStyle: Mansion
 transport: Sedan
 birthDate: 16/1/2025
 --------------------
+firstName: Yaritza Elena
+lastName: Lopez
+address: Coordenadas: 9.715512483691207, -83.77033721655607
+username: Lopez0116
+password: Abcdef12!
+hobby: Estudiante
+cardnumber: 4455555555555555
+cardexpiry: 12/25
+cardcvv: 124
+houseStyle: Aventurera
+transport: Sedan
+birthDate: 16/1/1999
+--------------------
