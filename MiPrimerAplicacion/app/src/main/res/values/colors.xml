@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="hint_color">#808080</color> <!-- Color gris claro para los hints -->
-    <color name="hint_color_night">#FFFFFF</color> <!-- Color blanco para modo oscuro -->
+    <color name="blue_dark">#005187</color>
+    <color name="blue">#4d82bc</color>
+    <color name="blue_light">#84b6f4</color>
+    <color name="blue_very_light">#c4dafa</color>
+    <color name="white">#fcffff</color>
+    <color name="background_color">#c4dafa</color> <!-- Fondo general -->
+    <color name="primary_color">#005187</color>    <!-- Color principal -->
+    <color name="text_color">#000000</color>       <!-- Texto general -->
+    <color name="hint_color">#84b6f4</color>       <!-- Texto de sugerencia -->
+
+
+    <color name="purple_200">#005187</color>
+    <color name="purple_500">#4d82bc</color>
+    <color name="purple_700">#84b6f4</color>
+    <color name="teal_200">#c4dafa</color>
+    <color name="teal_700">#fcffff</color>
+    <color name="black">#000000</color>
 </resources>

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    android:background="#FFCCCC">
+    android:background="@color/background_color">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,7 +19,7 @@
             android:textStyle="bold"
             android:layout_gravity="center"
             android:paddingBottom="16dp"
-            android:textColor="#B22222" />
+            android:textColor="@color/primary_color" />
 
         <!-- Foto -->
         <TextView
@@ -28,7 +28,7 @@
             android:text="Sube tu Foto"
             android:textSize="18sp"
             android:layout_marginBottom="8dp"
-            android:textColor="#000000" />
+            android:textColor="@color/text_color" />
 
         <!-- Vista previa de la foto circular -->
         <ImageView
@@ -43,25 +43,26 @@
             android:clipToOutline="true" />
 
         <!-- Botón para cargar o tomar foto -->
+
+        <!-- Campos de registro -->
+
         <Button
             android:id="@+id/buttonUploadPhoto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/rounded_button"
             android:text="Seleccionar Foto"
-            android:background="#6A5ACD"
-            android:textColor="#FFFFFF"
-            android:layout_marginBottom="16dp" />
+            android:textColor="@color/white" />
 
-
-        <!-- Campos de registro -->
         <EditText
             android:id="@+id/editTextFirstName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Nombre"
-            android:textColorHint="@color/hint_color"
+            android:textColorHint="@color/text_color"
             android:padding="12dp"
-            android:background="@drawable/edittext_background"
+            android:background="@drawable/rounded_edittext"
             android:layout_marginBottom="8dp" />
 
         <EditText
@@ -69,9 +70,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Apellido"
-            android:textColorHint="@color/hint_color"
+            android:textColorHint="@color/text_color"
             android:padding="12dp"
-            android:background="@drawable/edittext_background"
+            android:background="@drawable/rounded_edittext"
             android:layout_marginBottom="8dp" />
 
         <EditText
@@ -79,9 +80,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Domicilio"
-            android:textColorHint="@color/hint_color"
+            android:textColorHint="@color/text_color"
             android:padding="12dp"
-            android:background="@drawable/edittext_background"
+            android:background="@drawable/rounded_edittext"
             android:layout_marginBottom="8dp" />
 
         <EditText
@@ -89,9 +90,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Nickname"
-            android:textColorHint="@color/hint_color"
+            android:textColorHint="@color/text_color"
             android:padding="12dp"
-            android:background="@drawable/edittext_background"
+            android:background="@drawable/rounded_edittext"
             android:layout_marginBottom="8dp" />
 
         <EditText
@@ -99,9 +100,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Contraseña"
-            android:textColorHint="@color/hint_color"
+            android:textColorHint="@color/text_color"
             android:padding="12dp"
-            android:background="@drawable/edittext_background"
+            android:background="@drawable/rounded_edittext"
             android:layout_marginBottom="8dp"
             android:inputType="textPassword" />
 
@@ -110,9 +111,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Hobby"
-            android:textColorHint="@color/hint_color"
+            android:textColorHint="@color/text_color"
             android:padding="12dp"
-            android:background="@drawable/edittext_background"
+            android:background="@drawable/rounded_edittext"
             android:layout_marginBottom="8dp" />
 
         <EditText
@@ -120,19 +121,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Número de Tarjeta"
-            android:textColorHint="@color/hint_color"
+            android:textColorHint="@color/text_color"
             android:padding="12dp"
-            android:background="@drawable/edittext_background"
+            android:background="@drawable/rounded_edittext"
             android:layout_marginBottom="8dp"
             android:inputType="number" />
-
 
         <Spinner
             android:id="@+id/spinnerHouseStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:background="@drawable/edittext_background"
+            android:background="@drawable/rounded_edittext"
             android:padding="12dp" />
 
         <EditText
@@ -140,9 +140,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Transporte"
-            android:textColorHint="@color/hint_color"
+            android:textColorHint="@color/text_color"
             android:padding="12dp"
-            android:background="@drawable/edittext_background"
+            android:background="@drawable/rounded_edittext"
             android:layout_marginBottom="8dp" />
 
         <!-- CheckBox para Términos y Condiciones -->
@@ -152,8 +152,8 @@
             android:layout_height="wrap_content"
             android:enabled="true"
             android:focusable="true"
-            android:text="Aceptar términos y condiciones" />
-
+            android:text="Aceptar términos y condiciones"
+            android:textColor="@color/text_color" />
 
         <!-- Botón de registro -->
         <Button
@@ -161,8 +161,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Registrar"
-            android:background="#B22222"
-            android:textColor="#FFFFFF"
+            android:background="@drawable/rounded_button"
+            android:textColor="@color/white"
             android:layout_marginTop="16dp" />
     </LinearLayout>
 </ScrollView>
