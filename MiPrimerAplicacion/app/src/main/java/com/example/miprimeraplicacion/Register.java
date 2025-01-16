@@ -147,6 +147,13 @@ public class Register extends AppCompatActivity {
                     // Formatea como MM/AA
                     if (input.length() >= 2) {
                         String month = input.substring(0, 2);
+                        // Si el mes ingresado es mayor a 12, se corrige a "12"
+                        int monthInt = Integer.parseInt(month);
+                        if (monthInt > 12) {
+                            month = "12";
+                        } else if (monthInt < 1) {
+                            month = "01";
+                        }
                         String year = input.length() > 2 ? input.substring(2) : "";
 
                         // Construye el formato final
@@ -160,11 +167,28 @@ public class Register extends AppCompatActivity {
                         }
                     }
                 }
+
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
+                String input = expirationDateField.getText().toString();
 
+                if (input.length() == 5) { // Validar cuando el formato esté completo MM/AA
+                    String[] parts = input.split("/");
+                    int enteredMonth = Integer.parseInt(parts[0]);
+                    int enteredYear = Integer.parseInt(parts[1]) + 2000; // Convertir AA a AAAA
+
+                    // Obtener mes y año actuales
+                    Calendar calendar = Calendar.getInstance();
+                    int currentYear = calendar.get(Calendar.YEAR);
+                    int currentMonth = calendar.get(Calendar.MONTH) + 1; // Enero = 0
+
+                    // Validar que la fecha no sea anterior a la actual
+                    if (enteredYear < currentYear || (enteredYear == currentYear && enteredMonth < currentMonth)) {
+                        expirationDateField.setError("La fecha de expiración no puede ser anterior a la actual");
+                    }
+                }
             }
         });
 
