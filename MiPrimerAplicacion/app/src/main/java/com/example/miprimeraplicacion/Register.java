@@ -488,7 +488,7 @@ public class Register extends AppCompatActivity {
                 "sumisión", "esclava", "sadomasoquismo", "voyeurismo", "exhibicionismo", "dominatrix", "sadista",
                 "masoquista", "bondage", "orgasmar", "sumiso", "pecho desnudo", "azotes", "pegging", "sexo grupal",
                 "zoofilia", "incesto", "tabú", "sado", "latigazo", "porno gay", "travesti", "chica cam", "chico cam",
-                "película porno", "sexo en vivo", "chat erótico", "deseo carnal"
+                "película porno", "sexo en vivo", "chat erótico", "deseo carnal", "picha", "sinbrel", "riata"
         };
 
         for (String word : restrictedWords) {
