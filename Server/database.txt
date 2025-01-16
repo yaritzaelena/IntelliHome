@@ -1,1 +1,14 @@
 
+firstName: Yaritza
+lastName: Lopez
+address: San José
+username: Yari2000
+password: Abcdef12!
+hobby: Jugar
+cardnumber: 4444444444444444
+cardexpiry: 12/25
+cardcvv: 125
+houseStyle: Aventurera
+transport: Sedan
+birthDate: 11/2/2000
+--------------------
