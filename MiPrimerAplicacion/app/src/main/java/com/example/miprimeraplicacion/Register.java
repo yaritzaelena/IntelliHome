@@ -11,6 +11,8 @@ import android.text.TextWatcher;
 import android.widget.EditText;
 
 
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import android.widget.ArrayAdapter;
 import android.widget.AdapterView;
@@ -68,6 +70,7 @@ public class Register extends AppCompatActivity {
         buttonUploadPhoto = findViewById(R.id.buttonUploadPhoto);
         checkBoxTerms = findViewById(R.id.checkBoxTerms);
         registerButton = findViewById(R.id.buttonRegister);
+
 
         EditText expirationDateField = findViewById(R.id.editTextCardExpiry);
         cancelButton = findViewById(R.id.buttonCancel);
@@ -135,7 +138,12 @@ public class Register extends AppCompatActivity {
             }
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+
 
 
 
