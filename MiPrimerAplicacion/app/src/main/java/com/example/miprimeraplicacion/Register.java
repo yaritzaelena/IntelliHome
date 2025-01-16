@@ -127,7 +127,6 @@ public class Register extends AppCompatActivity {
                         minValidDate.set(currentYear - 18, currentMonth, currentDay); // Restar 18 años
 
                         if (selectedDate.after(minValidDate)) {
-                            birthDateEditText.setError("Debes tener mínimo 18 años");
                             birthDateEditText.requestFocus();
                             Toast.makeText(Register.this, "Debes tener al menos 18 años", Toast.LENGTH_LONG).show();
                             birthDateEditText.setText(""); // Borra la entrada si es menor de edad
