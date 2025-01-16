@@ -16,6 +16,7 @@ public class Login extends AppCompatActivity {
 
         EditText usernameEditText = findViewById(R.id.editTextUsername);
         EditText passwordEditText = findViewById(R.id.editTextPassword);
+        passwordEditText.setTransformationMethod(new DiamondTransformationMethod());
         Button loginButton = findViewById(R.id.buttonLogin);
         Button registerButton = findViewById(R.id.buttonRegister);
 
