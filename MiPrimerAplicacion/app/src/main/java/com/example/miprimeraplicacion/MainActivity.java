@@ -41,8 +41,8 @@ public class MainActivity extends AppCompatActivity {
         // Iniciar el hilo para conectarse al servidor y recibir mensajes
         new Thread(() -> {
             try {
-                //socket = new Socket("192.168.0.152", 1717); //Olman
-                socket = new Socket("192.168.0.106", 1717); //Yaritza
+                socket = new Socket("192.168.0.152", 1717); //Olman
+                //socket = new Socket("192.168.0.106", 1717); //Yaritza
                 out = new PrintWriter(socket.getOutputStream(), true);
                 in = new Scanner(socket.getInputStream());
 
@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     Toast.makeText(MainActivity.this, "Conectado al servidor", Toast.LENGTH_SHORT).show();
                     // Redirigir a LoginActivity
-                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    Intent intent = new Intent(MainActivity.this, Login.class);
                     startActivity(intent);
 
                 });
@@ -66,7 +66,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public static void sendAndReceiveRegister(String firstName, String lastName, String address, String username, String password, String hobby, String cardnumber, String cardexpiry, String cardcvv, String houseStyle, String transport, RegisterResponseCallback callback) {
+
+    public static void sendAndReceiveRegister(String firstName, String lastName, String address, String username, String password, String hobby, String cardnumber, String cardexpiry, String cardcvv, String houseStyle, String transport,  String birthDate, RegisterResponseCallback callback) {
+
         new Thread(() -> {
             try {
                 if (socket == null || socket.isClosed()) {
