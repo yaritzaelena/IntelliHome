@@ -72,6 +72,7 @@ public class Register extends AppCompatActivity {
         EditText lastNameEditText = findViewById(R.id.editTextLastName);
         EditText nicknameEditText = findViewById(R.id.editTextNickname);
         EditText passwordEditText = findViewById(R.id.editTextPassword);
+        EditText confirmPasswordEditText = findViewById(R.id.editTextConfirm);
         EditText hobbyEditText = findViewById(R.id.editTextHobby);
         EditText cardnumberEditText = findViewById(R.id.editTextCardNumber);
         EditText cardexpiryEditText = findViewById(R.id.editTextCardExpiry);
@@ -212,6 +213,7 @@ public class Register extends AppCompatActivity {
             String address = coordinatesTextView.getText().toString().trim();
             String nickname = nicknameEditText.getText().toString().trim();
             String password = passwordEditText.getText().toString().trim();
+            String confirmPassword = confirmPasswordEditText.getText().toString().trim();
             String hobby = hobbyEditText.getText().toString().trim();
             String cardnumber = cardnumberEditText.getText().toString().trim();
             String cardexpiry = cardexpiryEditText.getText().toString().trim();
@@ -221,9 +223,17 @@ public class Register extends AppCompatActivity {
             String birthDate = birthDateEditText.getText().toString().trim();
 
             if (firstName.isEmpty() || lastName.isEmpty() || address.isEmpty() || nickname.isEmpty() ||
-                    password.isEmpty() || hobby.isEmpty() ||  cardnumber.isEmpty() ||cardexpiry.isEmpty() ||cardcvv.isEmpty() ||houseStyle.isEmpty() || transportStyle.isEmpty()|| birthDate.isEmpty()) {
+                    password.isEmpty() || confirmPassword.isEmpty() || hobby.isEmpty() ||  cardnumber.isEmpty() ||cardexpiry.isEmpty() ||cardcvv.isEmpty() ||houseStyle.isEmpty() || transportStyle.isEmpty()|| birthDate.isEmpty()) {
 
                 Toast.makeText(Register.this, "Por favor, completa todos los campos.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (!validatePassword(password)) {
+                Toast.makeText(Register.this, "La contraseña no cumple con los requisitos mínimos.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (!password.equals(confirmPassword)) {
+                Toast.makeText(Register.this, "Las contraseñas no coinciden.", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -424,4 +434,29 @@ public class Register extends AppCompatActivity {
         }
         return false;
     }
+
+    public boolean validatePassword(String password) {
+        if (password.length() < 8) {
+            return false;
+        }
+
+        // Patrones para letras, números y símbolos especiales
+        String letters = "[a-zA-Z]";
+        String numbers = "[0-9]";
+        String specialChars = "[!@#$%^&*(),.?\":{}|<>]";
+
+        // Comprueba si la contraseña contiene cada tipo
+        boolean hasLetters = password.matches(".*" + letters + ".*");
+        boolean hasNumbers = password.matches(".*" + numbers + ".*");
+        boolean hasSpecialChars = password.matches(".*" + specialChars + ".*");
+
+        // Al menos dos tipos de caracteres
+        int typeCount = 0;
+        if (hasLetters) typeCount++;
+        if (hasNumbers) typeCount++;
+        if (hasSpecialChars) typeCount++;
+
+        return typeCount >= 2;
+    }
+
 }

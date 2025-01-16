@@ -1,1 +1,14 @@
 
+firstName: Yari
+lastName: Lopez
+address: Coordenadas: 9.670389722608686, -83.71815215796232
+username: Yaritza
+password: Abcdef12!
+hobby: Jugar
+cardnumber: 4444444444444444
+cardexpiry: 58/85
+cardcvv: 558
+houseStyle: Mansion
+transport: Sedan
+birthDate: 16/1/2025
+--------------------
