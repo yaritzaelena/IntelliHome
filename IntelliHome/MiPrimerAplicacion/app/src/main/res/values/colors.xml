@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="blue_dark">#005187</color>
+    <color name="blue">#4d82bc</color>
+    <color name="blue_light">#84b6f4</color>
+    <color name="blue_very_light">#c4dafa</color>
+    <color name="white">#fcffff</color>
+    <color name="background_color">#c4dafa</color> <!-- Fondo general -->
+    <color name="primary_color">#005187</color>    <!-- Color principal -->
+    <color name="text_color">#000000</color>       <!-- Texto general -->
+    <color name="hint_color">#84b6f4</color>       <!-- Texto de sugerencia -->
+
+
+    <color name="purple_200">#005187</color>
+    <color name="purple_500">#4d82bc</color>
+    <color name="purple_700">#84b6f4</color>
+    <color name="teal_200">#c4dafa</color>
+    <color name="teal_700">#fcffff</color>
+    <color name="black">#000000</color>
+</resources>
