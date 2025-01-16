@@ -37,6 +37,8 @@ public class Register extends AppCompatActivity {
     private CheckBox checkBoxTerms;
     private Button registerButton;
 
+    private Button cancelButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +58,14 @@ public class Register extends AppCompatActivity {
         buttonUploadPhoto = findViewById(R.id.buttonUploadPhoto);
         checkBoxTerms = findViewById(R.id.checkBoxTerms);
         registerButton = findViewById(R.id.buttonRegister);
+        cancelButton = findViewById(R.id.buttonCancel);
+
+        // Botón de Cancelar
+        cancelButton.setOnClickListener(v -> {
+            // Acción para el botón de Cancelar
+            Intent intent = new Intent(Register.this, Login.class);
+            startActivity(intent);
+        });
 
         // Deshabilitar el botón de registro inicialmente
         registerButton.setEnabled(false);

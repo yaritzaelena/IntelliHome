@@ -164,5 +164,15 @@
             android:background="@drawable/rounded_button"
             android:textColor="@color/white"
             android:layout_marginTop="16dp" />
+
+        <!-- Botón de cancelar -->
+        <Button
+            android:id="@+id/buttonCancel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CAncelar"
+            android:background="@drawable/rounded_button"
+            android:textColor="@color/white"
+            android:layout_marginTop="16dp" />
     </LinearLayout>
 </ScrollView>

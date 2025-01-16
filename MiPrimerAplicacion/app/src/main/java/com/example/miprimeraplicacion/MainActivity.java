@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     Toast.makeText(MainActivity.this, "Conectado al servidor", Toast.LENGTH_SHORT).show();
                     // Redirigir a LoginActivity
-                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    Intent intent = new Intent(MainActivity.this, Login.class);
                     startActivity(intent);
 
                 });

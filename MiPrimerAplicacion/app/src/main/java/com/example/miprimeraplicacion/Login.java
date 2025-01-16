@@ -17,6 +17,7 @@ public class Login extends AppCompatActivity {
         EditText usernameEditText = findViewById(R.id.editTextUsername);
         EditText passwordEditText = findViewById(R.id.editTextPassword);
         Button loginButton = findViewById(R.id.buttonLogin);
+        Button registerButton = findViewById(R.id.buttonRegister);
 
         loginButton.setOnClickListener(v -> {
             String username = usernameEditText.getText().toString().trim();
@@ -45,5 +46,16 @@ public class Login extends AppCompatActivity {
                 }
             });
         });
+
+        // Botón de Registrarse
+        registerButton.setOnClickListener(v -> {
+            // Acción para el botón de Registrarse
+            Intent intent = new Intent(Login.this, Register.class);
+            startActivity(intent);
+        });
+
+
+
+
     }
 }
