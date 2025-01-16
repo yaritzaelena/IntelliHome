@@ -1,4 +1,5 @@
 package com.example.miprimeraplicacion;
+import android.view.LayoutInflater;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import java.io.InputStream;
@@ -26,7 +27,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-
 import com.bumptech.glide.Glide;
 
 public class Register extends AppCompatActivity {
@@ -211,49 +211,75 @@ public class Register extends AppCompatActivity {
     /**
      * Mostrar el cuadro de diálogo de términos y condiciones
      */
-   private void showTermsDialog(CheckBox checkBox, boolean isChecked, Button registerButton) {
-       Log.d("Dialog", "showTermsDialog: Mostrando diálogo de términos y condiciones.");
 
-       // Leer el contenido del archivo
-       String terms = readTermsFromFile();
+    private void showTermsDialog(CheckBox checkBox, boolean isChecked, Button registerButton) {
+        Log.d("Dialog", "showTermsDialog: Mostrando diálogo de términos y condiciones.");
 
-       AlertDialog.Builder builder = new AlertDialog.Builder(this);
-       builder.setTitle("Términos y Condiciones");
+        // Leer el contenido del archivo
+        String terms = readTermsFromFile();
 
-       // Crear un ScrollView para manejar términos largos
-       ScrollView scrollView = new ScrollView(this);
-       TextView termsTextView = new TextView(this);
-       termsTextView.setText(terms);
-       termsTextView.setPadding(32, 32, 32, 32); // Margen para mejorar legibilidad
-       termsTextView.setTextSize(16); // Tamaño de fuente
-       termsTextView.setLineSpacing(1.2f, 1.2f); // Espaciado entre líneas
-       scrollView.addView(termsTextView);
+        // Inflar el diseño desde el XML
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View dialogView = inflater.inflate(R.layout.dialog_terms_conditions, null);
 
-       builder.setView(scrollView);
-       builder.setCancelable(false);
+        // Referencias a los elementos del layout
+        ScrollView scrollViewTerms = dialogView.findViewById(R.id.scrollViewTerms);
+        TextView termsTextView = dialogView.findViewById(R.id.termsTextView);
+        termsTextView.setText(terms);
 
-       builder.setPositiveButton("Aceptar", (dialog, which) -> {
-           Log.d("Dialog", "showTermsDialog: El usuario aceptó los términos.");
-           checkBox.setOnCheckedChangeListener(null); // Desactiva temporalmente el listener
-           checkBox.setChecked(true); // Marca el CheckBox
-           registerButton.setEnabled(true); // Habilita el botón Register
-           checkBox.setOnCheckedChangeListener((buttonView, checked) -> {
-               showTermsDialog(checkBox, checked, registerButton);
-           });
-       });
+        // Crear el AlertDialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Términos y Condiciones")
+                .setView(dialogView)
+                .setCancelable(false);
 
-       builder.setNegativeButton("Cancelar", (dialog, which) -> {
-           Log.d("Dialog", "showTermsDialog: El usuario canceló los términos.");
-           checkBox.setOnCheckedChangeListener(null); // Desactiva temporalmente el listener
-           checkBox.setChecked(false); // Desmarca el CheckBox
-           registerButton.setEnabled(false); // Desactiva el botón Register
-           checkBox.setOnCheckedChangeListener((buttonView, checked) -> {
-               showTermsDialog(checkBox, checked, registerButton);
-           });
-       });
+        // Botones
+        builder.setPositiveButton("Aceptar", null);
+        builder.setNegativeButton("Cancelar", (dialog, which) -> {
+            Log.d("Dialog", "showTermsDialog: El usuario canceló los términos.");
+            checkBox.setOnCheckedChangeListener(null); // Desactiva temporalmente el listener
+            checkBox.setChecked(false); // Desmarca el CheckBox
+            registerButton.setEnabled(false); // Desactiva el botón Register
+            checkBox.setOnCheckedChangeListener((buttonView, checked) -> {
+                showTermsDialog(checkBox, checked, registerButton);
+            });
+        });
 
-       builder.show();
-   }
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        // Referencia al botón "Aceptar" después de mostrar el diálogo
+        Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        positiveButton.setEnabled(false); // Desactivar inicialmente
+
+        // Listener para habilitar el botón solo cuando se llegue al final del ScrollView
+        scrollViewTerms.getViewTreeObserver().addOnScrollChangedListener(() -> {
+            View child = scrollViewTerms.getChildAt(0);
+            if (child != null) {
+                int diff = (child.getBottom() - (scrollViewTerms.getHeight() + scrollViewTerms.getScrollY()));
+                if (diff <= 0) {
+                    // Usuario llegó al final del ScrollView
+                    Log.d("Dialog", "showTermsDialog: Usuario llegó al final del texto.");
+                    positiveButton.setEnabled(true);
+                }
+            }
+        });
+
+        // Acción del botón "Aceptar"
+        positiveButton.setOnClickListener(v -> {
+            Log.d("Dialog", "showTermsDialog: El usuario aceptó los términos.");
+            checkBox.setOnCheckedChangeListener(null); // Desactiva temporalmente el listener
+            checkBox.setChecked(true); // Marca el CheckBox
+            registerButton.setEnabled(true); // Habilita el botón Register
+            checkBox.setOnCheckedChangeListener((buttonView, checked) -> {
+                showTermsDialog(checkBox, checked, registerButton);
+            });
+            dialog.dismiss();
+        });
+    }
+
+
+
 
     private String readTermsFromFile() {
         InputStream inputStream = getResources().openRawResource(R.raw.terms_conditions);
