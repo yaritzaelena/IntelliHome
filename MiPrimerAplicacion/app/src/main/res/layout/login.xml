@@ -95,30 +95,28 @@
             android:textStyle="bold" />
 
         <!-- Botón Registrar con Google -->
-        <Button
+        <ImageButton
             android:id="@+id/buttonRegisterGoogle"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/buttonRegister"
+            android:layout_centerHorizontal="true"
             android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/rounded_button"
-            android:text="Registrar con Google"
-            android:textColor="@color/white"
-            android:textStyle="bold" />
+            android:src="@mipmap/google_logo"
+            android:background="@null"
+            android:contentDescription="Registrar con Google" />
 
         <!-- Botón Registrar con Facebook -->
-        <Button
+        <ImageButton
             android:id="@+id/buttonRegisterFacebook"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/buttonRegisterGoogle"
+            android:layout_centerHorizontal="true"
             android:layout_marginTop="7dp"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/rounded_button"
-            android:text="Registrar con Facebook"
-            android:textColor="@color/white"
-            android:textStyle="bold" />
+            android:src="@mipmap/facebook_logo"
+            android:background="@null"
+            android:contentDescription="Registrar con Facebook" />
 
     </RelativeLayout>
 </ScrollView>

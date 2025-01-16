@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import android.text.method.HideReturnsTransformationMethod;
@@ -25,6 +26,8 @@ public class Login extends AppCompatActivity {
         passwordEditText.setTransformationMethod(new DiamondTransformationMethod());
         Button loginButton = findViewById(R.id.buttonLogin);
         Button registerButton = findViewById(R.id.buttonRegister);
+        ImageButton buttonRegisterGoogle = findViewById(R.id.buttonRegisterGoogle);
+        ImageButton buttonRegisterFacebook = findViewById(R.id.buttonRegisterFacebook);
 
         passwordEditText.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_UP) {
@@ -87,7 +90,15 @@ public class Login extends AppCompatActivity {
             startActivity(intent);
         });
 
+        buttonRegisterGoogle.setOnClickListener(v -> {
+            // Acción para registrar con Google
+            Toast.makeText(Login.this, "Registrar con Google", Toast.LENGTH_SHORT).show();
+        });
 
+        buttonRegisterFacebook.setOnClickListener(v -> {
+            // Acción para registrar con Facebook
+            Toast.makeText(Login.this, "Registrar con Facebook", Toast.LENGTH_SHORT).show();
+        });
 
 
     }
