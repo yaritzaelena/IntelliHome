@@ -111,25 +111,44 @@ public class Register extends AppCompatActivity {
         birthDateEditText.setOnClickListener(v -> {
             // Obtener la fecha actual
             final Calendar calendar = Calendar.getInstance();
-            int year = calendar.get(Calendar.YEAR);
-            int month = calendar.get(Calendar.MONTH);
-            int day = calendar.get(Calendar.DAY_OF_MONTH);
+            int currentYear = calendar.get(Calendar.YEAR);
+            int currentMonth = calendar.get(Calendar.MONTH);
+            int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
 
             // Mostrar el DatePickerDialog
             DatePickerDialog datePickerDialog = new DatePickerDialog(
                     Register.this,
-                    (view, year1, month1, dayOfMonth) -> {
-                        // Actualizar el campo con la fecha seleccionada
-                        String selectedDate = dayOfMonth + "/" + (month1 + 1) + "/" + year1;
-                        birthDateEditText.setText(selectedDate);
-                    },
-                    year,
-                    month,
-                    day
-            );
-            datePickerDialog.show();
+                    (view, year, month, dayOfMonth) -> {
+                        // Validar si la edad es mayor o igual a 18 años
+                        Calendar selectedDate = Calendar.getInstance();
+                        selectedDate.set(year, month, dayOfMonth);
 
+                        Calendar minValidDate = Calendar.getInstance();
+                        minValidDate.set(currentYear - 18, currentMonth, currentDay); // Restar 18 años
+
+                        if (selectedDate.after(minValidDate)) {
+                            birthDateEditText.setError("Debes tener mínimo 18 años");
+                            birthDateEditText.requestFocus();
+                            Toast.makeText(Register.this, "Debes tener al menos 18 años", Toast.LENGTH_LONG).show();
+                            birthDateEditText.setText(""); // Borra la entrada si es menor de edad
+                        } else {
+                            // Formatear la fecha seleccionada y actualizar el EditText
+                            String selectedDateStr = dayOfMonth + "/" + (month + 1) + "/" + year;
+                            birthDateEditText.setText(selectedDateStr);
+                        }
+                    },
+                    currentYear,
+                    currentMonth,
+                    currentDay
+            );
+
+            // Limitar la selección solo hasta la fecha actual
+            datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
+
+            datePickerDialog.show();
         });
+
+
         expirationDateField.addTextChangedListener(new TextWatcher() {
             private String current = "";
             private boolean isDeleting;
