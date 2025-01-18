@@ -1,5 +1,7 @@
 package com.example.miprimeraplicacion;
 import android.view.LayoutInflater;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import java.io.InputStream;
@@ -38,7 +40,8 @@ import androidx.core.content.ContextCompat;
 import com.bumptech.glide.Glide;
 import android.app.DatePickerDialog;
 import java.util.Calendar;
-
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 public class Register extends AppCompatActivity {
 
     private static final int CAMERA_PERMISSION_CODE = 100;
@@ -50,6 +53,9 @@ public class Register extends AppCompatActivity {
     private Button cancelButton;
 
     private TextView coordinatesTextView;
+
+    private RadioGroup radioGroupUserType;
+    private RadioButton radioButtonOwner, radioButtonTenant;
 
     // Manejar el resultado de la actividad del mapa
     @Override
@@ -68,6 +74,9 @@ public class Register extends AppCompatActivity {
         setContentView(R.layout.registro);
 
         // Inicializar los elementos de la vista
+        radioGroupUserType = findViewById(R.id.radioGroupUserType);
+        radioButtonOwner = findViewById(R.id.radioOwner);
+        radioButtonTenant = findViewById(R.id.radioTenant);
         EditText firstNameEditText = findViewById(R.id.editTextFirstName);
         EditText lastNameEditText = findViewById(R.id.editTextLastName);
         EditText nicknameEditText = findViewById(R.id.editTextNickname);
@@ -77,6 +86,7 @@ public class Register extends AppCompatActivity {
         EditText cardnumberEditText = findViewById(R.id.editTextCardNumber);
         EditText cardexpiryEditText = findViewById(R.id.editTextCardExpiry);
         EditText cardcvvEditText = findViewById(R.id.editTextCardCVV);
+        EditText iban = findViewById(R.id.editTextIBAN);
         Spinner spinnerHouseStyle = findViewById(R.id.spinnerHouseStyle);
         Spinner spinnerTransportStyle = findViewById(R.id.spinnerTransportStyle);
         imageViewPhoto = findViewById(R.id.imageViewPhoto);
@@ -147,6 +157,17 @@ public class Register extends AppCompatActivity {
             datePickerDialog.show();
         });
 
+        radioGroupUserType.setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId == R.id.radioOwner) {
+                iban.setVisibility(View.VISIBLE);
+
+            } else {
+                iban.setVisibility(View.GONE);
+                cardnumberEditText.setVisibility(View.VISIBLE);
+                cardexpiryEditText.setVisibility(View.VISIBLE);
+                cardcvvEditText.setVisibility(View.VISIBLE);
+            }
+        });
 
         expirationDateField.addTextChangedListener(new TextWatcher() {
             private String current = "";
@@ -262,6 +283,7 @@ public class Register extends AppCompatActivity {
             String cardnumber = cardnumberEditText.getText().toString().trim();
             String cardexpiry = cardexpiryEditText.getText().toString().trim();
             String cardcvv = cardcvvEditText.getText().toString().trim();
+            String cuentaiban = iban.getText().toString().trim();
             String houseStyle = spinnerHouseStyle.getSelectedItem().toString();
             String transportStyle = spinnerTransportStyle.getSelectedItem().toString();
             String birthDate = birthDateEditText.getText().toString().trim();
@@ -271,11 +293,47 @@ public class Register extends AppCompatActivity {
                 Toast.makeText(Register.this, "El nombre de usuario contiene palabras inapropiadas.", Toast.LENGTH_LONG).show();
                 return;
             }
+            // Verificar qué tipo de usuario está seleccionado
+            int selectedUserTypeId = radioGroupUserType.getCheckedRadioButtonId();
+            boolean isOwner = (selectedUserTypeId == R.id.radioOwner);
+            boolean isTenant = (selectedUserTypeId == R.id.radioTenant);
+
+            String userType = "";
+
+            if (selectedUserTypeId == R.id.radioOwner) {
+                userType = "Propietario";
+            } else if (selectedUserTypeId == R.id.radioTenant) {
+                userType = "Inquilino";
+            }
+
+            // Verificar si el nickname contiene palabras prohibidas
+            if (containsRestrictedWords(nickname)) {
+                Toast.makeText(Register.this, "El nombre de usuario contiene palabras inapropiadas.", Toast.LENGTH_LONG).show();
+                return;
+            }
+            // Validar si todos los campos obligatorios están llenos
             if (firstName.isEmpty() || lastName.isEmpty() || address.isEmpty() || nickname.isEmpty() ||
                     password.isEmpty() || confirmPassword.isEmpty() || hobby.isEmpty() ||  cardnumber.isEmpty() ||cardexpiry.isEmpty() ||cardcvv.isEmpty() ||houseStyle.isEmpty() || transportStyle.isEmpty()|| birthDate.isEmpty()) {
 
                 Toast.makeText(Register.this, "Por favor, completa todos los campos.", Toast.LENGTH_SHORT).show();
                 return;
+            }
+
+            // Validaciones específicas según el tipo de usuario
+            if (isOwner) { // Si es propietario
+                if (cuentaiban.isEmpty()) {
+                    Toast.makeText(Register.this, "Debes ingresar un número de cuenta IBAN.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                // Los campos de tarjeta deben ir vacíos para propietario
+
+            } else if (isTenant) { // Si es inquilino
+                if (cardnumber.isEmpty() || cardexpiry.isEmpty() || cardcvv.isEmpty()) {
+                    Toast.makeText(Register.this, "Debes completar los datos de la tarjeta.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                // El campo de cuenta IBAN debe ir vacío para inquilino
+                cuentaiban = "";
             }
             if (!validatePassword(password)) {
                 Toast.makeText(Register.this, "La contraseña no cumple con los requisitos mínimos.", Toast.LENGTH_SHORT).show();
@@ -295,7 +353,7 @@ public class Register extends AppCompatActivity {
             // Enviar los datos de registro al servidor
             MainActivity.sendAndReceiveRegister(
 
-       firstName, lastName, address, nickname, password, hobby, cardnumber, cardexpiry, cardcvv, houseStyle, transportStyle, birthDate,
+                    firstName, lastName, address, nickname, password, hobby, cardnumber, cardexpiry, cardcvv, cuentaiban, houseStyle, transportStyle, birthDate, userType,
 
                     new MainActivity.RegisterResponseCallback() {
                         @Override

@@ -41,8 +41,8 @@ public class MainActivity extends AppCompatActivity {
         // Iniciar el hilo para conectarse al servidor y recibir mensajes
         new Thread(() -> {
             try {
-                socket = new Socket("192.168.0.152", 1717); //Olman
-                //socket = new Socket("192.168.0.106", 1717); //Yaritza
+                //socket = new Socket("192.168.0.152", 1717); //Olman
+                socket = new Socket("192.168.0.106", 1717); //Yaritza
                 out = new PrintWriter(socket.getOutputStream(), true);
                 in = new Scanner(socket.getInputStream());
 
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public static void sendAndReceiveRegister(String firstName, String lastName, String address, String username, String password, String hobby, String cardnumber, String cardexpiry, String cardcvv, String houseStyle, String transport,  String birthDate, RegisterResponseCallback callback) {
+    public static void sendAndReceiveRegister(String firstName, String lastName, String address, String username, String password, String hobby, String cardnumber, String cardexpiry, String cardcvv, String cuentaiban, String houseStyle, String transport,  String birthDate, String userType, RegisterResponseCallback callback) {
 
         new Thread(() -> {
             try {
@@ -88,9 +88,11 @@ public class MainActivity extends AppCompatActivity {
                 json.put("cardnumber", cardnumber);
                 json.put("cardexpiry", cardexpiry);
                 json.put("cardcvv", cardcvv);
+                json.put("cuentaiban", cuentaiban);
                 json.put("houseStyle", houseStyle);
                 json.put("transport", transport);
                 json.put("birthDate", birthDate);
+                json.put("userType", userType);
 
                 String registerMessage = json.toString();
                 out.println(registerMessage);
