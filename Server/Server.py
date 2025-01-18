@@ -110,9 +110,11 @@ class ChatServer:
                 db_file.write(f"cardnumber: {self.encrypt(data['cardnumber'])}\n")
                 db_file.write(f"cardexpiry: {self.encrypt(data['cardexpiry'])}\n")
                 db_file.write(f"cardcvv: {self.encrypt(data['cardcvv'])}\n")
+                db_file.write(f"cuentaiban: {self.encrypt(data['cuentaiban'])}\n")
                 db_file.write(f"houseStyle: {self.encrypt(data['houseStyle'])}\n")
                 db_file.write(f"transport: {self.encrypt(data['transport'])}\n")
                 db_file.write(f"birthDate: {self.encrypt(data['birthDate'])}\n")
+                db_file.write(f"userType: {self.encrypt(data['userType'])}\n")
                 db_file.write(f"{'-' * 20}\n")
 
             print(f"Usuario registrado: {username}")
