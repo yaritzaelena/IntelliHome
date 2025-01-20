@@ -41,8 +41,8 @@ public class MainActivity extends AppCompatActivity {
         // Iniciar el hilo para conectarse al servidor y recibir mensajes
         new Thread(() -> {
             try {
-                //socket = new Socket("192.168.0.152", 1717); //Olman
-                socket = new Socket("192.168.0.106", 1717); //Yaritza
+                socket = new Socket("192.168.0.152", 1717); //Olman
+                //socket = new Socket("192.168.0.106", 1717); //Yaritza
                 out = new PrintWriter(socket.getOutputStream(), true);
                 in = new Scanner(socket.getInputStream());
 
@@ -166,14 +166,12 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         JSONObject jsonResponse = new JSONObject(response);
                         boolean status = jsonResponse.optBoolean("status", false); // Default a false si no está el campo
-                        String message = jsonResponse.optString("message", "Sin mensaje");
 
                         if (status) {
-                            // Éxito
-                            callback.onSuccess(message);
+                            // Enviar el JSON completo en lugar de solo el mensaje
+                            callback.onSuccess(jsonResponse.toString());
                         } else {
-                            // Error
-                            callback.onError(message);
+                            callback.onError(jsonResponse.optString("message", "Error desconocido"));
                         }
                     } catch (Exception e) {
                         System.err.println("LOG: Error al analizar el JSON: " + e.getMessage());
@@ -189,6 +187,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
     }
+
 
 
     public interface LoginResponseCallback {

@@ -12,6 +12,8 @@ import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.view.MotionEvent;
 
+import org.json.JSONObject;
+
 
 public class Login extends AppCompatActivity {
 
@@ -69,10 +71,25 @@ public class Login extends AppCompatActivity {
                 @Override
                 public void onSuccess(String response) {
                     runOnUiThread(() -> {
-                        Toast.makeText(Login.this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(Login.this, ExitActivity.class);
-                        startActivity(intent);
-                        finish();
+                        try {
+                            JSONObject jsonResponse = new JSONObject(response);
+                            boolean propietario = jsonResponse.optString("propietario", "false").equalsIgnoreCase("true");
+
+                            Toast.makeText(Login.this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show();
+
+                            // Redirigir según el tipo de usuario
+                            Intent intent;
+                            if (propietario) {
+                                intent = new Intent(Login.this, LoginActivity.class); // Redirigir a LoginActivity si es propietario
+                            } else {
+                                intent = new Intent(Login.this, ExitActivity.class); // Redirigir a ExitActivity si es inquilino
+                            }
+                            startActivity(intent);
+                            finish();
+                        } catch (Exception e) {
+                            Toast.makeText(Login.this, "Error al procesar la respuesta del servidor.", Toast.LENGTH_SHORT).show();
+                            e.printStackTrace();
+                        }
                     });
                 }
 
@@ -82,6 +99,7 @@ public class Login extends AppCompatActivity {
                 }
             });
         });
+
 
         // Botón de Registrarse
         registerButton.setOnClickListener(v -> {

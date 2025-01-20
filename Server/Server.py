@@ -104,7 +104,7 @@ class ChatServer:
                 db_file.write(f"firstName: {self.encrypt(data['firstName'])}\n")
                 db_file.write(f"lastName: {self.encrypt(data['lastName'])}\n")
                 db_file.write(f"address: {self.encrypt(data['address'])}\n")
-                db_file.write(f"username: {username}\n")  # Username en texto plano
+                db_file.write(f"username: {self.encrypt(data['username'])}\n")  # Username en texto plano
                 db_file.write(f"password: {self.encrypt(data['password'])}\n")
                 db_file.write(f"hobby: {self.encrypt(data['hobby'])}\n")
                 db_file.write(f"cardnumber: {self.encrypt(data['cardnumber'])}\n")
@@ -125,7 +125,7 @@ class ChatServer:
             return {"status": "error", "message": "Error al guardar los datos"}
 
     def login_user(self, username, password):
-        """ Verifica si un usuario puede iniciar sesión. """
+        """ Verifica si un usuario puede iniciar sesión y devuelve si es propietario o no. """
         print(f"Intentando iniciar sesión: {username}")
         current_time = time.time()
 
@@ -145,8 +145,10 @@ class ChatServer:
                     for line in block.strip().split("\n"):
                         if ":" in line:
                             key, value = line.split(":", 1)
-                            if key.strip() == "password":
-                                user_info[key.strip()] = self.decrypt(value.strip())
+                            if key == "password":
+                                user_info[key] = self.decrypt(value)
+                            elif key == "cuentaiban":
+                                user_info[key] = self.decrypt(value).strip()  # Desencriptar y quitar espacios extra
                             else:
                                 user_info[key.strip()] = value.strip()
 
@@ -154,7 +156,11 @@ class ChatServer:
                         if user_info["username"] == username and user_info["password"] == password:
                             print(f"Inicio de sesión exitoso para: {username}")
                             self.failed_attempts.pop(username, None)  # Reset de intentos
-                            return {"status": "true", "message": "Login exitoso"}
+
+                            # Verificar si el usuario tiene una cuenta IBAN vacía
+                            propietario = "false" if "cuentaiban" not in user_info or user_info["cuentaiban"] == "" else "true"
+
+                            return {"status": "true", "message": "Login exitoso", "propietario": propietario}
 
             print(f"Credenciales incorrectas para: {username}")
             self.record_failed_attempt(username)
