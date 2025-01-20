@@ -17,8 +17,8 @@ public class LoginActivity extends AppCompatActivity {
 
 
         ImageView imageView = findViewById(R.id.imageView2);
-        Button loginButton = findViewById(R.id.button);
-        Button registerButton = findViewById(R.id.button3);
+        Button registarHouseButton = findViewById(R.id.button);
+        Button housesActivityButton = findViewById(R.id.button3);
 
         // Configura una acción para la imagen
         imageView.setOnClickListener(v -> {
@@ -26,16 +26,16 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         // Botón de Login
-        loginButton.setOnClickListener(v -> {
+        registarHouseButton.setOnClickListener(v -> {
             // Acción para el botón de Login
-            Intent intent = new Intent(LoginActivity.this, Login.class);
+            Intent intent = new Intent(LoginActivity.this, ExitActivity.class);
             startActivity(intent); // Llama a la actividad Login
         });
 
         // Botón de Registrarse
-        registerButton.setOnClickListener(v -> {
+        housesActivityButton.setOnClickListener(v -> {
             // Acción para el botón de Registrarse
-            Intent intent = new Intent(LoginActivity.this, Register.class);
+            Intent intent = new Intent(LoginActivity.this, ExitActivity.class);
             startActivity(intent);
         });
 
