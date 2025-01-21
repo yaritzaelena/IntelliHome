@@ -4,6 +4,7 @@ import json
 import socket
 import threading
 import time
+import base64
 
 class ChatServer:
     def __init__(self, host='0.0.0.0', port=1717):
@@ -51,40 +52,48 @@ class ChatServer:
             threading.Thread(target=self.handle_client, args=(client_socket,)).start()
 
     def handle_client(self, client_socket):
-        while True:
-            try:
-                raw_data = client_socket.recv(1024)
-                if not raw_data:
-                    print("Conexión cerrada por el cliente o mensaje vacío.")
-                    break
+        """ Maneja la comunicación con el cliente en un bucle para permitir múltiples solicitudes. """
+        try:
+            while True:  # Mantener la conexión abierta para múltiples solicitudes
+                data_buffer = ""  # Acumulador para el mensaje JSON completo
 
-                message = raw_data.decode('utf-8')
-                print(f"Mensaje recibido (JSON crudo): {message}")
+                while True:
+                    chunk = client_socket.recv(8192).decode("utf-8")
+                    if not chunk:
+                        print("Conexión cerrada por el cliente.")
+                        return  # Sale del bucle si el cliente cierra la conexión
 
-                try:
-                    data = json.loads(message)
-                    action = data.get("action")
+                    data_buffer += chunk  # Acumula los fragmentos de JSON
 
-                    if action == "register":
-                        response = self.register_user(data)
-                    elif action == "login":
-                        response = self.login_user(data["username"], data["password"])
-                    else:
-                        response = {"status": "error", "message": "Acción no válida"}
+                    try:
+                        data = json.loads(data_buffer)
+                        break  # Si el JSON es válido, sale del bucle
+                    except json.JSONDecodeError:
+                        continue  # Si hay error, sigue esperando más datos
 
-                    response_json = json.dumps(response) + "\n"
-                    client_socket.send(response_json.encode('utf-8'))
-                    print(f"Respuesta enviada al cliente: {response_json}")
+                print(f"Mensaje recibido (JSON completo): {data_buffer}")
 
-                except json.JSONDecodeError as e:
-                    print(f"Error al decodificar JSON: {e}")
-                    response = {"status": "error", "message": "Formato JSON inválido"}
-                    client_socket.send(json.dumps(response).encode('utf-8'))
-                    
-            except Exception as e:
-                print(f"Error al manejar cliente: {e}")
-                break
-        client_socket.close()
+                action = data.get("action", "")
+
+                if action == "register":
+                    response = self.register_user(data)
+                elif action == "login":
+                    response = self.login_user(data["username"], data["password"])
+                else:
+                    response = {"status": "error", "message": "Acción no válida"}
+
+                response_json = json.dumps(response) + "\n"
+                client_socket.send(response_json.encode("utf-8"))
+                print(f"Respuesta enviada al cliente: {response_json}")
+
+        except Exception as e:
+            print(f"Error al manejar cliente: {e}")
+
+        finally:
+            print("Finalizando conexión con el cliente.")
+            client_socket.close()  # Cerrar solo cuando el cliente se desconecte.
+
+
 
     def register_user(self, data):
         """ Registra un usuario en la base de datos con encriptación. """
@@ -100,11 +109,25 @@ class ChatServer:
                             print(f"El usuario {username} ya existe.")
                             return {"status": "false", "message": "El nombre de usuario ya está en uso"}
 
+            # Guardar foto si está presente
+            photo_data = data.get("photo", "")
+            if photo_data:
+                try:
+                    os.makedirs("photos", exist_ok=True)  # Crear carpeta si no existe
+                    photo_bytes = base64.b64decode(photo_data)
+                    photo_path = f"photos/{username}.png"
+                    with open(photo_path, "wb") as photo_file:
+                        photo_file.write(photo_bytes)
+                    print(f"Foto de {username} guardada en {photo_path}")
+                except Exception as e:
+                    print(f"Error al guardar la foto: {str(e)}")
+
+            # Guardar datos en database.txt
             with open("database.txt", "a") as db_file:
                 db_file.write(f"firstName: {self.encrypt(data['firstName'])}\n")
                 db_file.write(f"lastName: {self.encrypt(data['lastName'])}\n")
                 db_file.write(f"address: {self.encrypt(data['address'])}\n")
-                db_file.write(f"username: {self.encrypt(data['username'])}\n")  # Username en texto plano
+                db_file.write(f"username: {username}\n")  # Username sin cifrar
                 db_file.write(f"password: {self.encrypt(data['password'])}\n")
                 db_file.write(f"hobby: {self.encrypt(data['hobby'])}\n")
                 db_file.write(f"cardnumber: {self.encrypt(data['cardnumber'])}\n")
@@ -115,6 +138,7 @@ class ChatServer:
                 db_file.write(f"transport: {self.encrypt(data['transport'])}\n")
                 db_file.write(f"birthDate: {self.encrypt(data['birthDate'])}\n")
                 db_file.write(f"userType: {self.encrypt(data['userType'])}\n")
+                db_file.write(f"photo: {photo_path}\n")  # Guardar la ruta de la imagen en lugar de la Base64
                 db_file.write(f"{'-' * 20}\n")
 
             print(f"Usuario registrado: {username}")
@@ -122,7 +146,7 @@ class ChatServer:
 
         except Exception as e:
             print(f"Error al guardar en el archivo: {e}")
-            return {"status": "error", "message": "Error al guardar los datos"}
+            return {"status": "false", "message": "Error en el registro"}
 
     def login_user(self, username, password):
         """ Verifica si un usuario puede iniciar sesión y devuelve si es propietario o no. """

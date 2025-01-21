@@ -11,13 +11,8 @@ import android.Manifest;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;
-
-
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-
-import android.widget.ArrayAdapter;
-import android.widget.AdapterView;
 import android.view.View;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -28,10 +23,8 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-import android.widget.Spinner;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
@@ -40,13 +33,15 @@ import androidx.core.content.ContextCompat;
 import com.bumptech.glide.Glide;
 import android.app.DatePickerDialog;
 import java.util.Calendar;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
+import android.util.Base64;
+
+
 public class Register extends AppCompatActivity {
 
     private static final int CAMERA_PERMISSION_CODE = 100;
     private ImageView imageViewPhoto;
     private Button buttonUploadPhoto;
+    private Bitmap userPhotoBitmap;
     private CheckBox checkBoxTerms;
     private Button registerButton;
 
@@ -288,6 +283,9 @@ public class Register extends AppCompatActivity {
             String transportStyle = spinnerTransportStyle.getSelectedItem().toString();
             String birthDate = birthDateEditText.getText().toString().trim();
 
+            // Validar que la imagen fue tomada
+            String photoBase64 = userPhotoBitmap != null ? encodeToBase64(userPhotoBitmap) : "";
+
             // Verificar si el nickname contiene palabras prohibidas
             if (containsRestrictedWords(nickname)) {
                 Toast.makeText(Register.this, "El nombre de usuario contiene palabras inapropiadas.", Toast.LENGTH_LONG).show();
@@ -353,14 +351,14 @@ public class Register extends AppCompatActivity {
             // Enviar los datos de registro al servidor
             MainActivity.sendAndReceiveRegister(
 
-                    firstName, lastName, address, nickname, password, hobby, cardnumber, cardexpiry, cardcvv, cuentaiban, houseStyle, transportStyle, birthDate, userType,
+                    firstName, lastName, address, nickname, password, hobby, cardnumber, cardexpiry, cardcvv, cuentaiban, houseStyle, transportStyle, birthDate, userType, photoBase64,
 
                     new MainActivity.RegisterResponseCallback() {
                         @Override
                         public void onSuccess(String response) {
                             runOnUiThread(() -> {
                                 Toast.makeText(Register.this, "Registro exitoso", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(Register.this, LoginActivity.class);
+                                Intent intent = new Intent(Register.this, Login.class);
                                 startActivity(intent);
                                 finish();
                             });
@@ -410,9 +408,20 @@ public class Register extends AppCompatActivity {
                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                     Bitmap photo = (Bitmap) result.getData().getExtras().get("data");
                     imageViewPhoto.setImageBitmap(photo);
+                    Bundle extras = result.getData().getExtras();
+                    userPhotoBitmap = (Bitmap) extras.get("data");
+                    imageViewPhoto.setImageBitmap(userPhotoBitmap);
                 }
             }
     );
+
+    private String encodeToBase64(Bitmap image) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.PNG, 50, byteArrayOutputStream); // Reducir calidad al 50%
+        byte[] byteArray = byteArrayOutputStream.toByteArray();
+        return Base64.encodeToString(byteArray, Base64.DEFAULT);
+    }
+
 
     /**
      * Mostrar opciones al usuario: "Cargar desde galería" o "Tomar una foto"

@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public static void sendAndReceiveRegister(String firstName, String lastName, String address, String username, String password, String hobby, String cardnumber, String cardexpiry, String cardcvv, String cuentaiban, String houseStyle, String transport,  String birthDate, String userType, RegisterResponseCallback callback) {
+    public static void sendAndReceiveRegister(String firstName, String lastName, String address, String username, String password, String hobby, String cardnumber, String cardexpiry, String cardcvv, String cuentaiban, String houseStyle, String transport,  String birthDate, String userType, String photoBase64, RegisterResponseCallback callback) {
 
         new Thread(() -> {
             try {
@@ -93,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
                 json.put("transport", transport);
                 json.put("birthDate", birthDate);
                 json.put("userType", userType);
+                json.put("photo", photoBase64);
+
 
                 String registerMessage = json.toString();
                 out.println(registerMessage);
