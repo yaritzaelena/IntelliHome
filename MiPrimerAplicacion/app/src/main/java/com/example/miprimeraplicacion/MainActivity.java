@@ -189,7 +189,53 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
     }
+    public static void sendHouseData(String description, String rules, String price, String capacity, String location, String housePhotoBase64, RegisterResponseCallback callback) {
+        new Thread(() -> {
+            try {
+                if (socket == null || socket.isClosed()) {
+                    callback.onError("Socket no inicializado o cerrado.");
+                    return;
+                }
 
+                // Construir el JSON con los datos de la casa
+                JSONObject json = new JSONObject();
+                json.put("action", "addHouse");
+                json.put("description", description);
+                json.put("rules", rules);
+                json.put("price", price);
+                json.put("capacity", capacity);
+                json.put("location", location);
+                json.put("housePhotoBase64", housePhotoBase64);
+
+                String houseDataMessage = json.toString();
+                out.println(houseDataMessage);
+                out.flush();
+                System.out.println("LOG: Datos de la casa enviados: " + houseDataMessage);
+
+                // Recibir la respuesta del servidor
+                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                String response = reader.readLine();
+
+                if (response != null) {
+                    System.out.println("LOG: Respuesta recibida: " + response);
+
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean status = jsonResponse.optBoolean("status", false);
+                    String message = jsonResponse.optString("message", "Sin mensaje");
+
+                    if (status) {
+                        callback.onSuccess(message);
+                    } else {
+                        callback.onError(message);
+                    }
+                } else {
+                    callback.onError("No se recibió respuesta del servidor.");
+                }
+            } catch (Exception e) {
+                callback.onError("Error: " + e.getMessage());
+            }
+        }).start();
+    }
 
 
     public interface LoginResponseCallback {
