@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@color/background_color">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Título -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Registro de Usuario"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:paddingBottom="16dp"
+            android:textColor="@color/primary_color" />
+
+        <!-- Foto -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sube tu Foto"
+            android:textSize="18sp"
+            android:layout_marginBottom="8dp"
+            android:textColor="@color/text_color" />
+
+        <!-- Vista previa de la foto circular -->
+        <ImageView
+            android:id="@+id/imageViewPhoto"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center"
+            android:background="@drawable/circular_image"
+            android:contentDescription="Vista previa de la foto"
+            android:layout_marginBottom="8dp"
+            android:scaleType="centerCrop"
+            android:clipToOutline="true" />
+
+        <!-- Botón para cargar o tomar foto -->
+
+        <!-- Campos de registro -->
+
+        <Button
+            android:id="@+id/buttonUploadPhoto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/rounded_button"
+            android:text="Seleccionar Foto"
+            android:textColor="@color/white" />
+
+        <EditText
+            android:id="@+id/editTextNickname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/rounded_edittext"
+            android:hint="Nickname"
+            android:padding="12dp"
+            android:textColorHint="@color/text_color" />
+
+        <EditText
+            android:id="@+id/editTextPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/rounded_edittext"
+            android:hint="Contraseña"
+            android:inputType="textPassword"
+            android:padding="12dp"
+            android:textColorHint="@color/text_color" />
+
+        <TextView
+
+            android:layout_width="296dp"
+            android:layout_height="46dp"
+            android:layout_gravity="center"
+            android:paddingBottom="16dp"
+            android:text="La contraseña debe tener al menos 8 caracteres.
+                            Debe contener al menos 2 tipos de caracteres:
+                                    Letras y números.
+Letras y símbolos especiales.
+
+                                                                                    Los caracteres pueden repetirse.
+             "
+            android:textColor="@color/primary_color"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editTextConfirm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/rounded_edittext"
+            android:hint="Confirmar contraseña"
+            android:inputType="textPassword"
+            android:padding="12dp"
+            android:textColorHint="@color/text_color" />
+        <EditText
+            android:id="@+id/editTextFirstName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nombre"
+            android:textColorHint="@color/text_color"
+            android:padding="12dp"
+            android:background="@drawable/rounded_edittext"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/editTextLastName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Apellido"
+            android:textColorHint="@color/text_color"
+            android:padding="12dp"
+            android:background="@drawable/rounded_edittext"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/editTextBirthDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/rounded_edittext"
+            android:clickable="true"
+            android:focusable="false"
+            android:hint="Fecha de Nacimiento"
+            android:padding="12dp"
+            android:textColorHint="@color/text_color" />
+
+        <EditText
+            android:id="@+id/editTextHobby"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Hobby"
+            android:textColorHint="@color/text_color"
+            android:padding="12dp"
+            android:background="@drawable/rounded_edittext"
+            android:layout_marginBottom="8dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="¿Quién eres?"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:layout_gravity="start"
+            android:paddingBottom="2dp"
+            android:textColor="@color/primary_color" />
+        <!-- Grupo de botones de radio para elegir tipo de usuario -->
+        <RadioGroup
+            android:id="@+id/radioGroupUserType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/radioOwner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Propietario" />
+
+            <RadioButton
+                android:id="@+id/radioTenant"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Inquilino" />
+        </RadioGroup>
+
+
+        <!-- Campo para el IBAN (Solo para Propietario) -->
+        <EditText
+            android:id="@+id/editTextIBAN"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Cuenta IBAN"
+            android:textColorHint="@color/text_color"
+            android:padding="12dp"
+            android:background="@drawable/rounded_edittext"
+            android:layout_marginBottom="8dp"
+            android:inputType="text"
+            android:visibility="gone" />  <!-- Oculto por defecto -->
+
+
+        <!-- Campo para el Número de Tarjeta -->
+        <EditText
+            android:id="@+id/editTextCardNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Número de Tarjeta"
+            android:textColorHint="@color/text_color"
+            android:padding="12dp"
+            android:background="@drawable/rounded_edittext"
+            android:layout_marginBottom="8dp"
+            android:inputType="number" />
+
+
+        <!-- Campo para la Fecha de Expiración -->
+        <EditText
+            android:id="@+id/editTextCardExpiry"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Fecha de Expiración (MM/AA)"
+            android:textColorHint="@color/text_color"
+            android:padding="12dp"
+            android:background="@drawable/rounded_edittext"
+            android:layout_marginBottom="8dp"
+            android:maxLength="5"
+            android:inputType="date" />
+
+        <!-- Campo para el CVV -->
+        <EditText
+            android:id="@+id/editTextCardCVV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="CVV"
+            android:textColorHint="@color/text_color"
+            android:padding="12dp"
+            android:background="@drawable/rounded_edittext"
+            android:layout_marginBottom="8dp"
+            android:inputType="numberPassword"
+            android:maxLength="3" />
+
+
+        <Spinner
+            android:id="@+id/spinnerHouseStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/rounded_edittext"
+            android:padding="12dp" />
+
+        <Spinner
+            android:id="@+id/spinnerTransportStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/rounded_edittext"
+            android:padding="12dp"
+            android:hint="Selecciona Transporte" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp">
+
+            <!-- Botón para abrir el mapa -->
+            <Button
+                android:id="@+id/buttonOpenMap"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Seleccionar ubicación en el mapa"
+                android:background="@drawable/rounded_button"
+                android:textColor="@color/white"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Texto para mostrar la dirección o coordenadas -->
+            <TextView
+                android:id="@+id/textViewCoordinates"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:background="@drawable/rounded_edittext"
+                android:text="Coordenadas: (latitud, longitud)"
+                android:textColor="@color/text_color"
+                android:layout_marginBottom="8dp" />
+        </LinearLayout>
+
+        <!-- CheckBox para Términos y Condiciones -->
+        <CheckBox
+            android:id="@+id/checkBoxTerms"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:enabled="true"
+            android:focusable="true"
+            android:text="Aceptar términos y condiciones"
+            android:textColor="@color/text_color" />
+
+        <!-- Botón de registro -->
+        <Button
+            android:id="@+id/buttonRegister"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Registrar"
+            android:background="@drawable/rounded_button"
+            android:textColor="@color/white"
+            android:layout_marginTop="16dp" />
+
+        <!-- Botón de cancelar -->
+        <Button
+            android:id="@+id/buttonCancel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CAncelar"
+            android:background="@drawable/rounded_button"
+            android:textColor="@color/white"
+            android:layout_marginTop="16dp" />
+    </LinearLayout>
+</ScrollView>

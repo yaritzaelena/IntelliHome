@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">IntelliHome</string>
+    <string name="contrase_a">Contraseña</string>
+    <!-- Otras cadenas -->
+    <string-array name="house_styles">
+        <item>Aventurera</item>
+        <item>Mansion</item>
+        <item>Costera</item>
+    </string-array>
+
+    <string-array name="transport_styles">
+        <item>Sedan</item>
+        <item>4x4</item>
+        <item>Moto</item>
+    </string-array>
+
+</resources>

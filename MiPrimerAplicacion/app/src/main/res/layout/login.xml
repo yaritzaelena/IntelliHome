@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/blue_very_light"
+    android:padding="16dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="match_parent"
+            android:layout_height="211dp"
+            android:layout_marginTop="100dp"
+            android:src="@mipmap/logotrans" />
+
+        <TextView
+            android:id="@+id/textViewTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="90dp"
+            android:text="Iniciar Sesión"
+            android:textColor="@color/blue_dark"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <!-- Campo Nombre de Usuario -->
+        <EditText
+            android:id="@+id/editTextUsername"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textViewTitle"
+            android:layout_marginTop="204dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/rounded_edittext"
+            android:hint="Nombre de usuario"
+            android:padding="12dp"
+            android:textColor="@color/blue_dark"
+            android:textColorHint="@color/text_color" />
+
+        <!-- Campo Contraseña -->
+        <EditText
+            android:id="@+id/editTextPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/editTextUsername"
+            android:layout_marginTop="11dp"
+            android:background="@drawable/rounded_edittext"
+            android:drawableEnd="@mipmap/ic_eye_closed"
+            android:hint="Contraseña"
+            android:inputType="textPassword"
+            android:padding="12dp"
+            android:textColor="@color/blue_dark"
+            android:textColorHint="@color/text_color" />
+
+        <!-- Botón Aceptar -->
+        <Button
+            android:id="@+id/buttonLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/editTextPassword"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/rounded_button"
+            android:text="Aceptar"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+        <!-- Enlace ¿Olvidaste tu contraseña? -->
+        <TextView
+            android:id="@+id/textViewRecoverPassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/buttonLogin"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"
+            android:text="¿Olvidaste tu contraseña?"
+            android:textColor="@color/blue" />
+
+        <!-- Botón Registrar -->
+        <Button
+            android:id="@+id/buttonRegister"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textViewRecoverPassword"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/rounded_button"
+            android:text="Registrar"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+        <!-- Botón Registrar con Google -->
+        <ImageButton
+            android:id="@+id/buttonRegisterGoogle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/buttonRegister"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"
+            android:src="@mipmap/google_logo"
+            android:background="@null"
+            android:contentDescription="Registrar con Google" />
+
+        <!-- Botón Registrar con Facebook -->
+        <ImageButton
+            android:id="@+id/buttonRegisterFacebook"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/buttonRegisterGoogle"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="7dp"
+            android:src="@mipmap/facebook_logo"
+            android:background="@null"
+            android:contentDescription="Registrar con Facebook" />
+
+    </RelativeLayout>
+</ScrollView>
+
+
