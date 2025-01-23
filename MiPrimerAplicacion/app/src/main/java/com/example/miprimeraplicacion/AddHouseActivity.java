@@ -43,10 +43,20 @@ public class AddHouseActivity extends AppCompatActivity {
     private List<Bitmap> selectedImages = new ArrayList<>(); // Lista para almacenar imágenes seleccionadas
     private ImagePagerAdapter imagePagerAdapter; // Adaptador para ViewPager2
 
+    private String username;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_house);
+        username = getIntent().getStringExtra("USERNAME");
+        if (username == null || username.isEmpty()) {
+            Toast.makeText(this, "Error: Usuario no identificado", Toast.LENGTH_SHORT).show();
+            finish(); // Cierra la actividad si no hay usuario
+            return;
+        }
+        Log.d("AddHouseActivity", "Usuario recibido: " + username);
+
 
         // Inicializar elementos
         buttonAddPhoto = findViewById(R.id.buttonAddPhoto);
@@ -159,7 +169,7 @@ public class AddHouseActivity extends AppCompatActivity {
         JSONArray jsonImages = new JSONArray(base64Images);
 
         // Enviar los datos de la casa al servidor
-        MainActivity.sendHouseData(description, rules, price, capacity, location, jsonImages,
+        MainActivity.sendHouseData(username, description, rules, price, capacity, location, jsonImages,
                 new MainActivity.RegisterResponseCallback() {
                     @Override
                     public void onSuccess(String response) {

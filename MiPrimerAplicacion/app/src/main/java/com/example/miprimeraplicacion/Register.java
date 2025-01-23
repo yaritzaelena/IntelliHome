@@ -33,6 +33,8 @@ import androidx.core.content.ContextCompat;
 import com.bumptech.glide.Glide;
 import android.app.DatePickerDialog;
 import java.util.Calendar;
+import java.util.concurrent.Executors;
+
 import android.util.Base64;
 
 
@@ -48,6 +50,7 @@ public class Register extends AppCompatActivity {
     private Button cancelButton;
 
     private TextView coordinatesTextView;
+    private String photoBase64 = ""; // Variable global para almacenar la imagen en Base64
 
     private RadioGroup radioGroupUserType;
     private RadioButton radioButtonOwner, radioButtonTenant;
@@ -284,7 +287,7 @@ public class Register extends AppCompatActivity {
             String birthDate = birthDateEditText.getText().toString().trim();
 
             // Validar que la imagen fue tomada
-            String photoBase64 = userPhotoBitmap != null ? encodeToBase64(userPhotoBitmap) : "";
+            //String photoBase64 = userPhotoBitmap != null ? encodeToBase64(userPhotoBitmap) : "";
 
             // Verificar si el nickname contiene palabras prohibidas
             if (containsRestrictedWords(nickname)) {
@@ -392,16 +395,86 @@ public class Register extends AppCompatActivity {
     }
 
     // Lanzadores para manejar resultados de actividad
+   /* private final ActivityResultLauncher<Intent> galleryLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    Uri selectedImage = result.getData().getData();
+                    Log.d("Register", "Imagen seleccionada de galería: " + selectedImage.toString());
+
+                    try {
+                        // Asignar el bitmap correctamente
+                        userPhotoBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
+                        imageViewPhoto.setImageBitmap(userPhotoBitmap);
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Log.e("Register", "Error al cargar imagen de galería: " + e.getMessage());
+                    }
+                } else {
+                    Log.e("Register", "No se seleccionó ninguna imagen.");
+                }
+            }
+    );
+    */
+    private Bitmap resizeBitmap(Bitmap bitmap, int maxWidth, int maxHeight) {
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+
+        float scaleWidth = ((float) maxWidth) / width;
+        float scaleHeight = ((float) maxHeight) / height;
+        float scale = Math.min(scaleWidth, scaleHeight);
+
+        int newWidth = Math.round(width * scale);
+        int newHeight = Math.round(height * scale);
+
+        return Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true);
+    }
+
+
     private final ActivityResultLauncher<Intent> galleryLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                     Uri selectedImage = result.getData().getData();
-                    Glide.with(this).load(selectedImage).into(imageViewPhoto);
+                    Log.d("Register", "Imagen seleccionada de galería: " + selectedImage.toString());
+
+                    // Procesar la imagen en un hilo en segundo plano
+                    Executors.newSingleThreadExecutor().execute(() -> {
+                        try {
+                            // Obtener el bitmap en un hilo de fondo
+                            Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
+
+                            // Reducir tamaño antes de convertir
+                            Bitmap resizedBitmap = resizeBitmap(bitmap, 800, 800);
+
+                            // Convertir a Base64
+                            String encodedImage = encodeToBase64(resizedBitmap);
+
+                            // Actualizar en el hilo principal
+                            runOnUiThread(() -> {
+                                userPhotoBitmap = resizedBitmap;
+                                imageViewPhoto.setImageBitmap(resizedBitmap);
+                                photoBase64 = encodedImage;
+                                Log.d("Register", "Imagen convertida a Base64 correctamente.");
+                            });
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            Log.e("Register", "Error al cargar imagen de galería: " + e.getMessage());
+                        }
+                    });
+
+                } else {
+                    Log.e("Register", "No se seleccionó ninguna imagen.");
                 }
             }
     );
 
+
+
+
+    /*
     private final ActivityResultLauncher<Intent> cameraLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -414,12 +487,39 @@ public class Register extends AppCompatActivity {
                 }
             }
     );
+    */
+
+    private final ActivityResultLauncher<Intent> cameraLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    Bitmap photo = (Bitmap) result.getData().getExtras().get("data");
+
+                    Executors.newSingleThreadExecutor().execute(() -> {
+                        // Reducir tamaño antes de convertir
+                        Bitmap resizedBitmap = resizeBitmap(photo, 800, 800);
+
+                        // Codificar a Base64 una sola vez
+                        photoBase64 = encodeToBase64(resizedBitmap);
+
+                        // Actualizar UI
+                        runOnUiThread(() -> {
+                            userPhotoBitmap = resizedBitmap;
+                            imageViewPhoto.setImageBitmap(resizedBitmap);
+                            Log.d("Register", "Imagen tomada con cámara convertida a Base64.");
+                        });
+                    });
+                }
+            }
+    );
+
 
     private String encodeToBase64(Bitmap image) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         image.compress(Bitmap.CompressFormat.PNG, 50, byteArrayOutputStream); // Reducir calidad al 50%
         byte[] byteArray = byteArrayOutputStream.toByteArray();
         return Base64.encodeToString(byteArray, Base64.DEFAULT);
+
     }
 
 

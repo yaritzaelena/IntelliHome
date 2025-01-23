@@ -33,7 +33,7 @@ public class LoginActivity extends AppCompatActivity {
         // Botón de Login
         registarHouseButton.setOnClickListener(v -> {
             // Acción para el botón de Login
-            Intent intent = new Intent(LoginActivity.this, ExitActivity.class);
+            Intent intent = new Intent(LoginActivity.this, AddHouseActivity.class);
             intent.putExtra("USERNAME", username);
             startActivity(intent); // Llama a la actividad Login
         });

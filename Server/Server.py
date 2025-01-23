@@ -233,6 +233,7 @@ class ChatServer:
     def add_house(self, data):
         """ Registra una casa en la base de datos con encriptación. """
         try:
+            username = self.encrypt(data.get("username", ""))
             description = self.encrypt(data.get("description", ""))
             rules = self.encrypt(data.get("rules", ""))
             price = self.encrypt(data.get("price", ""))
@@ -270,6 +271,7 @@ class ChatServer:
             # Guardar la información en database.txt con encriptación
             try:
                 with open("database_houses.txt", "a", encoding="utf-8") as db_file:
+                    db_file.write(f"username: {username}\n")
                     db_file.write(f"description: {description}\n")
                     db_file.write(f"rules: {rules}\n")
                     db_file.write(f"price: {price}\n")

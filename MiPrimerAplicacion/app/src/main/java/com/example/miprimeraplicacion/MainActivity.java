@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
     }
-    public static void sendHouseData(String description, String rules, String price, String capacity, String location, JSONArray housePhotoBase64, RegisterResponseCallback callback) {
+    public static void sendHouseData(String username, String description, String rules, String price, String capacity, String location, JSONArray housePhotoBase64, RegisterResponseCallback callback) {
         new Thread(() -> {
             try {
                 if (socket == null || socket.isClosed()) {
@@ -200,6 +200,7 @@ public class MainActivity extends AppCompatActivity {
                 // Construir el JSON correctamente
                 JSONObject json = new JSONObject();
                 json.put("action", "addHouse");
+                json.put("username", username);
                 json.put("description", description);
                 json.put("rules", rules);
                 json.put("price", price);
