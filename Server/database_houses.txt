@@ -1,0 +1,8 @@
+description: gAAAAABnkd8t1FEttDG8qzZuTIrlrW_zTIbz0lxjqmiMhDfzCwKi0sXyc7jPtB9V9YNjX0ZUUCETwuNNicrKliOT5M92D64_dA==
+rules: gAAAAABnkd8tRCorTs1QuUTGckMMJnkVNKT3mKLugxJpFFroht8a3tUpNzvcHZb1WZBtv02e06xbf25YTfLJBO0eRFhUfFf6eQ==
+price: gAAAAABnkd8tGOyhvY08xDPeSYijUpO-V5QsJam6AeOkUHoooJc9GsclbDKbNdiy-HNNCruKkHw7piJYaGjEMZ96ugFVvIucVw==
+capacity: gAAAAABnkd8tnBr4Gd5JySwMPDjmS4qfCdzKwVppv__RPraA_U5uT-K_fIgTNgNmz9boNEQgjhN4MlChLVVOGxjtzo372XiRLQ==
+location: gAAAAABnkd8tyb0PxumVHz1OiIDHGEeRF-qj2lJZcQyiq-Sq_-PdZ1xls6HdRtqLy6V-LOInWM9FLKKB3vSiJugTDVU1wheYxaHRyvHqatPD1gRZ0sLDVZnSV5YSecxxbAmhe4UWUqrBPfbgQ9HLn03CV8O8naP6YQ==
+photo_0: house_images\house_1737613101_0.jpg
+photo_1: house_images\house_1737613101_1.jpg
+--------------------

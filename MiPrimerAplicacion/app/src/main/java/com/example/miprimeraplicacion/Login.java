@@ -104,7 +104,7 @@ public class Login extends AppCompatActivity {
         // Botón de Registrarse
         registerButton.setOnClickListener(v -> {
             // Acción para el botón de Registrarse
-            Intent intent = new Intent(Login.this, Register.class);
+            Intent intent = new Intent(Login.this, AddHouseActivity.class);
             startActivity(intent);
         });
 

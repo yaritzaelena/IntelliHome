@@ -15,7 +15,7 @@ import java.util.Scanner;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-
+import org.json.JSONArray; // Asegúrate de importar esto
 
 
 // Recordar que dar los permisos del HW para utilizar los componentes por ejemplo la red
@@ -41,8 +41,8 @@ public class MainActivity extends AppCompatActivity {
         // Iniciar el hilo para conectarse al servidor y recibir mensajes
         new Thread(() -> {
             try {
-                socket = new Socket("192.168.0.152", 1717); //Olman
-                //socket = new Socket("192.168.0.106", 1717); //Yaritza
+                //socket = new Socket("192.168.0.152", 1717); //Olman
+                socket = new Socket("192.168.0.106", 1717); //Yaritza
                 out = new PrintWriter(socket.getOutputStream(), true);
                 in = new Scanner(socket.getInputStream());
 
@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
     }
-    public static void sendHouseData(String description, String rules, String price, String capacity, String location, String housePhotoBase64, RegisterResponseCallback callback) {
+    public static void sendHouseData(String description, String rules, String price, String capacity, String location, JSONArray housePhotoBase64, RegisterResponseCallback callback) {
         new Thread(() -> {
             try {
                 if (socket == null || socket.isClosed()) {
@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
 
-                // Construir el JSON con los datos de la casa
+                // Construir el JSON correctamente
                 JSONObject json = new JSONObject();
                 json.put("action", "addHouse");
                 json.put("description", description);
@@ -205,19 +205,19 @@ public class MainActivity extends AppCompatActivity {
                 json.put("price", price);
                 json.put("capacity", capacity);
                 json.put("location", location);
-                json.put("housePhotoBase64", housePhotoBase64);
+                json.put("housePhotoBase64", housePhotoBase64);  // ✅ Ahora es un JSONArray real
 
                 String houseDataMessage = json.toString();
                 out.println(houseDataMessage);
                 out.flush();
-                System.out.println("LOG: Datos de la casa enviados: " + houseDataMessage);
+                System.out.println("📤 JSON enviado al servidor: " + houseDataMessage);
 
                 // Recibir la respuesta del servidor
                 BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 String response = reader.readLine();
 
                 if (response != null) {
-                    System.out.println("LOG: Respuesta recibida: " + response);
+                    System.out.println("📥 Respuesta recibida: " + response);
 
                     JSONObject jsonResponse = new JSONObject(response);
                     boolean status = jsonResponse.optBoolean("status", false);
@@ -236,6 +236,10 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
     }
+
+
+
+
 
 
     public interface LoginResponseCallback {
