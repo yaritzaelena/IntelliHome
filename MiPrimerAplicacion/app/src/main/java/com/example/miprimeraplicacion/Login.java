@@ -84,6 +84,8 @@ public class Login extends AppCompatActivity {
                             } else {
                                 intent = new Intent(Login.this, ExitActivity.class); // Redirigir a ExitActivity si es inquilino
                             }
+                            // Pasar el nombre de usuario a la siguiente actividad
+                            intent.putExtra("USERNAME", username);
                             startActivity(intent);
                             finish();
                         } catch (Exception e) {
