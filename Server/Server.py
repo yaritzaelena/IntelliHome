@@ -240,10 +240,14 @@ class ChatServer:
             capacity = self.encrypt(data.get("capacity", ""))
             location = self.encrypt(data.get("location", ""))
             photos_list = data.get("housePhotoBase64", [])
+            amenities_list = data.get("amenities", [])
 
             if not isinstance(photos_list, list):
                 print("ERROR: `housePhotoBase64` no es una lista")
                 return {"status": "error", "message": "Formato incorrecto para imágenes"}
+            if not isinstance(amenities_list, list):
+                print("ERROR: `amenities` no es una lista")
+                return {"status": "error", "message": "Formato incorrecto para amenidades"}
 
             # Crear el directorio para las imágenes si no existe
             image_directory = "house_images"
@@ -282,7 +286,12 @@ class ChatServer:
                     for i, image_path in enumerate(image_paths):
                         db_file.write(f"photo_{i}: {image_path}\n")
 
+                    # Guardar amenidades en formato JSON para facilitar su recuperación
+                    db_file.write(f"amenities: {json.dumps(amenities_list, ensure_ascii=False)}\n")
+
                     db_file.write(f"{'-' * 20}\n")
+
+                    
 
             except Exception as e:
                 print(f"Error al guardar la casa en database.txt: {e}")

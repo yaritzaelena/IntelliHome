@@ -29,7 +29,10 @@ import com.bumptech.glide.Glide;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.json.JSONArray; // Asegúrate de importar esto
 
 // Convierte la lista de imágenes en Base64 a un JSONArray
@@ -45,6 +48,8 @@ public class AddHouseActivity extends AppCompatActivity {
 
     private String username;
 
+    private Map<String, CheckBox> amenitiesMap = new HashMap<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +62,37 @@ public class AddHouseActivity extends AppCompatActivity {
         }
         Log.d("AddHouseActivity", "Usuario recibido: " + username);
 
-
+        // Inicializar CheckBoxes
+        amenitiesMap.put("Cocina equipada", findViewById(R.id.check_cocina));
+        amenitiesMap.put("Aire acondicionado", findViewById(R.id.check_aire));
+        amenitiesMap.put("Calefacción", findViewById(R.id.check_calefaccion));
+        amenitiesMap.put("Wi-Fi gratuito", findViewById(R.id.check_wifi));
+        amenitiesMap.put("Televisión por cable", findViewById(R.id.check_tv));
+        amenitiesMap.put("Lavadora y secadora", findViewById(R.id.check_lavadora));
+        amenitiesMap.put("Piscina", findViewById(R.id.check_piscina));
+        amenitiesMap.put("Jardín o patio", findViewById(R.id.check_jardin));
+        amenitiesMap.put("Barbacoa o parrilla", findViewById(R.id.check_barbacoa));
+        amenitiesMap.put("Terraza o balcón", findViewById(R.id.check_terraza));
+        amenitiesMap.put("Gimnasio en casa", findViewById(R.id.check_gimnasio));
+        amenitiesMap.put("Garaje o estacionamiento", findViewById(R.id.check_garaje));
+        amenitiesMap.put("Sistema de seguridad", findViewById(R.id.check_seguridad));
+        amenitiesMap.put("Habitaciones con baño en suite", findViewById(R.id.check_habitaciones_bano));
+        amenitiesMap.put("Muebles de exterior", findViewById(R.id.check_muebles_exterior));
+        amenitiesMap.put("Microondas", findViewById(R.id.check_microondas));
+        amenitiesMap.put("Lavavajillas", findViewById(R.id.check_lavavajillas));
+        amenitiesMap.put("Cafetera", findViewById(R.id.check_cafetera));
+        amenitiesMap.put("Ropa de cama y toallas", findViewById(R.id.check_ropa_cama));
+        amenitiesMap.put("Áreas comunes", findViewById(R.id.check_areas_comunes));
+        amenitiesMap.put("Sofá cama", findViewById(R.id.check_sofa_cama));
+        amenitiesMap.put("Servicios de limpieza", findViewById(R.id.check_limpieza));
+        amenitiesMap.put("Transporte público cercano", findViewById(R.id.check_transporte));
+        amenitiesMap.put("Mascotas permitidas", findViewById(R.id.check_mascotas));
+        amenitiesMap.put("Tiendas y restaurantes", findViewById(R.id.check_tiendas));
+        amenitiesMap.put("Calefacción por suelo", findViewById(R.id.check_calefaccion_suelo));
+        amenitiesMap.put("Escritorio o área de trabajo", findViewById(R.id.check_escritorio));
+        amenitiesMap.put("Entretenimiento", findViewById(R.id.check_entretenimiento));
+        amenitiesMap.put("Chimenea", findViewById(R.id.check_chimenea));
+        amenitiesMap.put("Internet de alta velocidad", findViewById(R.id.check_internet));
         // Inicializar elementos
         buttonAddPhoto = findViewById(R.id.buttonAddPhoto);
         buttonOpenMap = findViewById(R.id.buttonOpenMap);
@@ -80,6 +115,7 @@ public class AddHouseActivity extends AppCompatActivity {
 
         // Botón para registrar la casa
         buttonRegister.setOnClickListener(v -> registerHouse());
+
     }
 
     @Override
@@ -137,6 +173,8 @@ public class AddHouseActivity extends AppCompatActivity {
     }
 
     private void registerHouse() {
+
+
         EditText editTextDescription = findViewById(R.id.editTextDescription);
         EditText editTextRules = findViewById(R.id.editTextRules);
         EditText editTextPrice = findViewById(R.id.editTextPrice);
@@ -158,40 +196,78 @@ public class AddHouseActivity extends AppCompatActivity {
             return;
         }
 
-        // Convertir todas las imágenes a Base64
-        List<String> base64Images = new ArrayList<>();
-        for (Bitmap bitmap : selectedImages) {
-            base64Images.add(encodeToBase64(bitmap));
+        //  Obtener amenidades seleccionadas
+        // Obtener amenidades seleccionadas
+        List<String> selectedAmenities = getSelectedAmenities();
+
+        // Verificar si la lista está vacía
+        if (selectedAmenities.isEmpty()) {
+            Toast.makeText(this, "Por favor, selecciona al menos una amenidad.", Toast.LENGTH_SHORT).show();
+            return;
         }
 
-        // Convertir la lista de imágenes en Base64 a un JSONArray
+        // Convertir la lista a JSONArray
 
-        JSONArray jsonImages = new JSONArray(base64Images);
 
-        // Enviar los datos de la casa al servidor
-        MainActivity.sendHouseData(username, description, rules, price, capacity, location, jsonImages,
-                new MainActivity.RegisterResponseCallback() {
-                    @Override
-                    public void onSuccess(String response) {
-                        runOnUiThread(() -> {
-                            Toast.makeText(AddHouseActivity.this, "Casa registrada exitosamente", Toast.LENGTH_SHORT).show();
-                            finish();
-                        });
+        new Thread(() -> {
+            List<String> base64Images = new ArrayList<>();
+
+
+            for (Bitmap bitmap : selectedImages) {
+                base64Images.add(encodeToBase64(bitmap)); // Ahora se ejecuta en segundo plano
+            }
+
+            JSONArray jsonImages = new JSONArray(base64Images);
+            JSONArray jsonAmenities = new JSONArray(getSelectedAmenities());
+
+            MainActivity.sendHouseData(username, description, rules, price, capacity, location, jsonImages, jsonAmenities,
+                    new MainActivity.RegisterResponseCallback() {
+                        @Override
+                        public void onSuccess(String response) {
+                            runOnUiThread(() -> {
+                                Toast.makeText(AddHouseActivity.this, "Casa registrada exitosamente", Toast.LENGTH_SHORT).show();
+                                finish();
+                            });
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                            runOnUiThread(() -> Toast.makeText(AddHouseActivity.this, "Error: " + error, Toast.LENGTH_SHORT).show());
+                        }
                     }
+            );
+        }).start();
 
-                    @Override
-                    public void onError(String error) {
-                        runOnUiThread(() -> Toast.makeText(AddHouseActivity.this, "Error: " + error, Toast.LENGTH_SHORT).show());
-                    }
-                }
-        );
+
+
+
     }
+
+    private List<String> getSelectedAmenities() {
+        List<String> selectedAmenities = new ArrayList<>();
+
+        for (Map.Entry<String, CheckBox> entry : amenitiesMap.entrySet()) {
+            if (entry.getValue().isChecked()) {
+                selectedAmenities.add(entry.getKey());
+            }
+        }
+        return selectedAmenities;
+    }
+
+
 
 
     private String encodeToBase64(Bitmap image) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        image.compress(Bitmap.CompressFormat.PNG, 50, byteArrayOutputStream);
+
+        // Redimensionar imagen (ejemplo: 800px de ancho máx)
+        Bitmap scaledBitmap = Bitmap.createScaledBitmap(image, 800, (800 * image.getHeight()) / image.getWidth(), true);
+
+        // Comprimir imagen al 40% en JPEG para reducir tamaño
+        scaledBitmap.compress(Bitmap.CompressFormat.PNG, 40, byteArrayOutputStream);
+
         byte[] byteArray = byteArrayOutputStream.toByteArray();
         return Base64.encodeToString(byteArray, Base64.DEFAULT);
     }
+
 }

@@ -38,3 +38,23 @@ photo_0: house_images\house_1737671700_0.jpg
 photo_1: house_images\house_1737671700_1.jpg
 photo_2: house_images\house_1737671700_2.jpg
 --------------------
+username: gAAAAABnkvBh8i8cwOH6gNJx9MOlEnvqE35yMpy8cJ_BUXO3uzs7zTdu_ahACD7ki3CkXE8jxb098YBn2S5OYpnUpiaYxBPCLA==
+description: gAAAAABnkvBhYPKyYhkJogQdoYN8DLLb7XBQUsikCv0QLIwoxnD4s84hQGUPEJ1r_GyFfpvTfaO7UwTZdRPnjgXpbXTREyJ4vg==
+rules: gAAAAABnkvBhbgd6oWQQPuyuVxsHFYNixZim3bf4txQzd1NsKiUnTZ7aRL3X1KwDMYdh3q7qHxaFI6Ltmufo0h38n48q-Ue54A==
+price: gAAAAABnkvBhuFWYn2fYsdNF-7-W-FHHUUDK6QJGCi28YW9076TAmgtI3hCHDTcqTPYeecOTF9ktQ6jpVsNvKLcHLv8bccmpmA==
+capacity: gAAAAABnkvBhmX6zXIC6smz6f9EJf_zTAZzcbpXwceAbqJgiuozdwNRRlbii_yFjhyx5Qg7dzYepTp3YwQa17xFMnSzyPi2AjA==
+location: gAAAAABnkvBhsfQqv3GOHeGTQbKTlw3m_81S3vMGb106gUPiAw197fv3cVSjCycaTF33h4GjQT7IGEH0Qh-Ygc5GLKLaXhZhlpJIsDK956vxP-vyHK1j9wa8fkGtwzGLZ4YAnYJjyWwjDp6DNSylaN7bIozcCq0X7Q==
+photo_0: house_images\house_1737683041_0.jpg
+photo_1: house_images\house_1737683041_1.jpg
+amenities: ["Cocina equipada", "Calefacción", "Aire acondicionado"]
+--------------------
+username: gAAAAABnkvOXjHw34EQPuyzhvVLJuwa1TLsfzlF9f_2FOoez2gUfX9-SVTEfHcvOWNW6-gmxiMG3R2zXaAeU3yxd24fXkzyFRw==
+description: gAAAAABnkvOX8qH3BSb9VRWHb2lk2LzsuwwiDFpFNbuX_7h2lfvzKcOXCbFDiM_MLv0ur7bGr6k0U_Vp63_kO8NZiPFvKFk_ww==
+rules: gAAAAABnkvOXIA23OVxTI5dN44ubD-0I1aDnKrcnLsPQ9E63ab2G5En-y3ek6I-W_XOcmhehwYyqrAKgbTqR4HeNbf0mJ06bpA==
+price: gAAAAABnkvOX1R7WGf2sxVityqUIakjCYrfDduyz7vXGfa7QKcimvP7o-an4-Jxa-Lm48zJbVDGmohmc1lMIRVuFmhcdwQ1RJw==
+capacity: gAAAAABnkvOXcGqcgbwnmG0B3LYqUrG6J_WleM0VP2hwLSnfFiCuQg73elJMjDgJe20ALgu-5RMGP0vvgs92veB47xAqHoQT8g==
+location: gAAAAABnkvOXSjDEJ1FCCYXGg8K8bkopnUBedUadwBpKsD06M5XaM-NEvKicIKyovbYj9-Nt8ccgTHMD-AWEjtHH7g1VMEJ0kQ1Z3JymYzd9TQxKark53HdTUqx-vBpwdsuR53UEsXdc1ruO36B9WVBdZJvcLf6faQ==
+photo_0: house_images\house_1737683863_0.jpg
+photo_1: house_images\house_1737683863_1.jpg
+amenities: ["Cocina equipada", "Calefacción", "Aire acondicionado"]
+--------------------
