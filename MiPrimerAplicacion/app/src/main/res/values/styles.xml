@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Define un estilo para los contenedores de amenidades -->
+    <style name="AmenityContainer">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_columnWeight">1</item>
+        <item name="android:orientation">vertical</item>
+        android:gravity="center_horizontal"> <!-- Alinea todo al centro -->
+    </style>
+
+    <style name="AmenityIcon">
+        <item name="android:layout_width">38dp</item> <!-- Puedes ajustar según necesidad -->
+        <item name="android:layout_height">38dp</item>
+    </style>
+
+    <style name="AmenityCheckBox">
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColor">#000000</item> <!-- Opcional: color negro -->
+    </style>
+
+    <!-- Estilo personalizado para los separadores -->
+    <style name="SeparatorStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">10dp</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+</resources>

@@ -15,6 +15,11 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // Recibir el nombre de usuario
+        String username = getIntent().getStringExtra("USERNAME");
+
+        // Mostrar mensaje de bienvenida
+        Toast.makeText(this, "Bienvenido, " + username, Toast.LENGTH_LONG).show();
 
         ImageView imageView = findViewById(R.id.imageView2);
         Button registarHouseButton = findViewById(R.id.button);
@@ -28,7 +33,8 @@ public class LoginActivity extends AppCompatActivity {
         // Botón de Login
         registarHouseButton.setOnClickListener(v -> {
             // Acción para el botón de Login
-            Intent intent = new Intent(LoginActivity.this, ExitActivity.class);
+            Intent intent = new Intent(LoginActivity.this, AddHouseActivity.class);
+            intent.putExtra("USERNAME", username);
             startActivity(intent); // Llama a la actividad Login
         });
 
