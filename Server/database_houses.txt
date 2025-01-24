@@ -58,3 +58,15 @@ photo_0: house_images\house_1737683863_0.jpg
 photo_1: house_images\house_1737683863_1.jpg
 amenities: ["Cocina equipada", "Calefacción", "Aire acondicionado"]
 --------------------
+username: gAAAAABnkvykR21ipvpkjgWaK-js4hUMX93TFkTPls3kJ3SFtiz-Dlpa_Ayk70U2KfBaQKCUAxP-C5RfrIkSfCP5nBPOSPlW4Q==
+description: gAAAAABnkvykmi4JFv85ySkpFOM6rNkzpzfyjcr7T6YIniv7OAxPWhncNbQBzky9I2Fl3BNu6Zb6DthVIBicmcDpluJKtIXCqg==
+rules: gAAAAABnkvyk36Vb5OLKDAXODE6ASyB2MzKrDYTR6QZhY9pv6pfrWR2F8iscrRnZydW3MrKa1P7OXx6-gQF2kvx4YUbVCikI0w==
+price: gAAAAABnkvykzLo_okUTaAA5vNTttPVgwu5IrVVqUr_VJg9gCToKDfqF7y2xF-XcoDwHJIx4qqtVgOcJO0fdXF3sy76ZmzcoWA==
+capacity: gAAAAABnkvyksyVtjeCu7ftIMpZmvO7576WFBAbHEIZPsI1BN5lHh_voWv5rl4kelX7VcyTXAn0uTUX_aZ7uBmzK0adk8wV9sQ==
+provincia: gAAAAABnkvykW3knfzt6gw-rf0RO_xgyUN7TshD8UB3ZOn-XXrdSDi2ZDotBZb9ecjZ-Q2mTbRW9AFyefjYTOjZn4Ng5J3ODfw==
+canton: gAAAAABnkvykve1tszKKQ2aAXhMddGlF22YFc6BxdIsCjfivNvMwlky--EX6m8qc-xldYvJZqq2ofwP_GkacjUaCaDHE6hijwA==
+location: gAAAAABnkvykmzNbmWsIdca-BDU7r6sAeF9aQTiSGejJbMLRXUJr2apF2LLlV-mNbqHM0vRbAKCWP3XVIeqge5jGIviZI3qC1iCGr1SeJ_kPtLlVlAdtz2_G_ziAohcWB4nSxlGQfdIyc12xVW76RCraqf62GVBamg==
+photo_0: house_images\house_1737686180_0.jpg
+photo_1: house_images\house_1737686180_1.jpg
+amenities: ["Terraza o balcón", "Gimnasio en casa"]
+--------------------

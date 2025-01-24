@@ -65,6 +65,28 @@
                 android:text="Seleccionar ubicación en el mapa"
                 android:textColor="@color/white" />
 
+            <!-- Spinner de Provincias -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Selecciona la provincia:" />
+
+            <Spinner
+                android:id="@+id/spinner_provincia"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <!-- Spinner de Cantones -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Selecciona el cantón:" />
+
+            <Spinner
+                android:id="@+id/spinner_canton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
             <!-- Texto para mostrar la dirección o coordenadas -->
             <TextView
                 android:id="@+id/textViewCoordinates"

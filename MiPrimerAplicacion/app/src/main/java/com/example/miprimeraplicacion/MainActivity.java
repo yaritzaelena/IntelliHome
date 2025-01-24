@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
     }
-    public static void sendHouseData(String username, String description, String rules, String price, String capacity, String location, JSONArray housePhotoBase64, JSONArray jsonAmenities, RegisterResponseCallback callback) {
+    public static void sendHouseData(String username, String description, String rules, String price, String capacity, String provincia,String canton,String location, JSONArray housePhotoBase64, JSONArray jsonAmenities, RegisterResponseCallback callback) {
         new Thread(() -> {
             try {
                 if (socket == null || socket.isClosed()) {
@@ -205,6 +205,8 @@ public class MainActivity extends AppCompatActivity {
                 json.put("rules", rules);
                 json.put("price", price);
                 json.put("capacity", capacity);
+                json.put("provincia", provincia);
+                json.put("canton", canton);
                 json.put("location", location);
                 json.put("housePhotoBase64", housePhotoBase64);  // ✅ Ahora es un JSONArray real
                 json.put("amenities", jsonAmenities);

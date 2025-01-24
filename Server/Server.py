@@ -238,6 +238,8 @@ class ChatServer:
             rules = self.encrypt(data.get("rules", ""))
             price = self.encrypt(data.get("price", ""))
             capacity = self.encrypt(data.get("capacity", ""))
+            provincia = self.encrypt(data.get("provincia", ""))
+            canton = self.encrypt(data.get("canton", ""))
             location = self.encrypt(data.get("location", ""))
             photos_list = data.get("housePhotoBase64", [])
             amenities_list = data.get("amenities", [])
@@ -280,6 +282,8 @@ class ChatServer:
                     db_file.write(f"rules: {rules}\n")
                     db_file.write(f"price: {price}\n")
                     db_file.write(f"capacity: {capacity}\n")
+                    db_file.write(f"provincia: {provincia}\n")
+                    db_file.write(f"canton: {canton}\n")
                     db_file.write(f"location: {location}\n")
 
                     # Guardar las rutas de las imágenes en database.txt

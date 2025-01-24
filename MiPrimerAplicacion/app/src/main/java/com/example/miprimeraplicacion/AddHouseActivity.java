@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +35,21 @@ import java.util.List;
 import java.util.Map;
 
 import org.json.JSONArray; // Asegúrate de importar esto
+import java.io.InputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import org.json.JSONObject;
+import org.json.JSONException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.AdapterView;
+import android.view.View;
+
 
 // Convierte la lista de imágenes en Base64 a un JSONArray
 
@@ -49,6 +65,9 @@ public class AddHouseActivity extends AppCompatActivity {
     private String username;
 
     private Map<String, CheckBox> amenitiesMap = new HashMap<>();
+
+    private Spinner spinnerProvincia, spinnerCanton;
+    private Map<String, List<String>> provinciasCantonesMap = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,7 +135,13 @@ public class AddHouseActivity extends AppCompatActivity {
         // Botón para registrar la casa
         buttonRegister.setOnClickListener(v -> registerHouse());
 
+        spinnerProvincia = findViewById(R.id.spinner_provincia);
+        spinnerCanton = findViewById(R.id.spinner_canton);
+
+        cargarDatosProvincias(); // Llama a la función que carga los datos
     }
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -186,7 +211,11 @@ public class AddHouseActivity extends AppCompatActivity {
         String capacity = editTextCapacity.getText().toString().trim();
         String location = textViewCoordinates.getText().toString().trim();
 
-        if (description.isEmpty() || rules.isEmpty() || price.isEmpty() || capacity.isEmpty() || location.isEmpty()) {
+        String provinciaSeleccionada = spinnerProvincia.getSelectedItem().toString();
+        String cantonSeleccionado = spinnerCanton.getSelectedItem().toString();
+
+
+        if (description.isEmpty() || rules.isEmpty() || price.isEmpty() || capacity.isEmpty() ||provinciaSeleccionada.isEmpty() ||cantonSeleccionado.isEmpty()|| location.isEmpty()) {
             Toast.makeText(this, "Por favor, completa todos los campos.", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -220,7 +249,7 @@ public class AddHouseActivity extends AppCompatActivity {
             JSONArray jsonImages = new JSONArray(base64Images);
             JSONArray jsonAmenities = new JSONArray(getSelectedAmenities());
 
-            MainActivity.sendHouseData(username, description, rules, price, capacity, location, jsonImages, jsonAmenities,
+            MainActivity.sendHouseData(username, description, rules, price, capacity, provinciaSeleccionada, cantonSeleccionado,location, jsonImages, jsonAmenities,
                     new MainActivity.RegisterResponseCallback() {
                         @Override
                         public void onSuccess(String response) {
@@ -242,6 +271,82 @@ public class AddHouseActivity extends AppCompatActivity {
 
 
     }
+
+    private String loadJSONFromRaw() {
+        String json = null;
+        try {
+            InputStream is = getResources().openRawResource(R.raw.provincias_cantones_distritos_costa_rica);
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer, StandardCharsets.UTF_8);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return json;
+    }
+
+    private void cargarDatosProvincias() {
+        try {
+            JSONObject jsonObject = new JSONObject(loadJSONFromRaw());
+            JSONObject provinciasJson = jsonObject.getJSONObject("provincias");
+
+            List<String> listaProvincias = new ArrayList<>();
+            provinciasCantonesMap.clear();
+
+            Iterator<String> keys = provinciasJson.keys();
+            while (keys.hasNext()) {
+                String key = keys.next();
+                JSONObject provincia = provinciasJson.getJSONObject(key);
+                String nombreProvincia = provincia.getString("nombre");
+                listaProvincias.add(nombreProvincia);
+
+                JSONObject cantonesJson = provincia.getJSONObject("cantones");
+                List<String> listaCantones = new ArrayList<>();
+
+                Iterator<String> cantonKeys = cantonesJson.keys();
+                while (cantonKeys.hasNext()) {
+                    String cantonKey = cantonKeys.next();
+                    listaCantones.add(cantonesJson.getJSONObject(cantonKey).getString("nombre"));
+                }
+
+                provinciasCantonesMap.put(nombreProvincia, listaCantones);
+            }
+
+            // Llenar Spinner de Provincias
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, listaProvincias);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinnerProvincia.setAdapter(adapter);
+
+            // Configurar listener para cargar cantones cuando cambie la provincia
+            spinnerProvincia.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    String provinciaSeleccionada = listaProvincias.get(position);
+                    cargarCantones(provinciaSeleccionada);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {}
+            });
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    private void cargarCantones(String provinciaSeleccionada) {
+        List<String> listaCantones = provinciasCantonesMap.get(provinciaSeleccionada);
+
+        if (listaCantones != null) {
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, listaCantones);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinnerCanton.setAdapter(adapter);
+        }
+    }
+
+
+
 
     private List<String> getSelectedAmenities() {
         List<String> selectedAmenities = new ArrayList<>();
