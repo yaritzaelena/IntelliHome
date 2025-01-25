@@ -1,4 +1,6 @@
 from cryptography.fernet import Fernet
+from PIL import Image
+import io
 import os
 import json
 import socket
@@ -81,6 +83,8 @@ class ChatServer:
                     response = self.login_user(data["username"], data["password"])
                 elif action == "addHouse":
                     response = self.add_house(data)  # Llamar la nueva función
+                elif action == "get_houses":
+                    response = self.get_houses()
                 else:
                     response = {"status": "error", "message": "Acción no válida"}
 
@@ -229,6 +233,62 @@ class ChatServer:
         except Exception as e:
             print(f"Error al cargar usuarios: {e}")
         return users
+
+    def get_houses(self):
+        houses = []
+        try:
+            if not os.path.exists("database_houses.txt") or os.stat("database_houses.txt").st_size == 0:
+                print("📢 No hay casas registradas en la base de datos.")
+                return {"status": "false", "message": "No hay casas registradas"}
+
+            with open("database_houses.txt", "r", encoding="utf-8") as file:
+                house_data = {}
+                for line in file:
+                    line = line.strip()
+                    if not line or line.startswith("-"):
+                        if house_data:
+                            houses.append(house_data)
+                        house_data = {}
+                        continue
+
+                    try:
+                        key, value = line.split(":", 1)
+                        key = key.strip()
+                        value = value.strip()
+
+                        if key.startswith("photo_"):
+                            image_path = value
+                            if os.path.exists(image_path):
+                                with Image.open(image_path) as img:
+                                    img = img.convert("RGB")  # Asegurar formato correcto
+                                    img.thumbnail((300, 300))  # Redimensionar imagen
+                                    buffered = io.BytesIO()
+                                    img.save(buffered, format="JPEG", quality=40)  # Reducir calidad
+                                    encoded_image = base64.b64encode(buffered.getvalue()).decode("utf-8")
+                                    house_data.setdefault("imagenes", []).append(encoded_image)
+                            else:
+                                print(f"⚠ La imagen {image_path} no existe.")
+                        elif key == "amenities":
+                            house_data[key] = json.loads(value)
+                        else:
+                            house_data[key] = self.decrypt(value)
+
+                    except Exception as e:
+                        print(f"⚠ Error al procesar la línea {line}: {e}")
+                        continue
+
+            if not houses:
+                print("📢 No se encontraron casas válidas.")
+                return {"status": "false", "message": "No hay casas disponibles"}
+
+            return {"status": "true", "houses": houses}
+
+        except Exception as e:
+            print(f"❌ Error al obtener casas: {e}")
+            return {"status": "false", "message": "Error al obtener casas"}
+
+
+
 
     def add_house(self, data):
         """ Registra una casa en la base de datos con encriptación. """
