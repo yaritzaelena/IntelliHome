@@ -1,19 +1,24 @@
 package com.example.miprimeraplicacion;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager2.widget.ViewPager2;
+
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ViewHouseActivity extends AppCompatActivity {
     @Override
@@ -31,33 +36,29 @@ public class ViewHouseActivity extends AppCompatActivity {
                 for (int i = 0; i < housesArray.length(); i++) {
                     JSONObject house = housesArray.getJSONObject(i);
                     String canton = house.getString("canton");
-                    String provincia = house.optString("provincia", "Desconocido");
-                    String price = house.optString("price", "No especificado");
-                    String owner = house.optString("username", "No disponible");
+                    String provincia = house.getString("provincia");
+                    String price = house.getString("price");
+                    String owner = house.getString("username");
                     JSONArray imagesArray = house.getJSONArray("imagenes");
 
-                    View houseView = getLayoutInflater().inflate(R.layout.item_house, null);
+                    View houseView = LayoutInflater.from(this).inflate(R.layout.item_house, container, false);
                     TextView textDetails = houseView.findViewById(R.id.textHouseDetails);
-                    LinearLayout imageContainer = houseView.findViewById(R.id.imageContainer);
+                    ViewPager2 viewPager = houseView.findViewById(R.id.viewPagerImages);
+                    TabLayout tabLayout = houseView.findViewById(R.id.tabLayoutIndicator);
 
                     textDetails.setText(provincia + ", " + canton + "\nPrecio: " + price + "\nDueño: " + owner);
 
+                    List<String> imageList = new ArrayList<>();
                     for (int j = 0; j < imagesArray.length(); j++) {
-                        String encodedImage = imagesArray.getString(j);
-                        if (!encodedImage.isEmpty()) {
-                            byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
-                            Bitmap bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-
-                            if (bitmap != null) {
-                                ImageView imageView = new ImageView(this);
-                                imageView.setImageBitmap(bitmap);
-                                imageView.setAdjustViewBounds(true);
-                                imageContainer.addView(imageView);
-                            } else {
-                                System.out.println("⚠ Error al decodificar imagen " + j);
-                            }
-                        }
+                        imageList.add(imagesArray.getString(j));
                     }
+
+                    HouseImageAdapter adapter = new HouseImageAdapter(this, imageList);
+                    viewPager.setAdapter(adapter);
+
+                    // Asignar el TabLayout a ViewPager2
+                    new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {}).attach();
+
                     container.addView(houseView);
                 }
             } catch (Exception e) {
@@ -66,6 +67,7 @@ public class ViewHouseActivity extends AppCompatActivity {
         }
     }
 }
+
 
 
 
