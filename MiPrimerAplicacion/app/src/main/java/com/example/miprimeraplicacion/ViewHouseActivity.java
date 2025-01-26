@@ -1,12 +1,17 @@
 package com.example.miprimeraplicacion;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
@@ -28,6 +33,26 @@ public class ViewHouseActivity extends AppCompatActivity {
 
         ScrollView scrollView = findViewById(R.id.scrollViewHouses);
         LinearLayout container = findViewById(R.id.houseContainer);
+        ImageButton btnFilter = findViewById(R.id.filterButton);
+        EditText searchBar = findViewById(R.id.searchEditText);
+
+        btnFilter.setOnClickListener(v -> {
+            Toast.makeText(this, "Abrir opciones de filtro", Toast.LENGTH_SHORT).show();
+        });
+
+// Filtrar casas en tiempo real (opcional)
+        searchBar.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Filtrar casas aquí...
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
 
         String housesData = getIntent().getStringExtra("houses_data");
         if (housesData != null) {
