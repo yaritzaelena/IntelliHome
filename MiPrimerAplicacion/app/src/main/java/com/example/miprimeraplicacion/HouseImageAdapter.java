@@ -1,9 +1,6 @@
 package com.example.miprimeraplicacion;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,15 +9,18 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
 import java.util.List;
 
 public class HouseImageAdapter extends RecyclerView.Adapter<HouseImageAdapter.ImageViewHolder> {
     private Context context;
-    private List<String> imageList;
+    private List<String> imageUrls; // 🔹 Ahora trabajamos con URLs en lugar de Base64
 
-    public HouseImageAdapter(Context context, List<String> imageList) {
+    public HouseImageAdapter(Context context, List<String> imageUrls) {
         this.context = context;
-        this.imageList = imageList;
+        this.imageUrls = imageUrls;
     }
 
     @NonNull
@@ -32,15 +32,18 @@ public class HouseImageAdapter extends RecyclerView.Adapter<HouseImageAdapter.Im
 
     @Override
     public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
-        String encodedImage = imageList.get(position);
-        byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
-        Bitmap bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-        holder.imageView.setImageBitmap(bitmap);
+        String imageUrl = imageUrls.get(position);
+
+        // 🔹 Cargar imagen con Glide (optimizado para carga en red)
+        Glide.with(context)
+                .load(imageUrl)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)  // Cachea la imagen para reducir tráfico de red
+                .into(holder.imageView);
     }
 
     @Override
     public int getItemCount() {
-        return imageList.size();
+        return imageUrls.size();
     }
 
     public static class ImageViewHolder extends RecyclerView.ViewHolder {
