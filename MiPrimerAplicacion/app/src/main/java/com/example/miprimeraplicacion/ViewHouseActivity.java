@@ -10,17 +10,17 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.ScrollView;
-import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.google.android.material.slider.RangeSlider;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -28,7 +28,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import android.util.Log;
 
 public class ViewHouseActivity extends AppCompatActivity {
 
@@ -36,21 +41,20 @@ public class ViewHouseActivity extends AppCompatActivity {
     private int minPrice = 0, maxPrice = 1000;
     private int selectedCapacity = 0;
     private List<String> selectedAmenities = new ArrayList<>();
-    private LinearLayout houseContainer; // Se usará en lugar de RecyclerView
+    private LinearLayout houseContainer;
+    private Map<String, CheckBox> amenitiesMap = new LinkedHashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_house);
 
-        ScrollView scrollView = findViewById(R.id.scrollViewHouses);
-        houseContainer = findViewById(R.id.houseContainer); // ✅ Usamos houseContainer en lugar de RecyclerView
+        houseContainer = findViewById(R.id.houseContainer);
         EditText searchBar = findViewById(R.id.searchEditText);
         ImageButton filterButton = findViewById(R.id.filterButton);
 
         filterButton.setOnClickListener(v -> showFilterPopup());
 
-        // Filtrar casas en tiempo real
         searchBar.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -64,7 +68,6 @@ public class ViewHouseActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {}
         });
 
-        // Cargar casas desde los datos pasados
         String housesData = getIntent().getStringExtra("houses_data");
         if (housesData != null) {
             loadHouses(housesData);
@@ -73,7 +76,7 @@ public class ViewHouseActivity extends AppCompatActivity {
 
     private void loadHouses(String housesData) {
         try {
-            houseContainer.removeAllViews(); // Limpiar antes de agregar nuevas casas
+            houseContainer.removeAllViews();
 
             JSONArray housesArray = new JSONArray(housesData);
             for (int i = 0; i < housesArray.length(); i++) {
@@ -82,14 +85,26 @@ public class ViewHouseActivity extends AppCompatActivity {
                 String provincia = house.getString("provincia");
                 String price = house.getString("price");
                 String owner = house.getString("username");
+                String capacidad = house.getString("capacity");
                 JSONArray imagesArray = house.getJSONArray("imagenes");
+                JSONArray amenitiesArray = house.getJSONArray("amenities");
 
                 View houseView = LayoutInflater.from(this).inflate(R.layout.item_house, houseContainer, false);
                 TextView textDetails = houseView.findViewById(R.id.textHouseDetails);
                 ViewPager2 viewPager = houseView.findViewById(R.id.viewPagerImages);
                 TabLayout tabLayout = houseView.findViewById(R.id.tabLayoutIndicator);
 
-                textDetails.setText(provincia + ", " + canton + "\nPrecio: " + price + "\nDueño: " + owner);
+                // Convertir amenidades a lista de Strings
+                List<String> amenitiesList = new ArrayList<>();
+                for (int j = 0; j < amenitiesArray.length(); j++) {
+                    amenitiesList.add(amenitiesArray.getString(j).trim().toLowerCase()); // Normalizar
+                }
+
+                // Guardar la lista de amenidades en el Tag de la vista
+                houseView.setTag(amenitiesList);
+
+                // Asegurar que la capacidad está en los detalles
+                textDetails.setText(provincia + ", " + canton + "\nCapacidad: " + capacidad + "\nPrecio: $" + price + "\nDueño: " + owner);
 
                 List<String> imageList = new ArrayList<>();
                 for (int j = 0; j < imagesArray.length(); j++) {
@@ -98,7 +113,6 @@ public class ViewHouseActivity extends AppCompatActivity {
 
                 HouseImageAdapter adapter = new HouseImageAdapter(this, imageList);
                 viewPager.setAdapter(adapter);
-
                 new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {}).attach();
 
                 houseContainer.addView(houseView);
@@ -107,6 +121,10 @@ public class ViewHouseActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+
+
+
 
     private void filterHouses(String query) {
         for (int i = 0; i < houseContainer.getChildCount(); i++) {
@@ -126,73 +144,158 @@ public class ViewHouseActivity extends AppCompatActivity {
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.filter_popup, null);
 
-        filterPopup = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
-        filterPopup.showAtLocation(findViewById(R.id.scrollViewHouses), Gravity.CENTER, 0, 0);
+        // Configurar correctamente el PopupWindow
+        filterPopup = new PopupWindow(popupView, (int) (getResources().getDisplayMetrics().widthPixels * 0.9), ViewGroup.LayoutParams.WRAP_CONTENT, true);
+        filterPopup.setFocusable(true);
+        filterPopup.setOutsideTouchable(true);
+        filterPopup.setBackgroundDrawable(getDrawable(R.drawable.popup_background)); // Fondo personalizado
+
+        // Mostrar el popup en el centro de la pantalla
+        filterPopup.showAtLocation(findViewById(android.R.id.content), Gravity.CENTER, 0, 0);
 
         EditText editTextCapacity = popupView.findViewById(R.id.editTextCapacityFilter);
-        SeekBar seekBarPrice = popupView.findViewById(R.id.seekBarPrice);
-        TextView textMinPrice = popupView.findViewById(R.id.textMinPrice);
-        TextView textMaxPrice = popupView.findViewById(R.id.textMaxPrice);
-        LinearLayout amenitiesContainer = popupView.findViewById(R.id.amenitiesContainer);
+        RangeSlider sliderPriceRange = popupView.findViewById(R.id.sliderPriceRange);
+        TextView textSelectedPriceRange = popupView.findViewById(R.id.textSelectedPriceRange);
+        GridLayout amenitiesContainer = popupView.findViewById(R.id.amenitiesSection);
         Button buttonApply = popupView.findViewById(R.id.buttonApplyFilter);
         Button buttonClear = popupView.findViewById(R.id.buttonClearFilter);
 
-        seekBarPrice.setProgress(maxPrice);
-        textMaxPrice.setText("$" + maxPrice);
-        seekBarPrice.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                maxPrice = progress;
-                textMaxPrice.setText("$" + maxPrice);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
+        // Configurar el slider de precio
+        sliderPriceRange.setValues((float) minPrice, (float) maxPrice);
+        sliderPriceRange.addOnChangeListener((slider, value, fromUser) -> {
+            minPrice = Math.round(slider.getValues().get(0));
+            maxPrice = Math.round(slider.getValues().get(1));
+            textSelectedPriceRange.setText("Rango seleccionado: $" + minPrice + " - $" + maxPrice);
         });
 
-        String[] amenities = {"Wi-Fi", "Piscina", "Gimnasio", "Terraza", "Cocina equipada"};
-        for (String amenity : amenities) {
-            CheckBox checkBox = new CheckBox(this);
-            checkBox.setText(amenity);
-            checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                if (isChecked) {
-                    selectedAmenities.add(amenity);
-                } else {
-                    selectedAmenities.remove(amenity);
+        // Cargar las amenidades correctamente
+        amenitiesMap.clear();
+        selectedAmenities.clear(); // Asegurar que la lista se limpie antes de actualizarla
+
+        for (int i = 0; i < amenitiesContainer.getChildCount(); i++) {
+            View amenityView = amenitiesContainer.getChildAt(i);
+            if (amenityView instanceof LinearLayout) {
+                CheckBox checkBox = ((LinearLayout) amenityView).findViewById(R.id.check_cocina);
+                if (checkBox != null) {
+                    String amenityName = checkBox.getText().toString().trim().toLowerCase(); // Normalizar
+                    amenitiesMap.put(amenityName, checkBox);
+
+                    checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                        if (isChecked) {
+                            if (!selectedAmenities.contains(amenityName)) {
+                                selectedAmenities.add(amenityName);
+                            }
+                        } else {
+                            selectedAmenities.remove(amenityName);
+                        }
+                        Log.d("Filtro", "Amenidades seleccionadas actualizadas: " + selectedAmenities);
+                    });
                 }
-            });
-            amenitiesContainer.addView(checkBox);
+            }
         }
 
+        // Aplicar filtro
         buttonApply.setOnClickListener(v -> {
-            selectedCapacity = editTextCapacity.getText().toString().isEmpty() ? 0 : Integer.parseInt(editTextCapacity.getText().toString());
+            String capacityText = editTextCapacity.getText().toString().trim();
+            selectedCapacity = capacityText.isEmpty() ? 0 : Integer.parseInt(capacityText);
+
+            Log.d("Filtro", "Aplicando filtros con capacidad: " + selectedCapacity + ", Precio: $" + minPrice + " - $" + maxPrice + ", Amenidades: " + selectedAmenities);
+
+            filterHouses(); // Aplicar filtros correctamente
             filterPopup.dismiss();
-            filterHouses();
         });
 
+        // Limpiar filtros
         buttonClear.setOnClickListener(v -> {
             selectedCapacity = 0;
+            minPrice = 0;
             maxPrice = 1000;
             selectedAmenities.clear();
-            filterPopup.dismiss();
+            editTextCapacity.setText(""); // Limpiar el campo de capacidad en el popup
+
+            Log.d("Filtro", "Filtros limpiados. Capacidad: " + selectedCapacity + ", Precio: $" + minPrice + " - $" + maxPrice + ", Amenidades: " + selectedAmenities);
+
             filterHouses();
+            filterPopup.dismiss();
         });
     }
 
+
+
+
+
     private void filterHouses() {
+        Log.d("Filtro", "Aplicando filtros...");
+
         for (int i = 0; i < houseContainer.getChildCount(); i++) {
             View houseView = houseContainer.getChildAt(i);
             TextView textDetails = houseView.findViewById(R.id.textHouseDetails);
             String details = textDetails.getText().toString().toLowerCase();
-            int housePrice = Integer.parseInt(details.replaceAll("[^0-9]", ""));
 
-            boolean matchesCapacity = selectedCapacity == 0 || details.contains("capacidad: " + selectedCapacity);
-            boolean matchesPrice = housePrice <= maxPrice;
-            boolean matchesAmenities = selectedAmenities.isEmpty() || selectedAmenities.stream().allMatch(details::contains);
+            Log.d("Filtro", "Detalles de la casa: " + details);
 
+            // ---------------------------
+            // EXTRAER CAPACIDAD MÍNIMA
+            // ---------------------------
+            int houseCapacity = 0;
+            Pattern pattern = Pattern.compile("capacidad:\\s*(\\d+)");
+            Matcher matcher = pattern.matcher(details);
+
+            if (matcher.find()) {
+                houseCapacity = Integer.parseInt(matcher.group(1));
+            }
+
+            Log.d("Filtro", "Capacidad encontrada: " + houseCapacity + " | Capacidad seleccionada: " + selectedCapacity);
+
+            boolean matchesCapacity = (selectedCapacity == 0 || houseCapacity >= selectedCapacity);
+
+            // ---------------------------
+            // EXTRAER PRECIO DE LA CASA
+            // ---------------------------
+            int housePrice = 0;
+            Pattern pricePattern = Pattern.compile("precio:\\s*\\$(\\d+)");
+            Matcher priceMatcher = pricePattern.matcher(details);
+
+            if (priceMatcher.find()) {
+                housePrice = Integer.parseInt(priceMatcher.group(1));
+            }
+
+            Log.d("Filtro", "Precio encontrado: $" + housePrice + " | Rango: $" + minPrice + " - $" + maxPrice);
+
+            boolean matchesPrice = (housePrice >= minPrice && housePrice <= maxPrice);
+
+            // ---------------------------
+            // COMPARACIÓN DE AMENIDADES
+            // ---------------------------
+            List<String> houseAmenities = (List<String>) houseView.getTag();
+            if (houseAmenities == null) {
+                houseAmenities = new ArrayList<>();
+            }
+
+            // Normalizar amenidades encontradas en la casa
+            List<String> normalizedHouseAmenities = new ArrayList<>();
+            for (String amenity : houseAmenities) {
+                normalizedHouseAmenities.add(amenity.trim().toLowerCase());
+            }
+
+            // Normalizar amenidades seleccionadas para comparación
+            List<String> normalizedSelectedAmenities = new ArrayList<>();
+            for (String amenity : selectedAmenities) {
+                normalizedSelectedAmenities.add(amenity.trim().toLowerCase());
+            }
+
+            Log.d("Filtro", "Amenidades encontradas: " + normalizedHouseAmenities);
+            Log.d("Filtro", "Amenidades solicitadas: " + normalizedSelectedAmenities);
+
+            // Comparación mejorada: Asegurar que TODAS las amenidades solicitadas estén en la casa
+            boolean matchesAmenities = normalizedSelectedAmenities.isEmpty() ||
+                    normalizedHouseAmenities.containsAll(normalizedSelectedAmenities);
+
+            Log.d("Filtro", "matchesCapacity: " + matchesCapacity + ", matchesPrice: " + matchesPrice + ", matchesAmenities: " + matchesAmenities);
+
+            // ---------------------------
+            // VERIFICAR TODOS LOS FILTROS
+            // ---------------------------
             if (matchesCapacity && matchesPrice && matchesAmenities) {
                 houseView.setVisibility(View.VISIBLE);
             } else {
@@ -200,4 +303,5 @@ public class ViewHouseActivity extends AppCompatActivity {
             }
         }
     }
+
 }
