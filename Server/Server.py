@@ -94,8 +94,11 @@ class ChatServer:
                     response = self.login_user(data["username"], data["password"])
                 elif action == "luces":
                     response= self.controlar_luces(data)
+                elif action == "addHouse":
+                    response = self.add_house(data)  # Llamar la nueva función
                 else:
                     response = {"status": "error", "message": "Acción no válida"}
+
 
                 response_json = json.dumps(response) + "\n"
                 client_socket.send(response_json.encode("utf-8"))
@@ -252,8 +255,83 @@ class ChatServer:
             print(f"Error al cargar usuarios: {e}")
         return users
 
+    def add_house(self, data):
+        """ Registra una casa en la base de datos con encriptación. """
+        try:
+            username = self.encrypt(data.get("username", ""))
+            description = self.encrypt(data.get("description", ""))
+            rules = self.encrypt(data.get("rules", ""))
+            price = self.encrypt(data.get("price", ""))
+            capacity = self.encrypt(data.get("capacity", ""))
+            provincia = self.encrypt(data.get("provincia", ""))
+            canton = self.encrypt(data.get("canton", ""))
+            location = self.encrypt(data.get("location", ""))
+            photos_list = data.get("housePhotoBase64", [])
+            amenities_list = data.get("amenities", [])
 
+            if not isinstance(photos_list, list):
+                print("ERROR: `housePhotoBase64` no es una lista")
+                return {"status": "error", "message": "Formato incorrecto para imágenes"}
+            if not isinstance(amenities_list, list):
+                print("ERROR: `amenities` no es una lista")
+                return {"status": "error", "message": "Formato incorrecto para amenidades"}
 
+            # Crear el directorio para las imágenes si no existe
+            image_directory = "house_images"
+            os.makedirs(image_directory, exist_ok=True)
+
+            # Identificador único para la casa
+            house_id = int(time.time())
+
+            # Guardar cada imagen
+            image_paths = []
+            for index, photo_base64 in enumerate(photos_list):
+                try:
+                    image_data = base64.b64decode(photo_base64)
+                    image_path = os.path.join(image_directory, f"house_{house_id}_{index}.jpg")
+                    
+                    with open(image_path, "wb") as image_file:
+                        image_file.write(image_data)
+
+                    image_paths.append(image_path)
+
+                except Exception as e:
+                    print(f"Error al guardar la imagen {index}: {e}")
+                    return {"status": "error", "message": "Error al guardar las imágenes"}
+
+            # Guardar la información en database.txt con encriptación
+            try:
+                with open("database_houses.txt", "a", encoding="utf-8") as db_file:
+                    db_file.write(f"username: {username}\n")
+                    db_file.write(f"description: {description}\n")
+                    db_file.write(f"rules: {rules}\n")
+                    db_file.write(f"price: {price}\n")
+                    db_file.write(f"capacity: {capacity}\n")
+                    db_file.write(f"provincia: {provincia}\n")
+                    db_file.write(f"canton: {canton}\n")
+                    db_file.write(f"location: {location}\n")
+
+                    # Guardar las rutas de las imágenes en database.txt
+                    for i, image_path in enumerate(image_paths):
+                        db_file.write(f"photo_{i}: {image_path}\n")
+
+                    # Guardar amenidades en formato JSON para facilitar su recuperación
+                    db_file.write(f"amenities: {json.dumps(amenities_list, ensure_ascii=False)}\n")
+
+                    db_file.write(f"{'-' * 20}\n")
+
+                    
+
+            except Exception as e:
+                print(f"Error al guardar la casa en database.txt: {e}")
+                return {"status": "error", "message": "Error al registrar la casa"}
+
+            print(f" Casa guardada correctamente con ID {house_id}")
+            return {"status": "true", "message": "Casa añadida correctamente"}
+
+        except Exception as e:
+            print(f"Error al registrar casa: {e}")
+            return {"status": "error", "message": "Error al registrar la casa"}
 if __name__ == "__main__":
     ChatServer()
 

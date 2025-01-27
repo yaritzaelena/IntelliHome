@@ -15,7 +15,7 @@ import java.util.Scanner;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-
+import org.json.JSONArray; // Asegúrate de importar esto
 
 
 // Recordar que dar los permisos del HW para utilizar los componentes por ejemplo la red
@@ -190,6 +190,60 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
     }
+    public static void sendHouseData(String username, String description, String rules, String price, String capacity, String provincia,String canton,String location, JSONArray housePhotoBase64, JSONArray jsonAmenities, RegisterResponseCallback callback) {
+        new Thread(() -> {
+            try {
+                if (socket == null || socket.isClosed()) {
+                    callback.onError("Socket no inicializado o cerrado.");
+                    return;
+                }
+
+                // Construir el JSON correctamente
+                JSONObject json = new JSONObject();
+                json.put("action", "addHouse");
+                json.put("username", username);
+                json.put("description", description);
+                json.put("rules", rules);
+                json.put("price", price);
+                json.put("capacity", capacity);
+                json.put("provincia", provincia);
+                json.put("canton", canton);
+                json.put("location", location);
+                json.put("housePhotoBase64", housePhotoBase64);  // ✅ Ahora es un JSONArray real
+                json.put("amenities", jsonAmenities);
+
+                String houseDataMessage = json.toString();
+                out.println(houseDataMessage);
+                out.flush();
+                System.out.println("📤 JSON enviado al servidor: " + houseDataMessage);
+
+                // Recibir la respuesta del servidor
+                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                String response = reader.readLine();
+
+                if (response != null) {
+                    System.out.println("📥 Respuesta recibida: " + response);
+
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean status = jsonResponse.optBoolean("status", false);
+                    String message = jsonResponse.optString("message", "Sin mensaje");
+
+                    if (status) {
+                        callback.onSuccess(message);
+                    } else {
+                        callback.onError(message);
+                    }
+                } else {
+                    callback.onError("No se recibió respuesta del servidor.");
+                }
+            } catch (Exception e) {
+                callback.onError("Error: " + e.getMessage());
+            }
+        }).start();
+    }
+
+
+
 
     public static void sendHabitacionLuz(String habitacion) {
         new Thread(() -> {
