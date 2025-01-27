@@ -2,7 +2,10 @@ package com.example.miprimeraplicacion;
 
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -19,14 +22,16 @@ public class TestLeds extends AppCompatActivity {
 
         // Asociar los botones
         Button botonRegresar = findViewById(R.id.button4);
-        Button btnCocina = findViewById(R.id.button5);
-        Button btnSala = findViewById(R.id.button6);
-        Button btnGaraje = findViewById(R.id.button7);
-        Button btnCuarto1 = findViewById(R.id.button8);
-        Button btnCuarto2 = findViewById(R.id.button9);
-        Button btnBano1 = findViewById(R.id.button10);
-        Button btnBano2 = findViewById(R.id.button11);
-        Button btnCorredor = findViewById(R.id.button12);
+        View btnCocina = findViewById(R.id.viewCocina);
+        View btnSala = findViewById(R.id.viewSala);
+        View btnGaraje = findViewById(R.id.viewGaraje);
+        View btnCuarto1 = findViewById(R.id.viewHabitacion1);
+        View btnCuarto2 = findViewById(R.id.viewHabitacion2);
+        View btnBano1 = findViewById(R.id.viewBano);
+        View btnBano2 = findViewById(R.id.viewBano2);
+        View btnCorredor = findViewById(R.id.viewCorredor);
+
+        final boolean[] isHighlighted = {false, false, false, false, false, false, false, false};
 
         // Establecer un onClickListener para cada uno
         botonRegresar.setOnClickListener(v -> {
@@ -35,42 +40,106 @@ public class TestLeds extends AppCompatActivity {
         });
 
         btnCocina.setOnClickListener(v -> {
-            // Llama a una función cuando el botón Cocina es presionado
+            if (!isHighlighted[0]) {
+                // Añadir contorno verde
+                btnCocina.setBackground(createBorderDrawable(10, Color.GREEN));
+            } else {
+                // Quitar contorno (devolver a fondo transparente)
+                btnCocina.setBackgroundColor(Color.TRANSPARENT);
+            }
+            // Cambiar el estado
+            isHighlighted[0] = !isHighlighted[0];
             btnCocinaFunction();
         });
 
         btnSala.setOnClickListener(v -> {
-            // Llama a una función cuando el botón Sala es presionado
+            if (!isHighlighted[1]) {
+                // Añadir contorno verde
+                btnSala.setBackground(createBorderDrawable(10, Color.GREEN));
+            } else {
+                // Quitar contorno (devolver a fondo transparente)
+                btnSala.setBackgroundColor(Color.TRANSPARENT);
+            }
+            // Cambiar el estado
+            isHighlighted[1] = !isHighlighted[1];
             btnSalaFunction();
         });
 
         btnGaraje.setOnClickListener(v -> {
-            // Llama a una función cuando el botón Garaje es presionado
+            if (!isHighlighted[2]) {
+                // Añadir contorno verde
+                btnGaraje.setBackground(createBorderDrawable(10, Color.GREEN));
+            } else {
+                // Quitar contorno (devolver a fondo transparente)
+                btnGaraje.setBackgroundColor(Color.TRANSPARENT);
+            }
+            // Cambiar el estado
+            isHighlighted[2] = !isHighlighted[2];
             btnGarajeFunction();
         });
 
         btnCuarto1.setOnClickListener(v -> {
-            // Llama a una función cuando el botón Cuarto 1 es presionado
+            if (!isHighlighted[3]) {
+                // Añadir contorno verde
+                btnCuarto1.setBackground(createBorderDrawable(10, Color.GREEN));
+            } else {
+                // Quitar contorno (devolver a fondo transparente)
+                btnCuarto1.setBackgroundColor(Color.TRANSPARENT);
+            }
+            // Cambiar el estado
+            isHighlighted[3] = !isHighlighted[3];
             btnCuarto1Function();
         });
 
         btnCuarto2.setOnClickListener(v -> {
-            // Llama a una función cuando el botón Cuarto 2 es presionado
+            if (!isHighlighted[4]) {
+                // Añadir contorno verde
+                btnCuarto2.setBackground(createBorderDrawable(10, Color.GREEN));
+            } else {
+                // Quitar contorno (devolver a fondo transparente)
+                btnCuarto2.setBackgroundColor(Color.TRANSPARENT);
+            }
+            // Cambiar el estado
+            isHighlighted[4] = !isHighlighted[4];
             btnCuarto2Function();
         });
 
         btnBano1.setOnClickListener(v -> {
-            // Llama a una función cuando el botón Baño 1 es presionado
+            if (!isHighlighted[5]) {
+                // Añadir contorno verde
+                btnBano1.setBackground(createBorderDrawable(10, Color.GREEN));
+            } else {
+                // Quitar contorno (devolver a fondo transparente)
+                btnBano1.setBackgroundColor(Color.TRANSPARENT);
+            }
+            // Cambiar el estado
+            isHighlighted[5] = !isHighlighted[5];
             btnBano1Function();
         });
 
         btnBano2.setOnClickListener(v -> {
-            // Llama a una función cuando el botón Baño 2 es presionado
+            if (!isHighlighted[6]) {
+                // Añadir contorno verde
+                btnBano2.setBackground(createBorderDrawable(10, Color.GREEN));
+            } else {
+                // Quitar contorno (devolver a fondo transparente)
+                btnBano2.setBackgroundColor(Color.TRANSPARENT);
+            }
+            // Cambiar el estado
+            isHighlighted[6] = !isHighlighted[6];
             btnBano2Function();
         });
 
         btnCorredor.setOnClickListener(v -> {
-            // Llama a una función cuando el botón Corredor es presionado
+            if (!isHighlighted[7]) {
+                // Añadir contorno verde
+                btnCorredor.setBackground(createBorderDrawable(10, Color.GREEN));
+            } else {
+                // Quitar contorno (devolver a fondo transparente)
+                btnCorredor.setBackgroundColor(Color.TRANSPARENT);
+            }
+            // Cambiar el estado
+            isHighlighted[7] = !isHighlighted[7];
             btnCorredorFunction();
         });
     }
@@ -121,5 +190,14 @@ public class TestLeds extends AppCompatActivity {
         // Lógica para el botón Corredor
         MainActivity.sendHabitacionLuz("CORREDOR");
     }
+
+    private GradientDrawable createBorderDrawable(int borderWidth, int borderColor) {
+        GradientDrawable drawable = new GradientDrawable();
+        drawable.setShape(GradientDrawable.RECTANGLE); // Forma rectangular
+        drawable.setStroke(borderWidth, borderColor);  // Contorno de grosor y color especificados
+        drawable.setColor(Color.TRANSPARENT);          // Fondo transparente
+        return drawable;
+    }
+
 
 }
