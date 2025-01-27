@@ -145,7 +145,10 @@ public class ViewHouseActivity extends AppCompatActivity {
         View popupView = inflater.inflate(R.layout.filter_popup, null);
 
         // Configurar correctamente el PopupWindow
-        filterPopup = new PopupWindow(popupView, (int) (getResources().getDisplayMetrics().widthPixels * 0.9), ViewGroup.LayoutParams.WRAP_CONTENT, true);
+        filterPopup = new PopupWindow(popupView,
+                (int) (getResources().getDisplayMetrics().widthPixels * 0.9),
+                ViewGroup.LayoutParams.WRAP_CONTENT, true);
+
         filterPopup.setFocusable(true);
         filterPopup.setOutsideTouchable(true);
         filterPopup.setBackgroundDrawable(getDrawable(R.drawable.popup_background)); // Fondo personalizado
@@ -168,53 +171,66 @@ public class ViewHouseActivity extends AppCompatActivity {
             textSelectedPriceRange.setText("Rango seleccionado: $" + minPrice + " - $" + maxPrice);
         });
 
-        // Cargar las amenidades correctamente
+        // ---------------------------
+        // CAPTURAR TODAS LAS AMENIDADES
+        // ---------------------------
+        selectedAmenities.clear();
         amenitiesMap.clear();
-        selectedAmenities.clear(); // Asegurar que la lista se limpie antes de actualizarla
 
         for (int i = 0; i < amenitiesContainer.getChildCount(); i++) {
             View amenityView = amenitiesContainer.getChildAt(i);
-            if (amenityView instanceof LinearLayout) {
-                CheckBox checkBox = ((LinearLayout) amenityView).findViewById(R.id.check_cocina);
-                if (checkBox != null) {
-                    String amenityName = checkBox.getText().toString().trim().toLowerCase(); // Normalizar
-                    amenitiesMap.put(amenityName, checkBox);
 
-                    checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                        if (isChecked) {
-                            if (!selectedAmenities.contains(amenityName)) {
-                                selectedAmenities.add(amenityName);
+            // Asegurar que es un LinearLayout que contiene un CheckBox
+            if (amenityView instanceof LinearLayout) {
+                LinearLayout layout = (LinearLayout) amenityView;
+                for (int j = 0; j < layout.getChildCount(); j++) {
+                    View childView = layout.getChildAt(j);
+                    if (childView instanceof CheckBox) {
+                        CheckBox checkBox = (CheckBox) childView;
+                        String amenityName = checkBox.getText().toString().trim().toLowerCase();
+                        amenitiesMap.put(amenityName, checkBox);
+
+                        checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                            if (isChecked) {
+                                if (!selectedAmenities.contains(amenityName)) {
+                                    selectedAmenities.add(amenityName);
+                                }
+                            } else {
+                                selectedAmenities.remove(amenityName);
                             }
-                        } else {
-                            selectedAmenities.remove(amenityName);
-                        }
-                        Log.d("Filtro", "Amenidades seleccionadas actualizadas: " + selectedAmenities);
-                    });
+
+                            // Log para verificar la lista de amenidades seleccionadas
+                            Log.d("Filtro", "Amenidades seleccionadas actualizadas: " + selectedAmenities);
+                        });
+                    }
                 }
             }
         }
 
-        // Aplicar filtro
+        // ---------------------------
+        // APLICAR FILTRO
+        // ---------------------------
         buttonApply.setOnClickListener(v -> {
             String capacityText = editTextCapacity.getText().toString().trim();
-            selectedCapacity = capacityText.isEmpty() ? 0 : Integer.parseInt(capacityText);
-
-            Log.d("Filtro", "Aplicando filtros con capacidad: " + selectedCapacity + ", Precio: $" + minPrice + " - $" + maxPrice + ", Amenidades: " + selectedAmenities);
+            if (!capacityText.isEmpty()) {
+                selectedCapacity = Integer.parseInt(capacityText);
+            } else {
+                selectedCapacity = 0; // Si está vacío, no aplicar filtro de capacidad
+            }
 
             filterHouses(); // Aplicar filtros correctamente
             filterPopup.dismiss();
         });
 
-        // Limpiar filtros
+        // ---------------------------
+        // LIMPIAR FILTROS
+        // ---------------------------
         buttonClear.setOnClickListener(v -> {
             selectedCapacity = 0;
             minPrice = 0;
             maxPrice = 1000;
             selectedAmenities.clear();
             editTextCapacity.setText(""); // Limpiar el campo de capacidad en el popup
-
-            Log.d("Filtro", "Filtros limpiados. Capacidad: " + selectedCapacity + ", Precio: $" + minPrice + " - $" + maxPrice + ", Amenidades: " + selectedAmenities);
-
             filterHouses();
             filterPopup.dismiss();
         });
@@ -224,8 +240,11 @@ public class ViewHouseActivity extends AppCompatActivity {
 
 
 
+
     private void filterHouses() {
-        Log.d("Filtro", "Aplicando filtros...");
+        Log.d("Filtro", "Aplicando filtros con capacidad: " + selectedCapacity +
+                ", Precio: $" + minPrice + " - $" + maxPrice +
+                ", Amenidades: " + selectedAmenities);
 
         for (int i = 0; i < houseContainer.getChildCount(); i++) {
             View houseView = houseContainer.getChildAt(i);
@@ -240,13 +259,11 @@ public class ViewHouseActivity extends AppCompatActivity {
             int houseCapacity = 0;
             Pattern pattern = Pattern.compile("capacidad:\\s*(\\d+)");
             Matcher matcher = pattern.matcher(details);
-
             if (matcher.find()) {
                 houseCapacity = Integer.parseInt(matcher.group(1));
             }
 
             Log.d("Filtro", "Capacidad encontrada: " + houseCapacity + " | Capacidad seleccionada: " + selectedCapacity);
-
             boolean matchesCapacity = (selectedCapacity == 0 || houseCapacity >= selectedCapacity);
 
             // ---------------------------
@@ -255,13 +272,11 @@ public class ViewHouseActivity extends AppCompatActivity {
             int housePrice = 0;
             Pattern pricePattern = Pattern.compile("precio:\\s*\\$(\\d+)");
             Matcher priceMatcher = pricePattern.matcher(details);
-
             if (priceMatcher.find()) {
                 housePrice = Integer.parseInt(priceMatcher.group(1));
             }
 
             Log.d("Filtro", "Precio encontrado: $" + housePrice + " | Rango: $" + minPrice + " - $" + maxPrice);
-
             boolean matchesPrice = (housePrice >= minPrice && housePrice <= maxPrice);
 
             // ---------------------------
@@ -272,26 +287,21 @@ public class ViewHouseActivity extends AppCompatActivity {
                 houseAmenities = new ArrayList<>();
             }
 
-            // Normalizar amenidades encontradas en la casa
+            // Normalizar amenidades almacenadas
             List<String> normalizedHouseAmenities = new ArrayList<>();
             for (String amenity : houseAmenities) {
                 normalizedHouseAmenities.add(amenity.trim().toLowerCase());
             }
 
-            // Normalizar amenidades seleccionadas para comparación
-            List<String> normalizedSelectedAmenities = new ArrayList<>();
-            for (String amenity : selectedAmenities) {
-                normalizedSelectedAmenities.add(amenity.trim().toLowerCase());
-            }
-
             Log.d("Filtro", "Amenidades encontradas: " + normalizedHouseAmenities);
-            Log.d("Filtro", "Amenidades solicitadas: " + normalizedSelectedAmenities);
+            Log.d("Filtro", "Amenidades solicitadas: " + selectedAmenities);
 
-            // Comparación mejorada: Asegurar que TODAS las amenidades solicitadas estén en la casa
-            boolean matchesAmenities = normalizedSelectedAmenities.isEmpty() ||
-                    normalizedHouseAmenities.containsAll(normalizedSelectedAmenities);
+            boolean matchesAmenities = selectedAmenities.isEmpty() ||
+                    normalizedHouseAmenities.containsAll(selectedAmenities);
 
-            Log.d("Filtro", "matchesCapacity: " + matchesCapacity + ", matchesPrice: " + matchesPrice + ", matchesAmenities: " + matchesAmenities);
+            Log.d("Filtro", "matchesCapacity: " + matchesCapacity +
+                    ", matchesPrice: " + matchesPrice +
+                    ", matchesAmenities: " + matchesAmenities);
 
             // ---------------------------
             // VERIFICAR TODOS LOS FILTROS
@@ -303,5 +313,6 @@ public class ViewHouseActivity extends AppCompatActivity {
             }
         }
     }
+
 
 }
