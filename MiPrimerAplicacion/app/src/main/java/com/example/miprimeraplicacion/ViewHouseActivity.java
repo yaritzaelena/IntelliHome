@@ -101,6 +101,8 @@ public class ViewHouseActivity extends AppCompatActivity {
                 String owner = house.getString("username");
                 String capacidad = house.getString("capacity");
                 JSONArray imagesArray = house.getJSONArray("imagenes");
+                String description = house.has("description") ? house.getString("description") : "No disponible";
+                String rules = house.has("rules") ? house.getString("rules") : "No disponible";
                 JSONArray amenitiesArray = house.getJSONArray("amenities");
 
                 View houseView = LayoutInflater.from(this).inflate(R.layout.item_house, houseContainer, false);
@@ -129,6 +131,9 @@ public class ViewHouseActivity extends AppCompatActivity {
                 viewPager.setAdapter(adapter);
                 new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {}).attach();
 
+                // Configurar el click para abrir la ventana emergente con información detallada
+                textDetails.setOnClickListener(v -> showHousePopup(provincia, canton, price, owner, capacidad, description, rules, amenitiesArray));
+
                 houseContainer.addView(houseView);
             }
         } catch (Exception e) {
@@ -136,6 +141,79 @@ public class ViewHouseActivity extends AppCompatActivity {
         }
     }
 
+
+    private void showHousePopup(String provincia, String canton, String price, String owner, String capacidad, String description, String rules, JSONArray amenitiesArray) {
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.popup_house_details, null);
+
+        // Configurar la ventana emergente
+        PopupWindow housePopup = new PopupWindow(popupView,
+                (int) (getResources().getDisplayMetrics().widthPixels * 0.9),
+                ViewGroup.LayoutParams.WRAP_CONTENT, true);
+
+        housePopup.setFocusable(true);
+        housePopup.setOutsideTouchable(true);
+        housePopup.setBackgroundDrawable(getDrawable(R.drawable.popup_background));
+
+        // Mostrar en el centro de la pantalla
+        housePopup.showAtLocation(findViewById(android.R.id.content), Gravity.CENTER, 0, 0);
+
+        // Referencias a los elementos de la ventana emergente
+        TextView textTitle = popupView.findViewById(R.id.textHouseTitle);
+        TextView textDescription = popupView.findViewById(R.id.textHouseDescription);
+        TextView textRules = popupView.findViewById(R.id.textHouseRules);
+        TextView textPrice = popupView.findViewById(R.id.textHousePrice);
+        TextView textCapacity = popupView.findViewById(R.id.textHouseCapacity);
+        TextView textOwner = popupView.findViewById(R.id.textHouseOwner);
+        TextView textLocation = popupView.findViewById(R.id.textHouseLocation);
+        LinearLayout amenitiesContainer = popupView.findViewById(R.id.amenitiesContainer);
+        Button buttonClose = popupView.findViewById(R.id.buttonClosePopup);
+        Button buttonRent = popupView.findViewById(R.id.buttonRentHouse);
+
+        // Asignar valores
+        textTitle.setText("Detalles de la Casa");
+        textDescription.setText("Descripción: " + description);
+        textRules.setText("Reglas: " + rules);
+        textPrice.setText("Precio: $" + price);
+        textCapacity.setText("Capacidad: " + capacidad + " personas");
+        textOwner.setText("Dueño: " + owner);
+        textLocation.setText("Ubicación: " + provincia + ", " + canton);
+
+        // Agregar amenidades dinámicamente
+        amenitiesContainer.removeAllViews();
+        for (int i = 0; i < amenitiesArray.length(); i++) {
+            try {
+                String amenity = amenitiesArray.getString(i);
+                TextView amenityTextView = new TextView(this);
+                amenityTextView.setText("• " + amenity);
+                amenitiesContainer.addView(amenityTextView);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Evento para alquilar la casa
+        buttonRent.setOnClickListener(v -> {
+            Log.d("Alquiler", "Casa alquilada: " + provincia + ", " + canton + " - Dueño: " + owner);
+            showRentConfirmation(provincia, canton, price, owner);
+        });
+
+        // Cerrar popup al presionar el botón
+        buttonClose.setOnClickListener(v -> housePopup.dismiss());
+    }
+
+    private void showRentConfirmation(String provincia, String canton, String price, String owner) {
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Confirmar Alquiler")
+                .setMessage("¿Deseas alquilar esta casa en " + provincia + ", " + canton + " por $" + price + "?")
+                .setPositiveButton("Sí", (dialog, which) -> {
+                    Log.d("Alquiler", "Casa alquilada correctamente");
+                    // Aquí puedes agregar la lógica para procesar el alquiler, como actualizar la base de datos
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss())
+                .show();
+    }
 
 
 
