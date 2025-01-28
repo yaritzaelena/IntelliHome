@@ -41,9 +41,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import android.util.Log;
 import java.util.HashMap;
+import android.content.Intent;
+import android.widget.Toast;
+import android.widget.Button;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class ViewHouseActivity extends AppCompatActivity {
-
+    private House house;
     private PopupWindow filterPopup;
     private int minPrice = 0, maxPrice = 1000;
     private int selectedCapacity = 0;
@@ -196,6 +200,14 @@ public class ViewHouseActivity extends AppCompatActivity {
         buttonRent.setOnClickListener(v -> {
             Log.d("Alquiler", "Casa alquilada: " + provincia + ", " + canton + " - Dueño: " + owner);
             showRentConfirmation(provincia, canton, price, owner);
+            // Verificar que la casa tiene un ID válido
+            if (house != null && house.getId() != null) {
+                Intent intent = new Intent(ViewHouseActivity.this, ReserveHouseActivity.class);
+                intent.putExtra("HOUSE_ID", house.getId());  // ✅ Enviar ID de la casa seleccionada
+                startActivity(intent);
+            } else {
+                Toast.makeText(ViewHouseActivity.this, "Error: No se encontró el ID de la casa", Toast.LENGTH_SHORT).show();
+            }
         });
 
         // Cerrar popup al presionar el botón

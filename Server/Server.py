@@ -332,8 +332,8 @@ class ChatServer:
                     # 🔹 Modificar para devolver **URL de imagen en lugar de Base64**
                     if key.startswith("photo_"):
                         image_name = os.path.basename(value)  # Obtener solo el nombre del archivo
-                        image_url = f"http://192.168.0.152:{PORT}/images/{image_name}"  # URL de la imagen Olman
-                        #image_url = f"http://192.168.0.106:{PORT}/images/{image_name}"  # URL de la imagen Yaritza
+                        #image_url = f"http://192.168.0.152:{PORT}/images/{image_name}"  # URL de la imagen Olman
+                        image_url = f"http://192.168.0.106:{PORT}/images/{image_name}"  # URL de la imagen Yaritza
                         house_data.setdefault("imagenes", []).append(image_url)
                         print(f"📸 Imagen agregada: {image_url}")  # Depuración
                     
@@ -405,8 +405,8 @@ class ChatServer:
             # Guardar la información en database_houses.txt con encriptación
             try:
                 with open("database_houses.txt", "a", encoding="utf-8") as db_file:
-                    db_file.write(f"username: {username}\n")
                     db_file.write(f"id: {house_id}\n")
+                    db_file.write(f"username: {username}\n")
                     db_file.write(f"description: {description}\n")
                     db_file.write(f"rules: {rules}\n")
                     db_file.write(f"price: {price}\n")

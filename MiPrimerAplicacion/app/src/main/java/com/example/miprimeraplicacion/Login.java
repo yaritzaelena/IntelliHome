@@ -120,6 +120,9 @@ public class Login extends AppCompatActivity {
         buttonRegisterGoogle.setOnClickListener(v -> {
             // Acción para registrar con Google
             Toast.makeText(Login.this, "Registrar con Google", Toast.LENGTH_SHORT).show();
+            // Acción para el botón de Registrarse
+            Intent intent = new Intent(Login.this, ReserveHouseActivity.class);
+            startActivity(intent);
         });
 
         buttonRegisterFacebook.setOnClickListener(v -> {

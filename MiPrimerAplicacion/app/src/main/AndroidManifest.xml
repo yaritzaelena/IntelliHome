@@ -43,6 +43,7 @@
         <activity android:name=".TestLeds" />
         <activity android:name=".AddHouseActivity" />
         <activity android:name=".ViewHouseActivity" />
+        <activity android:name=".ReserveHouseActivity" />
         <activity android:name=".MapActivity" android:exported="true" />
 
 

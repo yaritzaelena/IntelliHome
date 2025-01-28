@@ -3,6 +3,7 @@ package com.example.miprimeraplicacion;
 import java.util.List;
 
 public class House {
+    private String id;
     private String provincia;
     private String canton;
     private String price;
@@ -11,7 +12,8 @@ public class House {
     private List<String> imageUrls;
     private List<String> amenities;
 
-    public House(String provincia, String canton, String price, String capacity, String owner, List<String> imageUrls, List<String> amenities) {
+    public House(String id, String provincia, String canton, String price, String capacity, String owner, List<String> imageUrls, List<String> amenities) {
+        this.id = id;
         this.provincia = provincia;
         this.canton = canton;
         this.price = price;
@@ -20,7 +22,9 @@ public class House {
         this.imageUrls = imageUrls;
         this.amenities = amenities;
     }
-
+    public String getId() {
+        return id;
+    }
     public String getProvincia() {
         return provincia;
     }
