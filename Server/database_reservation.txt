@@ -1,6 +1,0 @@
-reservation_id: 1738050569
-house_id: 1738041022
-userloged: yaritza
-check_in: 2024-02-10
-check_out: 2024-02-20
---------------------

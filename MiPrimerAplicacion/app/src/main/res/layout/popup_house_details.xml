@@ -43,6 +43,13 @@
             android:padding="5dp"/>
 
         <TextView
+            android:id="@+id/textHouseTaxDetails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Desglose: "
+            android:padding="5dp"/>
+
+        <TextView
             android:id="@+id/textHouseCapacity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

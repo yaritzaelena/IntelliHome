@@ -174,6 +174,7 @@ public class ViewHouseActivity extends AppCompatActivity {
         TextView textDescription = popupView.findViewById(R.id.textHouseDescription);
         TextView textRules = popupView.findViewById(R.id.textHouseRules);
         TextView textPrice = popupView.findViewById(R.id.textHousePrice);
+        TextView textTaxDetails = popupView.findViewById(R.id.textHouseTaxDetails);
         TextView textCapacity = popupView.findViewById(R.id.textHouseCapacity);
         TextView textOwner = popupView.findViewById(R.id.textHouseOwner);
         TextView textLocation = popupView.findViewById(R.id.textHouseLocation);
@@ -183,11 +184,23 @@ public class ViewHouseActivity extends AppCompatActivity {
 
         String userloged = getIntent().getStringExtra("USERNAME");
 
+        // Convertir precio a número y agregar el 23%
+        double originalPrice = Double.parseDouble(price);
+        double taxIVA = originalPrice * 0.13;  // 13% de IVA
+        double taxCleaning = originalPrice * 0.10;  // 10% de limpieza
+        double finalPrice = originalPrice + taxIVA + taxCleaning;  // Precio total con impuestos
+
+        String formattedPrice = String.format("%.2f", finalPrice); // Redondear a 2 decimales
+        String formattedTaxIVA = String.format("%.2f", taxIVA);
+        String formattedTaxCleaning = String.format("%.2f", taxCleaning);
+
+
         // Asignar valores
         textTitle.setText("Detalles de la Casa");
         textDescription.setText("Descripción: " + description);
         textRules.setText("Reglas: " + rules);
-        textPrice.setText("Precio: $" + price);
+        textPrice.setText("Precio: $" + formattedPrice + " por noche (con impuestos)");
+        textTaxDetails.setText("Incluye:\n • 13% impuesto IVA: $" + formattedTaxIVA + "\n • 10% impuesto limpieza: $" + formattedTaxCleaning);
         textCapacity.setText("Capacidad: " + capacidad + " personas");
         textOwner.setText("Dueño: " + owner);
         textLocation.setText("Ubicación: " + provincia + ", " + canton);
