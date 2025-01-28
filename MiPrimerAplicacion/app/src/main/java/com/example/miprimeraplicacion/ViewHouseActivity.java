@@ -101,10 +101,13 @@ public class ViewHouseActivity extends AppCompatActivity {
     private void loadHouses(String housesData) {
         try {
             houseContainer.removeAllViews();
+            allHouses.clear();  // ✅ Asegurar que allHouses se vacíe antes de cargar
 
             JSONArray housesArray = new JSONArray(housesData);
             for (int i = 0; i < housesArray.length(); i++) {
                 JSONObject house = housesArray.getJSONObject(i);
+                allHouses.add(house);  // ✅ Guardar en allHouses para búsqueda
+
                 String houseid = house.getString("id");
                 String canton = house.getString("canton");
                 String provincia = house.getString("provincia");
@@ -141,12 +144,13 @@ public class ViewHouseActivity extends AppCompatActivity {
                 HouseImageAdapter adapter = new HouseImageAdapter(this, imageList);
                 viewPager.setAdapter(adapter);
                 new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {}).attach();
+                houseContainer.addView(houseView);
 
                 // Configurar el click para abrir la ventana emergente con información detallada
-                textDetails.setOnClickListener(v -> showHousePopup(houseid,provincia, canton, price, owner, capacidad, description, rules, amenitiesArray));
-
-                houseContainer.addView(houseView);
+                textDetails.setOnClickListener(v -> showHousePopup(houseid, provincia, canton, price, owner, capacidad, description, rules, amenitiesArray));
             }
+
+            displayHouses(allHouses);  // ✅ Mostrar casas correctamente
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -265,12 +269,16 @@ public class ViewHouseActivity extends AppCompatActivity {
 
         for (JSONObject house : housesList) {
             try {
+                String houseid = house.getString("id");
                 String canton = house.getString("canton");
                 String provincia = house.getString("provincia");
                 String price = house.getString("price");
                 String owner = house.getString("username");
                 String capacidad = house.getString("capacity");
                 JSONArray imagesArray = house.getJSONArray("imagenes");
+                String description = house.has("description") ? house.getString("description") : "No disponible";
+                String rules = house.has("rules") ? house.getString("rules") : "No disponible";
+                JSONArray amenitiesArray = house.getJSONArray("amenities");
 
                 View houseView = LayoutInflater.from(this).inflate(R.layout.item_house, houseContainer, false);
                 TextView textDetails = houseView.findViewById(R.id.textHouseDetails);
@@ -288,12 +296,28 @@ public class ViewHouseActivity extends AppCompatActivity {
                 viewPager.setAdapter(adapter);
                 new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {}).attach();
 
+                // ✅ Restauramos la conversión de amenidades a lista y las guardamos en el Tag
+                List<String> amenitiesList = new ArrayList<>();
+                for (int j = 0; j < amenitiesArray.length(); j++) {
+                    amenitiesList.add(amenitiesArray.getString(j).trim().toLowerCase()); // Normalizar
+                }
+                houseView.setTag(amenitiesList);
+
+                // 🔥 **REESTABLECER EL LISTENER PARA MOSTRAR DETALLES DE LA CASA**
+                textDetails.setClickable(true);
+                textDetails.setFocusable(true);
+                textDetails.setOnClickListener(v -> {
+                    Log.d("Popup", "Clic detectado en casa con ID: " + houseid);
+                    showHousePopup(houseid, provincia, canton, price, owner, capacidad, description, rules, amenitiesArray);
+                });
+
                 houseContainer.addView(houseView);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
+
 
     private void loadProvinceCantonData() {
         try {
