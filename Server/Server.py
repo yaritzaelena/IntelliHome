@@ -8,7 +8,7 @@ import base64
 import serial
 
 class ChatServer:
-    def __init__(self, host='0.0.0.0', port=1717):
+    def __init__(self, host='0.0.0.0', port=5050):
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.bind((host, port))
         self.server_socket.listen(5)
@@ -96,8 +96,12 @@ class ChatServer:
                     response= self.controlar_luces(data)
                 elif action == "addHouse":
                     response = self.add_house(data)  # Llamar la nueva función
+                elif action == "getOwnerHouses":
+                    response = self.handle_get_owner_houses(self.encrypt(data["username"]))
                 else:
                     response = {"status": "error", "message": "Acción no válida"}
+                
+
 
 
                 response_json = json.dumps(response) + "\n"
@@ -332,6 +336,31 @@ class ChatServer:
         except Exception as e:
             print(f"Error al registrar casa: {e}")
             return {"status": "error", "message": "Error al registrar la casa"}
+
+def handle_get_owner_houses(self, username):
+    """ Devuelve todas las casas registradas por un usuario en `database_houses.txt` """
+    houses = []
+    try:
+        with open("database_houses.txt", "r", encoding="utf-8") as db_file:
+            house_data = {}
+            for line in db_file:
+                line = line.strip()
+                if line == "--------------------":
+                    if house_data and house_data.get("username") == username:
+                        houses.append(house_data)
+                    house_data = {}
+                else:
+                    key, value = line.split(": ", 1)
+                    house_data[key] = value
+
+        response = {"status": True, "houses": houses} if houses else {"status": False, "message": "No se encontraron casas"}
+        return json.dumps(response, ensure_ascii=False)
+
+    except Exception as e:
+        print(f"Error al leer la base de datos: {e}")
+        return json.dumps({"status": False, "message": "Error leyendo la base de datos"})
+
+
 if __name__ == "__main__":
     ChatServer()
 

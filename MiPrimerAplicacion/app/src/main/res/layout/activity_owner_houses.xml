@@ -1,0 +1,37 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#B0C4DE"
+    android:padding="16dp">
+
+    <!-- Logo -->
+    <ImageView
+        android:id="@+id/logoImage"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_centerHorizontal="true"
+        android:src="@mipmap/logotrans"
+        android:scaleType="centerInside"/>
+
+    <!-- RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewHouses"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/logoImage"
+        android:layout_marginTop="10dp"
+        android:clipToPadding="false"
+        android:paddingBottom="100dp"
+        android:scrollbars="vertical"/>
+
+    <!-- Botón Agregar Casa -->
+    <ImageButton
+        android:id="@+id/addHouseButton"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="20dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_add"
+        android:elevation="5dp"/>
+</RelativeLayout>

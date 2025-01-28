@@ -28,6 +28,11 @@ public class LoginActivity extends AppCompatActivity {
         // Configura una acción para la imagen
         imageView.setOnClickListener(v -> {
             Toast.makeText(LoginActivity.this, "Imagen presionada", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(LoginActivity.this, OwnerHousesActivity.class);
+            intent.putExtra("USERNAME", username);
+            startActivity(intent); // Llama a la actividad Login
+            Toast.makeText(LoginActivity.this, "LLAMADA", Toast.LENGTH_SHORT).show();
+
         });
 
         // Botón de Login

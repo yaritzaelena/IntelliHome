@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import org.json.JSONArray; // Asegúrate de importar esto
 
 
+
 // Recordar que dar los permisos del HW para utilizar los componentes por ejemplo la red
 // Esto se hace en el archivo AndroidManifest
 
@@ -42,8 +43,8 @@ public class MainActivity extends AppCompatActivity {
         new Thread(() -> {
             try {
                 //socket = new Socket("192.168.0.152", 1717); //Olman
-                socket = new Socket("192.168.68.104", 1717); //Daniel
-                //socket = new Socket("192.168.0.106", 1717); //Yaritza
+                //socket = new Socket("192.168.68.104", 1717); //Daniel
+                socket = new Socket("192.168.0.106", 5050); //Yaritza
                 out = new PrintWriter(socket.getOutputStream(), true);
                 in = new Scanner(socket.getInputStream());
 
@@ -273,9 +274,52 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
+    public static void getOwnerHouses(String username, ServerCallback callback) {
+        new Thread(() -> {
+            try {
+                if (socket == null || socket.isClosed()) {
+                    callback.onError("Socket no inicializado o cerrado.");
+                    return;
+                }
 
+                // Construir el JSON para solicitar las casas del propietario
+                JSONObject json = new JSONObject();
+                json.put("action", "getOwnerHouses");
+                json.put("username", username);
 
+                // Enviar solicitud al servidor
+                out.println(json.toString());
+                out.flush();
+                System.out.println("📤 Solicitud enviada al servidor: " + json);
 
+                // Recibir la respuesta del servidor
+                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                String response = reader.readLine();
+
+                if (response != null) {
+                    System.out.println("📥 Respuesta recibida: " + response);
+
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean status = jsonResponse.optBoolean("status", false);
+
+                    if (status) {
+                        JSONArray housesArray = jsonResponse.getJSONArray("houses");
+                        callback.onSuccess(housesArray.toString()); // Devuelve JSON de casas
+                    } else {
+                        callback.onError(jsonResponse.optString("message", "Error desconocido"));
+                    }
+                } else {
+                    callback.onError("No se recibió respuesta del servidor.");
+                }
+            } catch (Exception e) {
+                callback.onError("Error: " + e.getMessage());
+            }
+        }).start();
+    }
+    public interface ServerCallback {
+        void onSuccess(String response);
+        void onError(String error);
+    }
 
     public interface LoginResponseCallback {
         void onSuccess(String response);
@@ -318,5 +362,10 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+
+
+
+
 
 }
