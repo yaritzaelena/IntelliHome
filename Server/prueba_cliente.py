@@ -1,7 +1,7 @@
 import socket
 import json
 
-def request_reservations():
+def request_reservations(house_id):
     try:
         # Conectar al servidor
         client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -9,7 +9,8 @@ def request_reservations():
 
         # Crear la solicitud JSON
         request_data = {
-            "action": "get_reservations"
+            "action": "getBlockedDates",
+            "house_id": house_id
         }
 
         # Enviar la solicitud al servidor
@@ -30,4 +31,4 @@ def request_reservations():
 
 # Ejecutar la prueba
 if __name__ == "__main__":
-    request_reservations()
+    request_reservations("1738039141")
