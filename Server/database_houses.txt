@@ -70,3 +70,15 @@ photo_0: house_images\house_1737686180_0.jpg
 photo_1: house_images\house_1737686180_1.jpg
 amenities: ["Terraza o balcón", "Gimnasio en casa"]
 --------------------
+username: gAAAAABnmFvMOb0cXMJQI-CrMB2_OLAxuwMs-03z9LDp7_jPlGCK3YT86eU7DPf9VM6HxI1facU8ue-7n7FOEx7g8zGYq9Sosg==
+description: gAAAAABnmFvM9smP0CBBdfIA9_y1-FwdiPKqz_cNP3W6BBC4TjRD00hxcqdtNtR_Jij5kYdwCScQkfAB2q_X5m7QPfa2g8rQtA==
+rules: gAAAAABnmFvMXpQXEpXwGLCL58dE_6WbTEysGxQzn0rhK9a1BqMWn8WOj7SkjQgq25tE88RfU3DS46Bh_kR3N7Egp69cUT_3Rg==
+price: gAAAAABnmFvMD_CGdtfQJ97zYGKeH8D4_b6dcKt2RbbInOh-ZjCAp-2-_Uq66gLFtIA0P90YWFNINAUaS5z3pjxICH3uV96KGQ==
+capacity: gAAAAABnmFvMgS734Guc5WKHmYuCGxwXLeIt-nQ1kctvy-QZmaA8KkF35NZhp4FtRf0mZ4Tjs0ir5qH-zBASaw-hFcJG1Ds22g==
+provincia: gAAAAABnmFvMbw-n_6iD6GxbT1sb2nrBCScRdWOWcGJWr3196VTjOU9IWh6d8m7EH8MzqrHFQHxYDCZDzmzTauXyG-r_fCfbog==
+canton: gAAAAABnmFvMhDkKMl8JZyVlp8jQAWcd4mZXr6gNJIx9_iEf92TrrfxsfHybbqtuLyDnJL-CUnP36ZAnKTwGyoKnldR5IWsN3w==
+location: gAAAAABnmFvMCpaihMtNGXexEQIy6bs4ga1qxptUifnR0Y4Fu0c5f27FwHZSZtrYkHf6JGy8Scxy37md0hQiduMXn-35-zgzKH0KPRK1akXfeUuZoeE-05oWGBvVGQXq3ZTT4GXttrjvClKkdjfjG8oYANGaczSj-g==
+photo_0: house_images\house_1738038220_0.jpg
+photo_1: house_images\house_1738038220_1.jpg
+amenities: ["Cocina equipada", "Aire acondicionado"]
+--------------------
