@@ -155,6 +155,8 @@ class ChatServer:
                     response = self.get_houses()
                 elif action == "reserveHouse":
                     response = self.reserve_house(data)
+                elif action == "get_reservations":
+                    response = self.get_reservations()
                 else:
                     response = {"status": "error", "message": "Acción no válida"}
 
@@ -473,6 +475,35 @@ class ChatServer:
             print(f"Error al registrar reserva: {e}")
             return {"status": "error", "message": "Error al registrar la reserva"}
 
+    def get_reservations(self):
+        """ Obtiene todas las reservas de la base de datos y las devuelve en formato JSON """
+        reservations = []
+        try:
+            with open(self.reservation_file, "r", encoding="utf-8") as db_file:
+                lines = db_file.readlines()
+                
+                reservation = {}
+                for line in lines:
+                    line = line.strip()
+                    if line.startswith("id:"):
+                        reservation["id"] = line.split(": ")[1]
+                    elif line.startswith("house_id:"):
+                        reservation["house_id"] = self.decrypt(line.split(": ")[1])
+                    elif line.startswith("userloged:"):
+                        reservation["userloged"] = self.decrypt(line.split(": ")[1])
+                    elif line.startswith("fecha_inicio:"):
+                        reservation["checkIn"] = self.decrypt(line.split(": ")[1])
+                    elif line.startswith("fecha_fin:"):
+                        reservation["checkOut"] = self.decrypt(line.split(": ")[1])
+                    elif line == "--------------------":
+                        reservations.append(reservation)
+                        reservation = {}
+
+        except Exception as e:
+            print(f"Error al leer {self.reservation_file}: {e}")
+            return {"status": "error", "message": "Error al obtener reservas"}
+
+        return {"status": "success", "reservations": reservations}
     
 if __name__ == "__main__":
     ChatServer()
