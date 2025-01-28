@@ -28,6 +28,7 @@ public class Login extends AppCompatActivity {
         passwordEditText.setTransformationMethod(new DiamondTransformationMethod());
         Button loginButton = findViewById(R.id.buttonLogin);
         Button registerButton = findViewById(R.id.buttonRegister);
+        Button btnTest = findViewById(R.id.button13);
         ImageButton buttonRegisterGoogle = findViewById(R.id.buttonRegisterGoogle);
         ImageButton buttonRegisterFacebook = findViewById(R.id.buttonRegisterFacebook);
 
@@ -107,6 +108,12 @@ public class Login extends AppCompatActivity {
         registerButton.setOnClickListener(v -> {
             // Acción para el botón de Registrarse
             Intent intent = new Intent(Login.this, Register.class);
+            startActivity(intent);
+        });
+
+        btnTest.setOnClickListener(v -> {
+            // Acción para el botón de Registrarse
+            Intent intent = new Intent(Login.this, TestLeds.class);
             startActivity(intent);
         });
 

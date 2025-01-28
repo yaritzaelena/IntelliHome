@@ -41,7 +41,12 @@ public class MainActivity extends AppCompatActivity {
         // Iniciar el hilo para conectarse al servidor y recibir mensajes
         new Thread(() -> {
             try {
+
                 socket = new Socket("192.168.0.152", 1717); //Olman
+
+                //socket = new Socket("192.168.0.152", 1717); //Olman
+                //socket = new Socket("192.168.68.104", 1717); //Daniel
+
                 //socket = new Socket("192.168.0.106", 1717); //Yaritza
                 out = new PrintWriter(socket.getOutputStream(), true);
                 in = new Scanner(socket.getInputStream());
@@ -295,6 +300,36 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
+
+
+
+    public static void sendHabitacionLuz(String habitacion) {
+        new Thread(() -> {
+            try {
+                if (socket == null || socket.isClosed()) {
+                    System.err.println("Socket no inicializado o cerrado.");
+                    return;
+                }
+
+                // Crear el mensaje en formato JSON
+                JSONObject jsonMessage = new JSONObject();
+                jsonMessage.put("action", "luces");  // Acción que el servidor espera
+                jsonMessage.put("habitacion", habitacion);
+
+                // Convertir el mensaje a String
+                String message = jsonMessage.toString();
+
+                // Enviar el mensaje
+                out.println(message);
+                out.flush();
+                System.out.println("LOG: Datos enviados: " + message);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.err.println("Error al enviar el mensaje: " + e.getMessage());
+            }
+        }).start();
+    }
 
 
 

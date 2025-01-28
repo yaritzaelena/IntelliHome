@@ -1,5 +1,6 @@
 import socket
 import json
+import serial
 
 def send_login_request(username, password):
     try:

@@ -5,6 +5,8 @@ import socket
 import threading
 import time
 import base64
+import serial
+
 from cryptography.fernet import Fernet
 from PIL import Image
 from http.server import SimpleHTTPRequestHandler, HTTPServer
@@ -38,7 +40,7 @@ class ImageServer(SimpleHTTPRequestHandler):
             else:
                 self.send_response(404)
                 self.end_headers()
-                print(f"❌ Imagen no encontrada: {image_path}")
+                print(f" Imagen no encontrada: {image_path}")
         else:
             self.send_response(404)
             self.end_headers()
@@ -48,7 +50,7 @@ def run_image_server():
     try:
         server_address = ("", PORT)
         httpd = HTTPServer(server_address, ImageServer)
-        print(f"📢 Servidor de imágenes corriendo en http://localhost:{PORT}/images/")
+        print(f" Servidor de imágenes corriendo en http://localhost:{PORT}/images/")
         httpd.serve_forever()
     except Exception as e:
         print(f"⚠ Error al iniciar el servidor de imágenes: {e}")
@@ -57,6 +59,7 @@ def run_image_server():
 # 🔹 Iniciar servidor de imágenes en un hilo separado
 image_server_thread = threading.Thread(target=run_image_server, daemon=True)
 image_server_thread.start()
+
 
 # 🔹 Clase principal del servidor
 class ChatServer:
@@ -67,6 +70,9 @@ class ChatServer:
         self.clients = []
         self.failed_attempts = {}  # Diccionario de intentos fallidos
         self.block_duration = 120  # Tiempo de bloqueo en segundos
+        self.arduino=None
+        self.serial_port='COM8'
+        self.conexion_exitosa=False
 
         # Generar clave de encriptación si no existe
         if not os.path.exists("secret.key"):
@@ -76,6 +82,15 @@ class ChatServer:
 
         print("Servidor iniciado y esperando conexiones...")
         threading.Thread(target=self.accept_connections).start()
+
+    def conectar_arduino(self):
+        try:
+            self.arduino=serial.Serial(self.serial_port,9600)
+            print(f"Conectando al puerto {self.serial_port}")
+            self.conexion_exitosa=True
+        except serial.SerialException as e:
+            print(f"Error al conectarse al puerto serial {e}")
+            self.conexion_exitosa=False
 
     def generate_key(self):
         """ Genera una clave de cifrado y la guarda en un archivo. """
@@ -132,6 +147,8 @@ class ChatServer:
                     response = self.register_user(data)
                 elif action == "login":
                     response = self.login_user(data["username"], data["password"])
+                elif action == "luces":
+                    response= self.controlar_luces(data)
                 elif action == "addHouse":
                     response = self.add_house(data)  # Llamar la nueva función
                 elif action == "get_houses":
@@ -152,6 +169,16 @@ class ChatServer:
             client_socket.close()  # Cerrar solo cuando el cliente se desconecte.
 
 
+    def controlar_luces(self,data):
+        habitacion = data["habitacion"]
+        self.conectar_arduino()
+        if self.conexion_exitosa:
+            if self.arduino!=None:
+                self.arduino.write(habitacion.encode("utf-8"))
+                self.conexion_exitosa=False
+                self.arduino.close()
+        else:
+            print("No se pudo establecer conexion con el arduino")
 
     def register_user(self, data):
         """ Registra un usuario en la base de datos con encriptación. """
@@ -321,7 +348,7 @@ class ChatServer:
             return {"status": "true", "houses": houses} if houses else {"status": "false", "message": "No hay casas registradas"}
 
         except Exception as e:
-            print(f"❌ Error al obtener casas: {e}")
+            print(f" Error al obtener casas: {e}")
             return {"status": "false", "message": "Error al obtener casas"}
 
 
@@ -400,7 +427,7 @@ class ChatServer:
                 print(f"Error al guardar la casa en database_houses.txt: {e}")
                 return {"status": "error", "message": "Error al registrar la casa"}
 
-            print(f"🏡 Casa guardada correctamente con ID {house_id}")
+            print(f" Casa guardada correctamente con ID {house_id}")
             return {"status": "true", "message": "Casa añadida correctamente"}
 
         except Exception as e:
