@@ -4,7 +4,7 @@
 			"nombre": "San José",
 			"cantones": {
 				"01": {
-					"nombre": "Central",
+					"nombre": "San José",
 					"distritos": {
 						"01": "Carmen",
 						"02": "Merced",
@@ -230,7 +230,7 @@
 			"nombre": "Alajuela",
 			"cantones": {
 				"01": {
-					"nombre": "Central",
+					"nombre": "Alajuela",
 					"distritos": {
 						"01": "Alajuela",
 						"02": "San José",
@@ -429,7 +429,7 @@
 			"nombre": "Cartago",
 			"cantones": {
 				"01": {
-					"nombre": "Central",
+					"nombre": "Cartago",
 					"distritos": {
 						"01": "Oriental",
 						"02": "Occidental",
@@ -525,7 +525,7 @@
 			"nombre": "Heredia",
 			"cantones": {
 				"01": {
-					"nombre": "Central",
+					"nombre": "Heredia",
 					"distritos": {
 						"01": "Heredia",
 						"02": "Mercedes",
@@ -746,7 +746,7 @@
 			"nombre": "Puntarenas",
 			"cantones": {
 				"01": {
-					"nombre": "Central",
+					"nombre": "Puntarenas",
 					"distritos": {
 						"01": "Puntarenas",
 						"02": "Pitahaya",
@@ -864,7 +864,7 @@
 			"nombre": "Limón",
 			"cantones": {
 				"01": {
-					"nombre": "Central",
+					"nombre": "Limón",
 					"distritos": {
 						"01": "Limón",
 						"02": "Valle La Estrella",

@@ -1,72 +1,56 @@
-description: gAAAAABnkd8t1FEttDG8qzZuTIrlrW_zTIbz0lxjqmiMhDfzCwKi0sXyc7jPtB9V9YNjX0ZUUCETwuNNicrKliOT5M92D64_dA==
-rules: gAAAAABnkd8tRCorTs1QuUTGckMMJnkVNKT3mKLugxJpFFroht8a3tUpNzvcHZb1WZBtv02e06xbf25YTfLJBO0eRFhUfFf6eQ==
-price: gAAAAABnkd8tGOyhvY08xDPeSYijUpO-V5QsJam6AeOkUHoooJc9GsclbDKbNdiy-HNNCruKkHw7piJYaGjEMZ96ugFVvIucVw==
-capacity: gAAAAABnkd8tnBr4Gd5JySwMPDjmS4qfCdzKwVppv__RPraA_U5uT-K_fIgTNgNmz9boNEQgjhN4MlChLVVOGxjtzo372XiRLQ==
-location: gAAAAABnkd8tyb0PxumVHz1OiIDHGEeRF-qj2lJZcQyiq-Sq_-PdZ1xls6HdRtqLy6V-LOInWM9FLKKB3vSiJugTDVU1wheYxaHRyvHqatPD1gRZ0sLDVZnSV5YSecxxbAmhe4UWUqrBPfbgQ9HLn03CV8O8naP6YQ==
-photo_0: house_images\house_1737613101_0.jpg
-photo_1: house_images\house_1737613101_1.jpg
+username: gAAAAABnl-5xoDPr-WRPG1iRC_2ZlrkATJUTVBkgrf1ZjMP29sJRA7VGH6O1kMwEH2nZ252wVb2OedIZTpWEzJzTMyeQMHm63g==
+description: gAAAAABnl-5xvj5bsaAaKh-aHX3bzJQP7by3bR77bfN-V1wV0GVTbqLT5uBvVrMynIyST8UqTh8MD19zWYXNdXDNhdjdPU6tRA==
+rules: gAAAAABnl-5x6jyQ_jwkFXwC55UgwL64OIQ_q22SZPktjuUZojUFkNQukaztrnVHQ6APDNr910N7jpKoJCsCH9U_FvoUcwRYTzV-3KDrJ3hyf3tBoYzMgDnx6g-dUZ73l9w9EQ1D8A67
+price: gAAAAABnl-5x9rrBmpPut_LK4ZkIg5UKhLHL3KrXQueq6qI_uwNnHQsd8Cs0Xbb9YLOXlzD-BqVuBZdLbxJ-xvuW_jNO2zHvGQ==
+capacity: gAAAAABnl-5xcsfREh-VBKxiz6W8ohUfY25Sno3H1xxYhaEa4TUwIggud_rB6SpbkfXiNAXAZIyBDfrqL2M5U818MPowRMR1ww==
+provincia: gAAAAABnl-5xon9dLNA9YRMhmBqkQNCHmoJvWvHfnZoLiwLrd6H1gmzFxNb-d15Par3fd3U8CwVL5YMPNLrm9oriRWc5LUrKkA==
+canton: gAAAAABnl-5xPf_kKi-mO7NqkLJo0xyxQw3WH8FMd1pOVdoDlGsYRHU4hQYwiDYA0hTyjPqe4-Ks-bI1nSwSD64t2OivZcsffg==
+location: gAAAAABnl-5x__tIxELBMrvcKJ0lIW_R5Zjorq00ekPnmPO1F60Y8yngJHJcr40k5D_LUB4IDpWpMaY0V-gzcnCUX9WoMNXvVOC3cPIyb0itSGYDYWsijqfp9qpxz84ZfUn859h-FAE0ICGf1ROdxwsI9E_RdaI1Cw==
+photo_0: http://localhost:8000/images/house_1738010225_0.jpg
+amenities: ["Habitaciones con baño en suite", "Escritorio o área de trabajo", "Lavadora y secadora", "Mascotas permitidas", "Televisión por cable", "Wi-Fi gratuito", "Barbacoa o parrilla", "Jardín o patio", "Cocina equipada", "Piscina", "Calefacción", "Gimnasio en casa", "Entretenimiento", "Internet de alta velocidad", "Garaje o estacionamiento", "Chimenea", "Aire acondicionado"]
 --------------------
-description: gAAAAABnkq6BFXC4Qc2wPIMgp4XN5kkqVg36QJmrZgMeEut5KwuL07gHZTxd7X6rzJ5ojIuBAlLKdMhgGGdbUOHcQgf8TMbFTA==
-rules: gAAAAABnkq6BST6wAU3dxy4fXJNvHGIr_KSR17YCd6WUMnHsKDLRhkAkWED9ikJZjukQpT25JPbTDhwWnweZuALdaJCHiuEjQw==
-price: gAAAAABnkq6BOoWQfpcWd2WXXsxEGzOGccKv7tGYhlB2-yP68wYexeE1tVFdBjCyW4-0GNGB7KEzmokQUnQR7TCrnQtrZnKWVA==
-capacity: gAAAAABnkq6BTy7LEPAbA4h-32WPcPwMsNZ48UF_84vWNg0X6LhjiDjZcXHehH7Eo4hEhSzVIYy2mWd1BkvwgQgTkMiTdI1ICQ==
-location: gAAAAABnkq6BE9fbafsCnnBaUSqFiA4Af-wRG7KDnx7fYwZiYgyTrN5r8je2tQF9VHTVqcgmmcpNbEnoKhBXAwY8xwaS-Vz3r67TgMePBpRrj6I5xLz54LfKnIIAQvfAmUvxEIXyw52_FCdJ7tyy1yklunEkIcxl9w==
-photo_0: house_images\house_1737666177_0.jpg
+username: gAAAAABnl-7aMEi7rH43jhHtDRFz7BHLRwTGbOheQIG7neXzhX9xwwcdr725xCgW71F3KcMo6M6Erc7AcDrl6iLit4VEgJvlKg==
+description: gAAAAABnl-7azUMCeHXOxp0iop_mW00iJHO8xSJNMh2HZh4AtGcLyHcEd3Cjzv12PqnjthCxrgJjHnuNnpJxdb42i4ugsV-hmk8go0F3hCW4xbLruyq0lrxnpjNXTXMUmV9lMSsSoIZl
+rules: gAAAAABnl-7aF6EyuLvbSXKcxVgGF11-R83f_kd6fc8QA2Wv1Zf6_UHvhJkXOHU7Po7_F8v5ydPxZzMjowh8EPgqS4RPnkxwFg==
+price: gAAAAABnl-7acGvBZSWTtw_3Od5gguvVIj1m-7uQiw13b_48dNdMnQ3n5rxCq3YClu6vZHahyoL2ilwFpKEE3jeW9xIluehg4w==
+capacity: gAAAAABnl-7aOlZ6lUQdXSCFeOF5TIlsElh5rw_jX7-UlVpEqXgOnGw1C1xjNaUSGJt1c2V60X-wWmZAbjdqSHmXOYvEgjMSlg==
+provincia: gAAAAABnl-7aRZWyhlzXTQhFs-fsSccjUMKnWsStQWe2b3vj5H_B7dGh29qdk-UZg_PyyYcE1Imqv_53iaU7lz0fGdXoGJhu_w==
+canton: gAAAAABnl-7aePlA27HHJ4dABAami4gxQ2S0WhgRUQ6_aUQKyG3u7sRHhQcXVB0dhcImkZ_8wj447cXhLTEkRWqhPEzKEZLM8A==
+location: gAAAAABnl-7a_5XfLhcPTNqSDvjrO1iWOWnf0Z8hi_5-YXwaf-VbAXZmei70KmBIhe6rm8YYefX_s1v4ZvcCRGB6CQqTARbn1u8fxo8d7NEkVKzDF8jYlPmxE4b_0R4orNImlZYARAZwLkaXRvOR1vERcw-gDa1ayg==
+photo_0: http://localhost:8000/images/house_1738010330_0.jpg
+amenities: ["Sistema de seguridad", "Televisión por cable", "Tiendas y restaurantes", "Wi-Fi gratuito", "Cocina equipada", "Terraza o balcón", "Calefacción"]
 --------------------
-description: gAAAAABnkrI6lcG3zvpKBX52v_RLNHWkvhplSGvEVPRrWE9l2-HJkp1vhz_tSV5wN2ibTcUHfmtWzhAJdIO0OHGQRgW1QSY42Q==
-rules: gAAAAABnkrI6ftE6WFWPB68XsILTz_-SP1X1VtVHHJcC2tPiHTa3Xlve6vWF0Aez9gyVsj5-vMhgCRZFdYG013pnmYru58I-jw==
-price: gAAAAABnkrI6KTzwPx1R3Av2pX2XzgOMrv_vqUw1RBuVbKke4tkrsBIMNwNyKnLXE2BmT9yihFUlhnZFPkiXh3l759EqlYBDDA==
-capacity: gAAAAABnkrI6Icfk9faTJbHcsGTfTxu-4kHHl5HDGGJ465GhVc2CVCA8Q4oF174kFV6EUHNqWJiwem8xBJZkiG-0lrOexBuGaA==
-location: gAAAAABnkrI68Ynf56S9l_Ldw_CEEOjY5mDnsY5JfRNQKE583luEjbg2foVDtoaaIKUFkrZNr0bLU6-Yhio-pFBHmHyawaaeEHeahTeXmPxv6PaxNKW1dSJq4wSSqKZKmZCzMivxLIh-1le6n8lNBO-RLNdsLSOSTQ==
-photo_0: house_images\house_1737667130_0.jpg
+username: gAAAAABnl-9rrXPOu9k7GbhLcZONPyF9UOOG-PmvMsFBt1DmqLaz9QAzVIbegkU73K1o6a8Wi5pEdb2G86ocvYGsLxx82lK2gw==
+description: gAAAAABnl-9r0cklXEyxprd8cXi4PHSeUY2SZ2TLxAj-rwU4hpn_X_TiLjmKxhT5cuGed8Sa-960UUVJNS1p8jXTlVz0Yuxs9dj_1YhpsmTrlZ-XOoSpoRY=
+rules: gAAAAABnl-9rcp_yc90SRDF2rGzKKB_X-g8QSncvv5niyf3z3GWVpnjL4Ue90GHT_PibbwSvGcqzEorFzZoIGWLFV9niwmGQhljeN4j-SKIyfbzWoMXGdn-fOwHGxw-C1LAZ1HvhmSQy
+price: gAAAAABnl-9ra7ZVO7U3SFVQhba1oHcgc4PMdiDMuwtxHN7MifAVm7f6gfOr2Ym8rBfSCx8On9T-OWBpfBUix9YJp39RKTc-hg==
+capacity: gAAAAABnl-9rS_LFN45yu4gg7GOsUAAxUhxq7cR6kLW08TgD2VxYUm1KT3R7iR-zTSRpLKMt4bMAe8HiVknd9dIQs-HpkVkDKw==
+provincia: gAAAAABnl-9rHPCy6a-lwr2LjiPgAPuxCPsBNIIcBfpG2gplKBdXbYt0EInbb5u6hekC0QLdQmRoON2FMOqxc9H_Grlr9zLteg==
+canton: gAAAAABnl-9rknwXeIzJ8KzD49pA0XbBOKkXDyZH-vcupzXwV-Ci4J1Vuaeb5eXnoIlN8DA4LiFoOSeejDeBV7R7cUG-o5ITow==
+location: gAAAAABnl-9rJ0_vPFvuFCm5yhbF3OtMaTPgTnB23rMK38xcpy_hnzpEFqnN1lIuVpIh0YKE1jHoN_Kb8Wi4X_aipooRxcrEqCEOhxmPzBQNQqvPySGQi7Wjf-MPYdVTJQjrHFLSWsk2jYmarbe8N-KhumgOipcr6Q==
+photo_0: http://localhost:8000/images/house_1738010475_0.jpg
+amenities: ["Sofá cama", "Lavadora y secadora", "Televisión por cable", "Cafetera", "Wi-Fi gratuito", "Cocina equipada", "Entretenimiento", "Aire acondicionado"]
 --------------------
-username: gAAAAABnksDr4FQeFkR2SNIE8fbI9941wAQZZSxoWTPa5_z8iNfejP9Qt2nWdgezUsjbuv67e9gVNyUqYpzyjqlWa8SmaWwesg==
-description: gAAAAABnksDr4dgqT3KtzC-qsqruWMO6W86UsYoPja8jbvQxlY1YUCRRmvLDZQHHg45HrMV9ZGQtUt6afJdzCTfQ5M3vmGPnKg==
-rules: gAAAAABnksDrnDwJvrC2JnufmIkCxPcJutNTxJqGHGgY_RChvC32TwL5Oj002-zZGs0bSOB-fyxzaXC6uQBz3uRsUogZfAE-bA==
-price: gAAAAABnksDrm5nc7V7gVI872FIQE2MzemR5nzlA8EVzYJ8FJqeqI4WOgiAlMpQqkQrgEpLX-XGYZqwOLktRn6qh14YQZAV5DQ==
-capacity: gAAAAABnksDrfG7Gf_h6QBVNI78PCzU7MyuKK9DTDDSG_ihD3YFDhAYVI_BbsOxRli4-f21Ns4j6mM-f6zsSTO4Br8e5F0S6Fg==
-location: gAAAAABnksDrHopH1RjqG8Nif1seURj29WlqsEZ2DN_szHYtyLygP1GfVjIV1ZU_XZv_-1YcF3QSboyPlkTA7FnEK1c-t6K6MnnnVYspgXHeR-xtTt_sB82ZrY0f-H4YaoHJDWaRhAHIHG7i2Slq2X41ugeBxVLDww==
-photo_0: house_images\house_1737670891_0.jpg
+username: gAAAAABnl-_xMWzIBIetOYS39tyj7dMLXo4gMk1wc5ZKa53oyQTRjzaFvuVYFVZZgzoIWTi9tdXXasceWhf-7gq5W-QK4eMj4g==
+description: gAAAAABnl-_xI4AYkLVi7b8xzQGVAVIbW39FS263gBUG39K3yc-ooNR4mS__3zWbzyPNrbgEemZknMc5SahE_bVMVZenwb7xCw==
+rules: gAAAAABnl-_xr65sQvvIJC6VsiH3C-0uymXvJ4mFIUqzsXpC1hycAS2fNO2M6m86zWcJbMSJGXpZb40ur_tzlMpr1KZ9NtcvxdsmrzpAHsm8untgzSuASatZGPoNMEAQzJzY_dRuwVUgAVi9zyzUUjWOMmTYJgef5cR98bzsweh0TJkarONZad4=
+price: gAAAAABnl-_xa-P2_Uz9E3X-0ZidtKuBF2tGwBDdZMzTKlRBW4YIK8YIq2ZKlgG5BYQz0Fb9SB5cACD-coomTexAQJpA867heA==
+capacity: gAAAAABnl-_xVdbNets_eHXNtvXi1AxPdM16AIYFmHuTeWctpDR8bIol9jb_qFaK3x3P2cnqvpuIGI-vUa82C49bTCkfky9Tvg==
+provincia: gAAAAABnl-_xhu7_4Yd3xI9PwUVPrMkWs8_6FNInqjFVwDsyUG39GtNcJj_Amr2i-JW44LFvfXrsCy-Nf-TIV-Ov8hfdX1pM2g==
+canton: gAAAAABnl-_xquoJpDXwx2dS2l5lWiE4eNpxB4je-hMfjegzJrJHMQbzrehRIwOL77qq63KPnik9omrX1L4aTy93CFSFRAILqQ==
+location: gAAAAABnl-_xc8uqrfejoDEAXgGP4GNoOWjkwyCORg2b6k4a643zdXJ9vbDHLGR6py2oS9ahH_vEZnnTeHvuVh7WJTiy5bo-JgP7nnCb0g9228_h5OBKexXlPyul5vOSixGp2KIRLGsrJnjFjjYaqAuh1NyJ1OXBuA==
+photo_0: http://localhost:8000/images/house_1738010609_0.jpg
+amenities: ["Muebles de exterior", "Wi-Fi gratuito", "Cocina equipada", "Piscina", "Calefacción", "Gimnasio en casa", "Garaje o estacionamiento", "Aire acondicionado"]
 --------------------
-username: gAAAAABnksQUcubd29brLMqReNW7N4Y6Cn2UDuw1f_H0R_M_48J8FaJ1qHij1D0g2hREWwUJbsXnT6jiHoLG_yXl0aSSJ1lKow==
-description: gAAAAABnksQUDKya8xEkq4_FmmIEsAFQiLJ0g5XZ7MPnqE5AVyu3a8LgISeWR2nB3LlX4jEsMPTlPo4QnlW2MXoBpE_eQCgi3w==
-rules: gAAAAABnksQUuNgwEJrbko1ru3bhRSU83qrB80_YI92rbjJCCCsmdiOpCPq6kNq_AQEb_gL8WqSgMuk8E3j-aIFd9pQdzqKTYQ==
-price: gAAAAABnksQUcTaScgnPbDFJ_fWz6186-bbrEI6rC_-FALf50uNbjU2L2i5K1yORUO4q0kAEiwFz1ZOZdKiuujC58HfcaQ__TA==
-capacity: gAAAAABnksQUXbQVtc1uYvvLKjxdY4kL4ZZ6HaMgEjTz8SDaFTOwzP2SI41I3w51tsOrpyCnj-VMXUCdT9JAncICccdW5sXI4w==
-location: gAAAAABnksQURmGAwp6NlpewJwyo3n0Vb7FKJZgFvS27-DwJqb2RqEpa0QFv9Vn20TWuxK2WsjPDecckj5yBn1gmASSX1iHNxdNYYIyFTFfyoVsJXvfXZnzFqa-k2B7jeNnn51X_Hvj62AvbMXIWLmvLOmdsFQ-C6g==
-photo_0: house_images\house_1737671700_0.jpg
-photo_1: house_images\house_1737671700_1.jpg
-photo_2: house_images\house_1737671700_2.jpg
---------------------
-username: gAAAAABnkvBh8i8cwOH6gNJx9MOlEnvqE35yMpy8cJ_BUXO3uzs7zTdu_ahACD7ki3CkXE8jxb098YBn2S5OYpnUpiaYxBPCLA==
-description: gAAAAABnkvBhYPKyYhkJogQdoYN8DLLb7XBQUsikCv0QLIwoxnD4s84hQGUPEJ1r_GyFfpvTfaO7UwTZdRPnjgXpbXTREyJ4vg==
-rules: gAAAAABnkvBhbgd6oWQQPuyuVxsHFYNixZim3bf4txQzd1NsKiUnTZ7aRL3X1KwDMYdh3q7qHxaFI6Ltmufo0h38n48q-Ue54A==
-price: gAAAAABnkvBhuFWYn2fYsdNF-7-W-FHHUUDK6QJGCi28YW9076TAmgtI3hCHDTcqTPYeecOTF9ktQ6jpVsNvKLcHLv8bccmpmA==
-capacity: gAAAAABnkvBhmX6zXIC6smz6f9EJf_zTAZzcbpXwceAbqJgiuozdwNRRlbii_yFjhyx5Qg7dzYepTp3YwQa17xFMnSzyPi2AjA==
-location: gAAAAABnkvBhsfQqv3GOHeGTQbKTlw3m_81S3vMGb106gUPiAw197fv3cVSjCycaTF33h4GjQT7IGEH0Qh-Ygc5GLKLaXhZhlpJIsDK956vxP-vyHK1j9wa8fkGtwzGLZ4YAnYJjyWwjDp6DNSylaN7bIozcCq0X7Q==
-photo_0: house_images\house_1737683041_0.jpg
-photo_1: house_images\house_1737683041_1.jpg
-amenities: ["Cocina equipada", "Calefacción", "Aire acondicionado"]
---------------------
-username: gAAAAABnkvOXjHw34EQPuyzhvVLJuwa1TLsfzlF9f_2FOoez2gUfX9-SVTEfHcvOWNW6-gmxiMG3R2zXaAeU3yxd24fXkzyFRw==
-description: gAAAAABnkvOX8qH3BSb9VRWHb2lk2LzsuwwiDFpFNbuX_7h2lfvzKcOXCbFDiM_MLv0ur7bGr6k0U_Vp63_kO8NZiPFvKFk_ww==
-rules: gAAAAABnkvOXIA23OVxTI5dN44ubD-0I1aDnKrcnLsPQ9E63ab2G5En-y3ek6I-W_XOcmhehwYyqrAKgbTqR4HeNbf0mJ06bpA==
-price: gAAAAABnkvOX1R7WGf2sxVityqUIakjCYrfDduyz7vXGfa7QKcimvP7o-an4-Jxa-Lm48zJbVDGmohmc1lMIRVuFmhcdwQ1RJw==
-capacity: gAAAAABnkvOXcGqcgbwnmG0B3LYqUrG6J_WleM0VP2hwLSnfFiCuQg73elJMjDgJe20ALgu-5RMGP0vvgs92veB47xAqHoQT8g==
-location: gAAAAABnkvOXSjDEJ1FCCYXGg8K8bkopnUBedUadwBpKsD06M5XaM-NEvKicIKyovbYj9-Nt8ccgTHMD-AWEjtHH7g1VMEJ0kQ1Z3JymYzd9TQxKark53HdTUqx-vBpwdsuR53UEsXdc1ruO36B9WVBdZJvcLf6faQ==
-photo_0: house_images\house_1737683863_0.jpg
-photo_1: house_images\house_1737683863_1.jpg
-amenities: ["Cocina equipada", "Calefacción", "Aire acondicionado"]
---------------------
-username: gAAAAABnkvykR21ipvpkjgWaK-js4hUMX93TFkTPls3kJ3SFtiz-Dlpa_Ayk70U2KfBaQKCUAxP-C5RfrIkSfCP5nBPOSPlW4Q==
-description: gAAAAABnkvykmi4JFv85ySkpFOM6rNkzpzfyjcr7T6YIniv7OAxPWhncNbQBzky9I2Fl3BNu6Zb6DthVIBicmcDpluJKtIXCqg==
-rules: gAAAAABnkvyk36Vb5OLKDAXODE6ASyB2MzKrDYTR6QZhY9pv6pfrWR2F8iscrRnZydW3MrKa1P7OXx6-gQF2kvx4YUbVCikI0w==
-price: gAAAAABnkvykzLo_okUTaAA5vNTttPVgwu5IrVVqUr_VJg9gCToKDfqF7y2xF-XcoDwHJIx4qqtVgOcJO0fdXF3sy76ZmzcoWA==
-capacity: gAAAAABnkvyksyVtjeCu7ftIMpZmvO7576WFBAbHEIZPsI1BN5lHh_voWv5rl4kelX7VcyTXAn0uTUX_aZ7uBmzK0adk8wV9sQ==
-provincia: gAAAAABnkvykW3knfzt6gw-rf0RO_xgyUN7TshD8UB3ZOn-XXrdSDi2ZDotBZb9ecjZ-Q2mTbRW9AFyefjYTOjZn4Ng5J3ODfw==
-canton: gAAAAABnkvykve1tszKKQ2aAXhMddGlF22YFc6BxdIsCjfivNvMwlky--EX6m8qc-xldYvJZqq2ofwP_GkacjUaCaDHE6hijwA==
-location: gAAAAABnkvykmzNbmWsIdca-BDU7r6sAeF9aQTiSGejJbMLRXUJr2apF2LLlV-mNbqHM0vRbAKCWP3XVIeqge5jGIviZI3qC1iCGr1SeJ_kPtLlVlAdtz2_G_ziAohcWB4nSxlGQfdIyc12xVW76RCraqf62GVBamg==
-photo_0: house_images\house_1737686180_0.jpg
-photo_1: house_images\house_1737686180_1.jpg
-amenities: ["Terraza o balcón", "Gimnasio en casa"]
+username: gAAAAABnmB4gxYnrI-W1UkFqwTBrl1qMWKtR0jTVm12hrQgo-U31GLygzEQc_fcFdmGyxYU1caEkQEx9R4x-dA6gr7AxTWvZDQ==
+description: gAAAAABnmB4g2Rtr8IPYUVliMIR7KljaHHgJpN4ftixAKMrYpSNbxGPCuLWGD0wq7zKfX2SGN9txQxiKexH8T0yzrC-637O5QI_9HiC5oMb6dOKirKPD2Qo=
+rules: gAAAAABnmB4ggApO_5lMed7-ALwa6QYn9FponOm8Y5LgndxWR9cKSlgMOhmRcfCZKiZncoFfJJlUG0d0f8ccJDOHh8VnoCAKeZY3vmFusr0l49Vu8KnAILM=
+price: gAAAAABnmB4g3DYNxUsU9BURZFAkLLtbzmrEN_tUpOb7Wi9FNw5lyxdJusx4ODQjJBtmPjWcqktz7RAM3IJhKR-V39l09d3jEw==
+capacity: gAAAAABnmB4g-YbqzHOdWBNGRUs82QIaYXxHuaI7rn3TyoytjFnhQlvHw7bpHbG2TQrD_pR-1y4DqcsC1WN0JBUbg0alWeEUsw==
+provincia: gAAAAABnmB4gHUnvtJ_gx4QRabgiFxm8CBfgz_mHpE3elSGu_WW_HtuXxrdCozww8OPmmkeABGFe0HGyQQhMsPtYxxS062izNg==
+canton: gAAAAABnmB4gOqzhvr5uub2q0h5DC34zL-k8pgU1SQD5wJ-IxqMcwKpIUBJvQHMbcOLJd9hn93vP77DQbPHf8-reKaO2u9zqJA==
+location: gAAAAABnmB4gHd-fZpujYWoik0FGvYHmewxg4oW4e5uDFLtAGqriajNYDiYnk-4n9HpTDvk7vXxgVhDiW9Zxp-93GGu0cpSYj4zngldv751YVowjs9sGZ6JDpGQ2yhEUNSEmoQ8UVDUqa_QPZQvWtawQCCVRbAIUvA==
+photo_0: http://localhost:8000/images/house_1738022432_0.jpg
+photo_1: http://localhost:8000/images/house_1738022432_1.jpg
+amenities: ["Microondas", "Escritorio o área de trabajo", "Lavadora y secadora", "Mascotas permitidas", "Televisión por cable", "Tiendas y restaurantes", "Cafetera", "Wi-Fi gratuito", "Barbacoa o parrilla", "Jardín o patio", "Cocina equipada", "Ropa de cama y toallas", "Piscina", "Gimnasio en casa", "Entretenimiento", "Servicios de limpieza", "Garaje o estacionamiento"]
 --------------------
