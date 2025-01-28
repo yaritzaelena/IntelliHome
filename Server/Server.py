@@ -5,7 +5,6 @@ import socket
 import threading
 import time
 import base64
-import serial
 
 class ChatServer:
     def __init__(self, host='0.0.0.0', port=1717):
@@ -15,9 +14,6 @@ class ChatServer:
         self.clients = []
         self.failed_attempts = {}  # Diccionario de intentos fallidos
         self.block_duration = 120  # Tiempo de bloqueo en segundos
-        self.arduino=None
-        self.serial_port='COM8'
-        self.conexion_exitosa=False
 
         # Generar clave de encriptación si no existe
         if not os.path.exists("secret.key"):
@@ -27,15 +23,6 @@ class ChatServer:
 
         print("Servidor iniciado y esperando conexiones...")
         threading.Thread(target=self.accept_connections).start()
-
-    def conectar_arduino(self):
-        try:
-            self.arduino=serial.Serial(self.serial_port,9600)
-            print(f"Conectando al puerto {self.serial_port}")
-            self.conexion_exitosa=True
-        except serial.SerialException as e:
-            print(f"Error al conectarse al puerto serial {e}")
-            self.conexion_exitosa=False
 
     def generate_key(self):
         """ Genera una clave de cifrado y la guarda en un archivo. """
@@ -92,17 +79,10 @@ class ChatServer:
                     response = self.register_user(data)
                 elif action == "login":
                     response = self.login_user(data["username"], data["password"])
-                elif action == "luces":
-                    response= self.controlar_luces(data)
                 elif action == "addHouse":
                     response = self.add_house(data)  # Llamar la nueva función
-                elif action == "ownhouse":
-                    response = self.handle_get_owner_houses(data["username"])
-                    print("aqui")
                 else:
                     response = {"status": "error", "message": "Acción no válida"}
-                
-
 
 
                 response_json = json.dumps(response) + "\n"
@@ -117,16 +97,6 @@ class ChatServer:
             client_socket.close()  # Cerrar solo cuando el cliente se desconecte.
 
 
-    def controlar_luces(self,data):
-        habitacion = data["habitacion"]
-        self.conectar_arduino()
-        if self.conexion_exitosa:
-            if self.arduino!=None:
-                self.arduino.write(habitacion.encode("utf-8"))
-                self.conexion_exitosa=False
-                self.arduino.close()
-        else:
-            print("No se pudo establecer conexion con el arduino")
 
     def register_user(self, data):
         """ Registra un usuario en la base de datos con encriptación. """
@@ -307,8 +277,8 @@ class ChatServer:
             # Guardar la información en database.txt con encriptación
             try:
                 with open("database_houses.txt", "a", encoding="utf-8") as db_file:
+                    db_file.write(f"id: {house_id}\n")
                     db_file.write(f"username: {username}\n")
-                    db_file.write (f"id: {house_id}\n")
                     db_file.write(f"description: {description}\n")
                     db_file.write(f"rules: {rules}\n")
                     db_file.write(f"price: {price}\n")
@@ -338,34 +308,5 @@ class ChatServer:
         except Exception as e:
             print(f"Error al registrar casa: {e}")
             return {"status": "error", "message": "Error al registrar la casa"}
-
-    def handle_get_owner_houses(self, username):
-        """ Devuelve todas las casas registradas por un usuario en `database_houses.txt` """
-        houses = []
-        try:
-            with open("database_houses.txt", "r", encoding="utf-8") as db_file:
-                house_data = {}
-                for line in db_file:
-                    line = line.strip()
-                    if line == "--------------------":
-                        # Desencriptar el username almacenado y compararlo
-                        if house_data and self.decrypt(house_data.get("username", "")) == username:
-                            # Desencriptar todos los datos de la casa antes de enviarlos
-                            decrypted_house = {key: self.decrypt(value) for key, value in house_data.items()}
-                            houses.append(decrypted_house)
-                        house_data = {}
-                    else:
-                        key, value = line.split(": ", 1)
-                        house_data[key] = value
-
-            response = {"status": True, "houses": houses} if houses else {"status": False, "message": "No se encontraron casas"}
-            return json.dumps(response, ensure_ascii=False)
-
-        except Exception as e:
-            print(f"Error al leer la base de datos: {e}")
-            return json.dumps({"status": False, "message": "Error leyendo la base de datos"})
-
 if __name__ == "__main__":
     ChatServer()
-
-
