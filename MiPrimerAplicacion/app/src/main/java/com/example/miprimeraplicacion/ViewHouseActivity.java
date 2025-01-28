@@ -101,10 +101,12 @@ public class ViewHouseActivity extends AppCompatActivity {
     private void loadHouses(String housesData) {
         try {
             houseContainer.removeAllViews();
+            allHouses.clear();
 
             JSONArray housesArray = new JSONArray(housesData);
             for (int i = 0; i < housesArray.length(); i++) {
                 JSONObject house = housesArray.getJSONObject(i);
+                allHouses.add(house);
                 String houseid = house.getString("id");
                 String canton = house.getString("canton");
                 String provincia = house.getString("provincia");
@@ -147,6 +149,7 @@ public class ViewHouseActivity extends AppCompatActivity {
 
                 houseContainer.addView(houseView);
             }
+            displayHouses(allHouses);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -303,8 +306,7 @@ public class ViewHouseActivity extends AppCompatActivity {
                 return;
             }
 
-            JSONObject rootObject = new JSONObject(json); // ✅ Se usa `json`, no `jsonString`
-
+            JSONObject rootObject = new JSONObject(json);
             if (!rootObject.has("provincias")) {
                 Log.e("CargaProvincias", "Error: No se encontró la clave 'provincias' en el JSON");
                 return;
@@ -315,7 +317,10 @@ public class ViewHouseActivity extends AppCompatActivity {
             for (Iterator<String> provinceIt = provinciasObject.keys(); provinceIt.hasNext(); ) {
                 String provinceKey = provinceIt.next();
                 JSONObject province = provinciasObject.getJSONObject(provinceKey);
-                String provinceName = province.getString("nombre").trim().toLowerCase();
+                String provinceName = province.optString("nombre", "").trim().toLowerCase();
+                if (provinceName.isEmpty()) {
+                    continue;
+                }
 
                 if (!province.has("cantones")) {
                     Log.e("CargaProvincias", "Error: La provincia " + provinceName + " no tiene cantones");
@@ -327,12 +332,10 @@ public class ViewHouseActivity extends AppCompatActivity {
                 for (Iterator<String> cantonIt = cantons.keys(); cantonIt.hasNext(); ) {
                     String cantonKey = cantonIt.next();
                     JSONObject canton = cantons.getJSONObject(cantonKey);
-                    String cantonName = canton.getString("nombre").trim().toLowerCase();
-
-                    // ✅ Guardamos la relación cantón -> provincia
-                    cantonToProvinciaMap.put(cantonName, provinceName);
-
-                    Log.d("CargaProvincias", "Cargado Cantón: " + cantonName + " -> Provincia: " + provinceName);
+                    String cantonName = canton.optString("nombre", "").trim().toLowerCase();
+                    if (!cantonName.isEmpty()) {
+                        cantonToProvinciaMap.put(cantonName, provinceName);
+                    }
                 }
             }
 
@@ -344,6 +347,7 @@ public class ViewHouseActivity extends AppCompatActivity {
     }
 
 
+
     private void filterHouses(String query) {
         if (query.isEmpty()) {
             displayHouses(allHouses);
@@ -352,13 +356,11 @@ public class ViewHouseActivity extends AppCompatActivity {
 
         query = query.trim().toLowerCase();
 
-        if (cantonToProvinciaMap == null || cantonToProvinciaMap.isEmpty()) {
-            Log.e("FiltroBusqueda", "Error: Mapa cantonToProvinciaMap no está cargado.");
-            return;
-        }
-
+        // 🔹 Si la consulta no está en el mapa, asumimos que es una provincia en vez de un cantón
         String provinceMatch = cantonToProvinciaMap.get(query);
-        Log.d("FiltroBusqueda", "Query: " + query + " -> Provincia encontrada: " + provinceMatch);
+        if (provinceMatch == null) {
+            provinceMatch = query;  // 🔹 Intentar buscar directamente por provincia si no está en el mapa
+        }
 
         List<JSONObject> matchingCanton = new ArrayList<>();
         List<JSONObject> matchingProvince = new ArrayList<>();
@@ -368,30 +370,23 @@ public class ViewHouseActivity extends AppCompatActivity {
                 String houseCanton = house.getString("canton").trim().toLowerCase();
                 String houseProvince = house.getString("provincia").trim().toLowerCase();
 
-                Log.d("FiltroCasas", "Casa: " + houseCanton + ", " + houseProvince);
-
                 if (houseCanton.equals(query)) {
                     matchingCanton.add(house);
-                    Log.d("FiltroCasas", "✔ Coincide con cantón: " + houseCanton);
-                } else if (provinceMatch != null && houseProvince.equals(provinceMatch)) {
+                } else if (houseProvince.equals(provinceMatch)) {
                     matchingProvince.add(house);
-                    Log.d("FiltroCasas", "✔ Coincide con provincia: " + houseProvince);
                 }
             } catch (Exception e) {
                 Log.e("FiltroCasas", "Error procesando casa", e);
             }
         }
 
-        // 🔥❗️EXCLUSIÓN: Si no coincide ni por cantón ni por provincia, NO SE AGREGA
         List<JSONObject> sortedList = new ArrayList<>();
         sortedList.addAll(matchingCanton);
         sortedList.addAll(matchingProvince);
 
-        Log.d("FiltroFinal", "Casas ordenadas: Cantón=" + matchingCanton.size() +
-                ", Provincia=" + matchingProvince.size());
-
         displayHouses(sortedList);
     }
+
 
     private void showFilterPopup() {
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
