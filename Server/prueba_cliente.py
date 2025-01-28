@@ -1,35 +1,33 @@
 import socket
 import json
-import serial
 
-def send_login_request(username, password):
+def request_reservations():
     try:
-        # Connect to the server
+        # Conectar al servidor
         client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        client_socket.connect(('192.168.0.152', 1717))  # Update with your server's IP and port
+        client_socket.connect(('192.168.0.152', 1717))  # Cambia la IP y puerto si es necesario
 
-        # Prepare the login JSON
-        login_data = {
-            "action": "login",
-            "username": username,
-            "password": password
+        # Crear la solicitud JSON
+        request_data = {
+            "action": "get_reservations"
         }
 
-        # Send the data
-        client_socket.sendall(json.dumps(login_data).encode('utf-8'))
-        print(f"Sent: {login_data}")
+        # Enviar la solicitud al servidor
+        client_socket.sendall(json.dumps(request_data).encode('utf-8'))
+        print(f"📩 Solicitud enviada: {request_data}")
 
-        # Receive the response
-        response = client_socket.recv(1024).decode('utf-8')
-        print(f"Received: {response}")
+        # Recibir la respuesta del servidor
+        response = client_socket.recv(4096).decode('utf-8')
+        response_json = json.loads(response)
+
+        print(f"📩 Respuesta del servidor: {json.dumps(response_json, indent=4, ensure_ascii=False)}")
 
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"❌ Error: {e}")
 
     finally:
         client_socket.close()
 
+# Ejecutar la prueba
 if __name__ == "__main__":
-    # Test the client with valid and invalid credentials
-    send_login_request("Olman2020", "1235")  # Example of invalid credentials
-    #send_login_request("Olman2020", "1234")  # Replace with valid credentials in your database
+    request_reservations()
