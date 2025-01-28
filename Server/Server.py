@@ -157,8 +157,6 @@ class ChatServer:
                     response = self.reserve_house(data)
                 elif action == "get_reservations":
                     response = self.get_reservations()
-                elif action == "getBlockedDates":
-                    response = self.get_blocked_dates(data)
                 else:
                     response = {"status": "error", "message": "Acción no válida"}
 
@@ -520,51 +518,36 @@ class ChatServer:
         reservation_file = "database_reservation.txt"  # Archivo donde se guardan las reservas
 
         try:
-            # 🔹 Verificar si `house_id` es un diccionario (posible error desde Java)
-            if isinstance(house_id, dict):  
-                house_id = house_id.get("houseId", "")  # Extrae el `houseId` correctamente
-
-            house_id_str = str(house_id)  # Asegurar que sea un string
-            print(f"📌 Buscando reservas bloqueadas para la casa: {house_id_str}")
-
             with open(reservation_file, "r", encoding="utf-8") as db_file:
                 lines = db_file.readlines()
                 reservation = {}  # Diccionario temporal para cada reserva
 
                 for line in lines:
                     line = line.strip()
-                    print(f"🔎 Procesando línea: {line}")  # Log de cada línea procesada
 
                     if line.startswith("reservation_id:"):
                         reservation["id"] = line.split(": ")[1]
                     elif line.startswith("house_id:"):
-                        reservation["house_id"] = line.split(": ")[1]  # ⚠️ No encriptar aquí para comparar directamente
+                        reservation["house_id"] = line.split(": ")[1]  # ⚠️ No encriptar aquí para comparar
                     elif line.startswith("check_in:"):
                         reservation["check_in"] = line.split(": ")[1]
                     elif line.startswith("check_out:"):
                         reservation["check_out"] = line.split(": ")[1]
 
                     elif line == "--------------------":
-                        # ✅ Comparación corregida
-                        if reservation.get("house_id") == house_id_str:
-                            print(f"✅ Reserva encontrada: {reservation}")
+                        # Solo agregar la reserva si coincide con la casa que buscamos
+                        if reservation.get("house_id") == house_id:
                             reservations.append({
                                 "check_in": reservation["check_in"],
                                 "check_out": reservation["check_out"]
                             })
-                        else:
-                            print(f"❌ Reserva ignorada, no coincide con la casa {house_id_str}")
-
                         reservation = {}  # Reiniciar para la siguiente reserva
 
-            print(f"📋 Fechas bloqueadas encontradas: {reservations}")
             return {"status": "success", "blocked_dates": reservations}
 
         except Exception as e:
             print(f"❌ Error al leer reservas: {e}")
             return {"status": "error", "message": "Error al obtener las fechas bloqueadas"}
-
-
 
 
 
