@@ -153,6 +153,8 @@ class ChatServer:
                     response = self.add_house(data)  # Llamar la nueva función
                 elif action == "get_houses":
                     response = self.get_houses()
+                elif action == "reserveHouse":
+                    response = self.reserve_house(data)
                 else:
                     response = {"status": "error", "message": "Acción no válida"}
 
@@ -332,8 +334,8 @@ class ChatServer:
                     # 🔹 Modificar para devolver **URL de imagen en lugar de Base64**
                     if key.startswith("photo_"):
                         image_name = os.path.basename(value)  # Obtener solo el nombre del archivo
-                        #image_url = f"http://192.168.0.152:{PORT}/images/{image_name}"  # URL de la imagen Olman
-                        image_url = f"http://192.168.0.106:{PORT}/images/{image_name}"  # URL de la imagen Yaritza
+                        image_url = f"http://192.168.0.152:{PORT}/images/{image_name}"  # URL de la imagen Olman
+                        #image_url = f"http://192.168.0.106:{PORT}/images/{image_name}"  # URL de la imagen Yaritza
                         house_data.setdefault("imagenes", []).append(image_url)
                         print(f"📸 Imagen agregada: {image_url}")  # Depuración
                     
@@ -435,5 +437,42 @@ class ChatServer:
             print(f"Error al registrar casa: {e}")
             return {"status": "error", "message": "Error al registrar la casa"}
 
+    def reserve_house(self, data):
+        """ Registra una reserva en la base de datos con encriptación. """
+        try:
+            houseId = self.encrypt(data.get("houseId", ""))
+            userloged = self.encrypt(data.get("userloged", ""))
+            checkIn = self.encrypt(data.get("checkIn", ""))
+            checkOut = self.encrypt(data.get("checkOut", ""))
+
+            if not all([house_id, userloged, fecha_inicio, fecha_fin]):
+                print("ERROR: Datos de reserva incompletos")
+                return {"status": "error", "message": "Faltan datos en la reserva"}
+
+            # Identificador único de la reserva basado en timestamp
+            reservation_id = int(time.time())
+
+            # Guardar la información en database_reservation.txt con encriptación
+            try:
+                with open("database_reserve_house.txt", "a", encoding="utf-8") as db_file:
+                    db_file.write(f"id: {reservation_id}\n")
+                    db_file.write(f"houseId: {houseId}\n")
+                    db_file.write(f"userloged: {userloged}\n")
+                    db_file.write(f"checkIn: {checkIn}\n")
+                    db_file.write(f"checkOut: {checkOut}\n")
+                    db_file.write(f"{'-' * 20}\n")
+
+            except Exception as e:
+                print(f"Error al guardar la reserva en {self.reservation_file}: {e}")
+                return {"status": "error", "message": "Error al registrar la reserva"}
+
+            print(f"✅ Reserva guardada correctamente con ID {reservation_id}")
+            return {"status": "success", "message": "Reserva añadida correctamente"}
+
+        except Exception as e:
+            print(f"Error al registrar reserva: {e}")
+            return {"status": "error", "message": "Error al registrar la reserva"}
+
+    
 if __name__ == "__main__":
     ChatServer()
