@@ -69,6 +69,12 @@ public class ViewHouseActivity extends AppCompatActivity {
 
         filterButton.setOnClickListener(v -> showFilterPopup());
 
+        // Obtener el nombre de usuario desde el intent
+        String userloged = getIntent().getStringExtra("USERNAME");
+
+        // Mostrar en el log para verificar que se pasó correctamente
+        Log.d("ViewHouseActivity", "Usuario que inició sesión: " + userloged);
+
         // Cargar casas y datos de cantones/provincias
         String housesData = getIntent().getStringExtra("houses_data");
         if (housesData != null) {
@@ -174,6 +180,8 @@ public class ViewHouseActivity extends AppCompatActivity {
         Button buttonClose = popupView.findViewById(R.id.buttonClosePopup);
         Button buttonRent = popupView.findViewById(R.id.buttonRentHouse);
 
+        String userloged = getIntent().getStringExtra("USERNAME");
+
         // Asignar valores
         textTitle.setText("Detalles de la Casa");
         textDescription.setText("Descripción: " + description);
@@ -199,7 +207,8 @@ public class ViewHouseActivity extends AppCompatActivity {
         // Evento para alquilar la casa
         buttonRent.setOnClickListener(v -> {
             Log.d("Alquiler", "Casa alquilada: " + provincia + ", " + canton + " - Dueño: " + owner);
-            showRentConfirmation(provincia, canton, price, owner);
+
+            showRentConfirmation(provincia, canton, price, owner, userloged);
             // Verificar que la casa tiene un ID válido
             if (house != null && house.getId() != null) {
                 Intent intent = new Intent(ViewHouseActivity.this, ReserveHouseActivity.class);
@@ -208,13 +217,16 @@ public class ViewHouseActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(ViewHouseActivity.this, "Error: No se encontró el ID de la casa", Toast.LENGTH_SHORT).show();
             }
+
+            showRentConfirmation(provincia, canton, price, owner, userloged);
+
         });
 
         // Cerrar popup al presionar el botón
         buttonClose.setOnClickListener(v -> housePopup.dismiss());
     }
 
-    private void showRentConfirmation(String provincia, String canton, String price, String owner) {
+    private void showRentConfirmation(String provincia, String canton, String price, String owner, String userloged) {
         new androidx.appcompat.app.AlertDialog.Builder(this)
                 .setTitle("Confirmar Alquiler")
                 .setMessage("¿Deseas alquilar esta casa en " + provincia + ", " + canton + " por $" + price + "?")
