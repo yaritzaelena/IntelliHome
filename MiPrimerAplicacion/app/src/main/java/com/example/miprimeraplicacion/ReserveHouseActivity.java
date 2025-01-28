@@ -3,6 +3,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.LayoutInflater;
 import androidx.appcompat.app.AlertDialog;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,6 +32,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
 import androidx.fragment.app.DialogFragment;
+import java.util.List;
+import java.util.ArrayList;
 
 
 
@@ -44,6 +50,26 @@ public class ReserveHouseActivity extends DialogFragment {
         fragment.setArguments(args);
         return fragment;
     }
+    private void showDateRangePicker(List<Long> disabledDays) {
+        CalendarConstraints.Builder constraintsBuilder = new CalendarConstraints.Builder()
+                .setValidator(new DateValidatorExcluding(disabledDays));
+
+        MaterialDatePicker.Builder<Pair<Long, Long>> builder = MaterialDatePicker.Builder.dateRangePicker();
+        builder.setTitleText("Selecciona tu fecha de reserva");
+        builder.setCalendarConstraints(constraintsBuilder.build());
+
+        MaterialDatePicker<Pair<Long, Long>> datePicker = builder.build();
+        datePicker.show(getParentFragmentManager(), "DATE_PICKER");
+
+        datePicker.addOnPositiveButtonClickListener(selection -> {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+
+            checkInDate = sdf.format(new Date(selection.first));
+            checkOutDate = sdf.format(new Date(selection.second));
+
+            textViewSelectedDates.setText("Entrada: " + checkInDate + "  |  Salida: " + checkOutDate);
+        });
+    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -58,8 +84,9 @@ public class ReserveHouseActivity extends DialogFragment {
         Button buttonConfirmReservation = view.findViewById(R.id.buttonConfirmReservation);
         Button buttonBack = view.findViewById(R.id.buttonBack);
 
-        // Seleccionar fechas
-        buttonSelectDates.setOnClickListener(v -> showDateRangePicker());
+        loadBlockedDates();
+        buttonSelectDates.setOnClickListener(v -> showDateRangePicker(new ArrayList<>()));
+
 
         // Confirmar reserva (muestra el diálogo de confirmación)
         buttonConfirmReservation.setOnClickListener(v -> showConfirmationDialog());
@@ -71,20 +98,47 @@ public class ReserveHouseActivity extends DialogFragment {
         return builder.create();
     }
 
-    private void showDateRangePicker() {
-        MaterialDatePicker.Builder<Pair<Long, Long>> builder = MaterialDatePicker.Builder.dateRangePicker();
-        builder.setTitleText("Selecciona tu fecha de reserva");
-        builder.setCalendarConstraints(new CalendarConstraints.Builder().setValidator(DateValidatorPointForward.now()).build());
+    private void loadBlockedDates() {
+        MainActivity.getBlockedDates(houseId, new MainActivity.LoginResponseCallback() {
+            @Override
+            public void onSuccess(String response) {
+                try {
+                    JSONObject jsonResponse = new JSONObject(response);
+                    if (jsonResponse.getString("status").equals("success")) {
+                        JSONArray blockedDates = jsonResponse.getJSONArray("blocked_dates");
 
-        MaterialDatePicker<Pair<Long, Long>> datePicker = builder.build();
-        datePicker.show(getParentFragmentManager(), "DATE_PICKER");
+                        List<Long> disabledDays = new ArrayList<>();
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
-        datePicker.addOnPositiveButtonClickListener(selection -> {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-            checkInDate = sdf.format(new Date(selection.first));
-            checkOutDate = sdf.format(new Date(selection.second));
+                        for (int i = 0; i < blockedDates.length(); i++) {
+                            JSONObject dateRange = blockedDates.getJSONObject(i);
+                            try {
+                                long start = sdf.parse(dateRange.getString("check_in")).getTime();
+                                long end = sdf.parse(dateRange.getString("check_out")).getTime();
 
-            textViewSelectedDates.setText("Entrada: " + checkInDate + " | Salida: " + checkOutDate);
+                                // Agregar todos los días entre check-in y check-out a la lista de días bloqueados
+                                for (long date = start; date <= end; date += 86400000) {  // 86400000 ms = 1 día
+                                    disabledDays.add(date);
+                                }
+                            } catch (java.text.ParseException e) {
+                                e.printStackTrace();  // Manejar error de conversión de fecha
+                            }
+                        }
+
+                        requireActivity().runOnUiThread(() -> showDateRangePicker(disabledDays));
+                    } else {
+                        requireActivity().runOnUiThread(() -> textViewSelectedDates.setText("Error: " + jsonResponse.optString("message", "No se pudo obtener el mensaje de error")));
+
+                    }
+                } catch (org.json.JSONException e) {
+                    e.printStackTrace();  // Manejar error de JSON
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                requireActivity().runOnUiThread(() -> textViewSelectedDates.setText("Error al cargar fechas bloqueadas: " + error));
+            }
         });
     }
 

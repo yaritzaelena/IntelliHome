@@ -41,3 +41,15 @@ check_in: 27/01/2025
 check_out: 30/01/2025
 --------------------
 
+reservation_id: 1738053439
+house_id: 1738039141
+userloged: yaritza
+check_in: 03/02/2025
+check_out: 05/02/2025
+--------------------
+reservation_id: 1738055159
+house_id: 1738039141
+userloged: yaritza
+check_in: 27/01/2025
+check_out: 30/01/2025
+--------------------

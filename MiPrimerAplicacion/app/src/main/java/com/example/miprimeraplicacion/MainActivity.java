@@ -364,6 +364,40 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    public static void getBlockedDates(String houseId, LoginResponseCallback callback) {
+        new Thread(() -> {
+            try {
+                if (socket == null || socket.isClosed()) {
+                    callback.onError("Socket no inicializado o cerrado.");
+                    return;
+                }
+
+                // Construir solicitud JSON
+                JSONObject jsonRequest = new JSONObject();
+                jsonRequest.put("action", "getBlockedDates");
+                jsonRequest.put("houseId", houseId);
+
+                // Enviar la solicitud al servidor
+                out.println(jsonRequest.toString());
+                out.flush();
+
+                // Recibir respuesta del servidor
+                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                String response = reader.readLine();
+
+                if (response != null) {
+                    callback.onSuccess(response);
+                } else {
+                    callback.onError("No se recibió respuesta del servidor.");
+                }
+            } catch (Exception e) {
+                callback.onError("Error: " + e.getMessage());
+            }
+        }).start();
+    }
+
+
+
     public interface LoginResponseCallback {
         void onSuccess(String response);
         void onError(String error);

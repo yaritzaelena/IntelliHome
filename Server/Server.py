@@ -512,6 +512,44 @@ class ChatServer:
 
         return {"status": "success", "reservations": reservations}
 
+    def get_blocked_dates(self, house_id):
+        """ Devuelve un JSON con las fechas bloqueadas de una casa específica """
+        reservations = []
+        reservation_file = "database_reservation.txt"  # Archivo donde se guardan las reservas
+
+        try:
+            with open(reservation_file, "r", encoding="utf-8") as db_file:
+                lines = db_file.readlines()
+                reservation = {}  # Diccionario temporal para cada reserva
+
+                for line in lines:
+                    line = line.strip()
+
+                    if line.startswith("reservation_id:"):
+                        reservation["id"] = line.split(": ")[1]
+                    elif line.startswith("house_id:"):
+                        reservation["house_id"] = line.split(": ")[1]  # ⚠️ No encriptar aquí para comparar
+                    elif line.startswith("check_in:"):
+                        reservation["check_in"] = line.split(": ")[1]
+                    elif line.startswith("check_out:"):
+                        reservation["check_out"] = line.split(": ")[1]
+
+                    elif line == "--------------------":
+                        # Solo agregar la reserva si coincide con la casa que buscamos
+                        if reservation.get("house_id") == house_id:
+                            reservations.append({
+                                "check_in": reservation["check_in"],
+                                "check_out": reservation["check_out"]
+                            })
+                        reservation = {}  # Reiniciar para la siguiente reserva
+
+            return {"status": "success", "blocked_dates": reservations}
+
+        except Exception as e:
+            print(f"❌ Error al leer reservas: {e}")
+            return {"status": "error", "message": "Error al obtener las fechas bloqueadas"}
+
+
 
 
     
