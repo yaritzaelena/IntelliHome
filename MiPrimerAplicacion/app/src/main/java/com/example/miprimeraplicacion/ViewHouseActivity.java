@@ -101,12 +101,13 @@ public class ViewHouseActivity extends AppCompatActivity {
     private void loadHouses(String housesData) {
         try {
             houseContainer.removeAllViews();
-            allHouses.clear();
+            allHouses.clear();  // ✅ Asegurar que `allHouses` se vacíe antes de cargar
 
             JSONArray housesArray = new JSONArray(housesData);
             for (int i = 0; i < housesArray.length(); i++) {
                 JSONObject house = housesArray.getJSONObject(i);
-                allHouses.add(house);
+                allHouses.add(house);  // ✅ Guardar en `allHouses` para búsqueda
+
                 String houseid = house.getString("id");
                 String canton = house.getString("canton");
                 String provincia = house.getString("provincia");
@@ -143,17 +144,18 @@ public class ViewHouseActivity extends AppCompatActivity {
                 HouseImageAdapter adapter = new HouseImageAdapter(this, imageList);
                 viewPager.setAdapter(adapter);
                 new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {}).attach();
+                houseContainer.addView(houseView);
 
                 // Configurar el click para abrir la ventana emergente con información detallada
-                textDetails.setOnClickListener(v -> showHousePopup(houseid,provincia, canton, price, owner, capacidad, description, rules, amenitiesArray));
-
-                houseContainer.addView(houseView);
+                textDetails.setOnClickListener(v -> showHousePopup(houseid, provincia, canton, price, owner, capacidad, description, rules, amenitiesArray));
             }
-            displayHouses(allHouses);
+
+            displayHouses(allHouses);  // ✅ Mostrar casas correctamente
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
 
     private void showHousePopup(String houseid, String provincia, String canton, String price, String owner, String capacidad, String description, String rules, JSONArray amenitiesArray) {
@@ -274,6 +276,7 @@ public class ViewHouseActivity extends AppCompatActivity {
                 String owner = house.getString("username");
                 String capacidad = house.getString("capacity");
                 JSONArray imagesArray = house.getJSONArray("imagenes");
+                JSONArray amenitiesArray = house.getJSONArray("amenities");
 
                 View houseView = LayoutInflater.from(this).inflate(R.layout.item_house, houseContainer, false);
                 TextView textDetails = houseView.findViewById(R.id.textHouseDetails);
@@ -291,12 +294,20 @@ public class ViewHouseActivity extends AppCompatActivity {
                 viewPager.setAdapter(adapter);
                 new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {}).attach();
 
+                // ✅ Restauramos la conversión de amenidades a lista y las guardamos en el Tag
+                List<String> amenitiesList = new ArrayList<>();
+                for (int j = 0; j < amenitiesArray.length(); j++) {
+                    amenitiesList.add(amenitiesArray.getString(j).trim().toLowerCase()); // Normalizar
+                }
+                houseView.setTag(amenitiesList);  // 🔹 Guardamos las amenidades correctamente
+
                 houseContainer.addView(houseView);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
+
 
     private void loadProvinceCantonData() {
         try {
@@ -356,11 +367,13 @@ public class ViewHouseActivity extends AppCompatActivity {
 
         query = query.trim().toLowerCase();
 
-        // 🔹 Si la consulta no está en el mapa, asumimos que es una provincia en vez de un cantón
-        String provinceMatch = cantonToProvinciaMap.get(query);
-        if (provinceMatch == null) {
-            provinceMatch = query;  // 🔹 Intentar buscar directamente por provincia si no está en el mapa
+        if (cantonToProvinciaMap == null || cantonToProvinciaMap.isEmpty()) {
+            Log.e("FiltroBusqueda", "Error: Mapa cantonToProvinciaMap no está cargado.");
+            return;
         }
+
+        String provinceMatch = cantonToProvinciaMap.get(query);
+        Log.d("FiltroBusqueda", "Query: " + query + " -> Provincia encontrada: " + provinceMatch);
 
         List<JSONObject> matchingCanton = new ArrayList<>();
         List<JSONObject> matchingProvince = new ArrayList<>();
@@ -370,19 +383,27 @@ public class ViewHouseActivity extends AppCompatActivity {
                 String houseCanton = house.getString("canton").trim().toLowerCase();
                 String houseProvince = house.getString("provincia").trim().toLowerCase();
 
+                Log.d("FiltroCasas", "Casa: " + houseCanton + ", " + houseProvince);
+
                 if (houseCanton.equals(query)) {
                     matchingCanton.add(house);
-                } else if (houseProvince.equals(provinceMatch)) {
+                    Log.d("FiltroCasas", "✔ Coincide con cantón: " + houseCanton);
+                } else if (provinceMatch != null && houseProvince.equals(provinceMatch)) {
                     matchingProvince.add(house);
+                    Log.d("FiltroCasas", "✔ Coincide con provincia: " + houseProvince);
                 }
             } catch (Exception e) {
                 Log.e("FiltroCasas", "Error procesando casa", e);
             }
         }
 
+        // 🔥❗️EXCLUSIÓN: Si no coincide ni por cantón ni por provincia, NO SE AGREGA
         List<JSONObject> sortedList = new ArrayList<>();
         sortedList.addAll(matchingCanton);
         sortedList.addAll(matchingProvince);
+
+        Log.d("FiltroFinal", "Casas ordenadas: Cantón=" + matchingCanton.size() +
+                ", Provincia=" + matchingProvince.size());
 
         displayHouses(sortedList);
     }
