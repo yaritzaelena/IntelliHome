@@ -284,7 +284,7 @@ public class MainActivity extends AppCompatActivity {
 
                 // Construir el JSON para solicitar las casas del propietario
                 JSONObject json = new JSONObject();
-                json.put("action", "getOwnerHouses");
+                json.put("action", "ownhouse");
                 json.put("username", username);
 
                 // Enviar solicitud al servidor

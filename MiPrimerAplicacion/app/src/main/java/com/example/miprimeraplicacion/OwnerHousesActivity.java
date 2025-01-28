@@ -18,7 +18,7 @@ public class OwnerHousesActivity extends AppCompatActivity {
     private String username;  // Nombre de usuario del propietario
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_owner_houses);
 
