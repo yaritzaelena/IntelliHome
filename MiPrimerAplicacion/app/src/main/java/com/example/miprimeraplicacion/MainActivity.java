@@ -331,7 +331,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public static void reserveHouse(String houseId, String checkIn, String checkOut, LoginResponseCallback callback) {
+    public static void reserveHouse(String userloged,String houseId, String checkIn, String checkOut, LoginResponseCallback callback) {
         new Thread(() -> {
             try {
                 if (socket == null || socket.isClosed()) {
@@ -341,6 +341,7 @@ public class MainActivity extends AppCompatActivity {
 
                 JSONObject jsonRequest = new JSONObject();
                 jsonRequest.put("action", "reserveHouse");
+                jsonRequest.put("userloged",userloged);
                 jsonRequest.put("houseId", houseId);
                 jsonRequest.put("checkIn", checkIn);
                 jsonRequest.put("checkOut", checkOut);

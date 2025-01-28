@@ -208,8 +208,12 @@ public class ViewHouseActivity extends AppCompatActivity {
         // Evento para alquilar la casa
         buttonRent.setOnClickListener(v -> {
             Log.d("Alquiler", "Usuario: " + userloged + " seleccionó la casa con ID: " + houseid);
+            ReserveHouseActivity dialogFragment = ReserveHouseActivity.newInstance(houseid, userloged);
+            dialogFragment.show(getSupportFragmentManager(), "ReserveHouseDialog");
 
-            showRentConfirmation(houseid, provincia, canton, price, owner, userloged);
+           // showRentConfirmation(houseid, provincia, canton, price, owner, userloged);
+
+            /*
             // Verificar que la casa tiene un ID válido
             if (houseid != null && !houseid.isEmpty()) {
                 Intent intent = new Intent(ViewHouseActivity.this, ReserveHouseActivity.class);
@@ -219,7 +223,7 @@ public class ViewHouseActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(ViewHouseActivity.this, "Error: No se encontró el ID de la casa", Toast.LENGTH_SHORT).show();
             }
-
+            */
 
         });
 
@@ -233,6 +237,7 @@ public class ViewHouseActivity extends AppCompatActivity {
                 .setMessage("¿Deseas alquilar esta casa en " + provincia + ", " + canton + " por $" + price + "?")
                 .setPositiveButton("Sí", (dialog, which) -> {
                     Log.d("Alquiler", "Casa alquilada correctamente");
+
                     // Aquí puedes agregar la lógica para procesar el alquiler, como actualizar la base de datos
                     dialog.dismiss();
                 })
@@ -326,15 +331,6 @@ public class ViewHouseActivity extends AppCompatActivity {
     }
 
 
-
-
-
-
-
-
-
-
-
     private void filterHouses(String query) {
         if (query.isEmpty()) {
             displayHouses(allHouses);
@@ -383,16 +379,6 @@ public class ViewHouseActivity extends AppCompatActivity {
 
         displayHouses(sortedList);
     }
-
-
-
-
-
-
-
-
-
-
 
     private void showFilterPopup() {
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -489,11 +475,6 @@ public class ViewHouseActivity extends AppCompatActivity {
             filterPopup.dismiss();
         });
     }
-
-
-
-
-
 
     private void filterHouses() {
         Log.d("Filtro", "Aplicando filtros con capacidad: " + selectedCapacity +

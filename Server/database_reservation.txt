@@ -4,3 +4,39 @@ userloged: yaritza
 check_in: 2024-02-10
 check_out: 2024-02-20
 --------------------
+reservation_id: 1738051946
+house_id: 1738039141
+userloged: yaritza
+check_in: 27/01/2025
+check_out: 29/01/2025
+--------------------
+reservation_id: 1738051981
+house_id: 1738039141
+userloged: yaritza
+check_in: 10/02/2025
+check_out: 12/02/2025
+--------------------
+reservation_id: 1738052120
+house_id: 1738039141
+userloged: yaritza
+check_in: 27/01/2025
+check_out: 30/01/2025
+--------------------
+reservation_id: 1738052836
+house_id: 1738039141
+userloged: yaritza
+check_in: 27/01/2025
+check_out: 30/01/2025
+--------------------
+reservation_id: 1738052840
+house_id: 1738039141
+userloged: yaritza
+check_in: 27/01/2025
+check_out: 30/01/2025
+--------------------
+reservation_id: 1738053248
+house_id: 1738039141
+userloged: yaritza
+check_in: 27/01/2025
+check_out: 30/01/2025
+--------------------

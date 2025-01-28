@@ -467,7 +467,7 @@ class ChatServer:
                 db_file.write(f"{'-' * 20}\n")
 
             print(f"✅ Reserva registrada correctamente con ID {reservation_id} para la casa {house_id} por {userloged}")
-            return {"status": "success", "message": "Reserva registrada correctamente"}
+            return {"status": "success", "message": "Reserva registrada correctamente", "reservation_id": reservation_id}
 
         except Exception as e:
             print(f"❌ Error al registrar reserva: {e}")
