@@ -1,0 +1,50 @@
+username: gAAAAABnmF9lIk84OeJssUy8sBxghesYwkyCa3Udpj4U2ZVMDZu7pxJ0q1QW55G1lpBU_2RdMgkxk4uhIo5ZXFAg5eIQRmWSKQ==
+id: 1738039141
+description: gAAAAABnmF9lOpVDTVrRvJLHPO6K8SwBEBd1KGTYvHw-xCg7vJ9yb-aeCO1CguMOqJxIi9a96F_67HKnWceo6LRR7tcl94I7dFUziypz3I0rXcquJ81d4Qc=
+rules: gAAAAABnmF9lnRhDtk4P4M9sUPz5rMbUYMZy3GZLpfxhdDPzPpndKMlXjiwYua7fB6_WcYi4GzAcfgLKIlBHFJlCyUw-PSb1OQ==
+price: gAAAAABnmF9lbI9PGLwjiQUyjAAnBRrtl_lBZlWjpPsNOgmOhEubQP6SAOg-Ks7W7E4LpxA6Gf18eWM9SMh-gtq28Q0b8wao2A==
+capacity: gAAAAABnmF9l343T0Q3SgpQ4nMmSik501kVwskepjFOnlwgU54tt0Q3Y-apGpEvuLycHPWGr8w6rY9rXCHT7P8l_ac8N20-mng==
+provincia: gAAAAABnmF9l4lS6SgBhvDLMUdeWi_rMYCCqLP5AK3ctjV6q9Rv4B0laCgR0cO00s-1sstXe1stGckYxlmnv_VkhzcftapOsKA==
+canton: gAAAAABnmF9luk3OP1cqNv9_kwYhkdUVQuQPmMkNF2osZO61PzeKbRoXZ0q3UqcSRXmXOdHPhH6lEJ8FD_0iJP3ycA7NL_ttDA==
+location: gAAAAABnmF9lk4nMaq5I8p5GSPE4cRi9DLxd22muPRLrLuRSQXOvuVY_jcq1XZ1axQol59lYTw7N0hNVAopvziTmGfesO5daxAwuEOSN5kal1kgRCNYHkP_qpoE4oCRm2oSfs_yb88rDd1svxWE8Z2t9Iv3Ja1cf-g==
+photo_0: house_images\house_1738039141_0.jpg
+photo_1: house_images\house_1738039141_1.jpg
+amenities: ["Televisión por cable", "Aire acondicionado"]
+--------------------
+username: gAAAAABnmGYvR2yrEdJq5K4VeNrOvv5UE74NYWc5GS10a0nSqAbxDCWJ0pGOfIl7QlGuRXq3xok73mho2iYbBwKwwGptQYNzwA==
+id: 1738040879
+description: gAAAAABnmGYvLDSRGhQKjVxPXzXuqZuvjU0cOMQJN9Vc-_NM-uyy2pBKl-KGMS0C21SI_TfN-f_KWk2ISDrWH-T5O6JoCzbIacSxL_3FjjoFznMXr3sdnwI=
+rules: gAAAAABnmGYvlbR3tXbNu8ACKaMaUIyn49hT-7urZN94j9MEeveQq_32kz6B3M-PZCngLZR2LDTqFB4z5ismXZl2fjlCD2yktA==
+price: gAAAAABnmGYvPnJ3dNgEVWYv0mjpXxNydwqU7GmPLo9bXvyP9Z2WtWMrWzxnCm6ClDJqZEVr8kNx23hx7hb2fjletSx3-l0Kyw==
+capacity: gAAAAABnmGYvneFYj257Iy1E1YzC-7iqhGj6Z_d1qD4R6arbAzVPZG-6XywIAXD8rir4pjxcYzqZ8eq0FX4pZDPjV5EkMHWLYg==
+provincia: gAAAAABnmGYvwD2Fhav1Y-TbFi2brNcDfX9oap0c_1IsoZpHS_7A9Or1GSlmihRwmv6rmMcGRUHoYDDDZHHW9XdprNyMlW48Sw==
+canton: gAAAAABnmGYv7Rpyy-Inhop_chTf_YiJAzrMOBsCIeuxqqjE_ShGZN9LxgIMdIJuQh4Tomqu9SiSDzaWqkRVelHgn1ghZY3q3g==
+location: gAAAAABnmGYvxs8rAYHYYZGyL3t92a3zOVph_Bvjlt3g1o4XONXrON0YIYFef_tvgj2vOs83Bpg5m35WDjOACwAziORzrTFkMRbrHOFLf1xgdM2An-xPWWSaOIqZ9fe7SJJT2-AYjq5FoLLl3caX2G9DcC1lJqnE5w==
+photo_0: http://localhost:8000/images/house_1738040879_0.jpg
+photo_1: http://localhost:8000/images/house_1738040879_1.jpg
+amenities: ["Wi-Fi gratuito", "Cocina equipada", "Piscina", "Aire acondicionado"]
+--------------------
+username: gAAAAABnmGZ_cZwASVfLa5FeJ7xe1uA_gZfp5JVJfRxZEm9rlrkaERMHLt7srDviXqWegkTTokPpPZOFtqAMmsl-gXsZKqN7LQ==
+id: 1738040959
+description: gAAAAABnmGZ__69E_BFPJE8WOK05xX-9Wk_c949OKrMaCmMpmipGV88a20GhYdtW2h-IzgJqk8l8NPHi0cxrdDuy_Caft2lOfA==
+rules: gAAAAABnmGZ_4rmB60XAip9hQmsJhM6gvIw2SAoWkrZTFqe41L421TQ62shWUevqozCDalIMaIuIhQw5FGzDy-AP12thBnLXHw==
+price: gAAAAABnmGZ_r1iUgl76eMQr325vpiA-jpK6MnuZslTYPwuU1mvgmD7t5XUqHz86RT8qLm-TGS57rJO-EQgahr6hU5YS5I_0cg==
+capacity: gAAAAABnmGZ_THwoP3_ZMHMIquXXt6c7zwC0oSDrrl8UVrAfZIIIZM_qo6y49iI-ruWyqI6aF5lt4oid54b2_yVf2-TfIAkTKA==
+provincia: gAAAAABnmGZ_wsVwwh7ZKqjbo8-BaJ26KIdn9Scj3sJvNPrTQl310D8bymOMcpqHP_lS_SGYerDK89HWwig0ZGK1tctWfJj3hw==
+canton: gAAAAABnmGZ_3Ti95_Vll3VtlDT6BsKEF_8zfkT-SNPWUiKKqvuSWGmxxcLgjA8pV4S93Uqimv9NfkdVYD4OHGKT9h0x02V_UQ==
+location: gAAAAABnmGZ_s1mfqnOSmZnTahucv0LQIrUShqAvdJUU_aCsKp5uTPxRAf0I3BfVjn9JDo2mWKiYtgaCP5DD-dgZCslfgs2ceWfOkRVoTdTfGHbUBSmk8mA1juySslfDLyYjsnZ3u1wME9KO1yWiF9jJCfTzolxtKw==
+photo_0: http://localhost:8000/images/house_1738040959_0.jpg
+amenities: ["Transporte público cercano", "Habitaciones con baño en suite", "Sofá cama", "Lavavajillas", "Muebles de exterior", "Sistema de seguridad", "Microondas", "Lavadora y secadora", "Mascotas permitidas", "Televisión por cable", "Cafetera", "Wi-Fi gratuito", "Barbacoa o parrilla", "Jardín o patio", "Cocina equipada", "Terraza o balcón", "Ropa de cama y toallas", "Piscina", "Áreas comunes", "Calefacción", "Gimnasio en casa", "Entretenimiento", "Garaje o estacionamiento", "Chimenea", "Aire acondicionado"]
+--------------------
+username: gAAAAABnmGa-7LTIXcqqtrAwIfio9lL7BCJLdE4EDSKLvEeBZ8NkAKST-m6vv4dlJywpfS4XsEM0ygHGkuWkAEV-_XiNn0mp-w==
+id: 1738041022
+description: gAAAAABnmGa-HPZ0uQccpkbv9f8CFTdDApH1lLOunDh2mOPGwPVliODdKfayTvOhKQFbd1aidNBzFWp7SLckDwVe-W60pNYJqNMaxC2FPWway_bcXOEz6Ag=
+rules: gAAAAABnmGa-bA2wwAtRhzkg4kdRUBw1p0_4npDpxXp2tInFf17aKQ2cGqE2cDJ0EJQMgclO1-NQzGyu7e1u_Ugz8BCv_WBmuZG5bYcLJiWfbnE5WmGzfsI=
+price: gAAAAABnmGa-7aV4ZBcRqRDU6z_DAoV_TA9GAg_7vg2r7renqZ3ecgWopCWxv2F2KR9gYre9vj01D1lEts1NDge2rjDeri3BvA==
+capacity: gAAAAABnmGa-ceHhe6XLFxBfg7RhpVGfBZi096az230ldood5Krh73H-uVGoTcl8FmacR1HqjexszYFIfc77-TnuJxIvprJfLw==
+provincia: gAAAAABnmGa-SyXGrBrl9-o6W-HGKfYsuoJJg1tZihVpoNvZ-q9sRLZ863-VW_bcehSCGg4NyPDT0YiePmP_nXNCd2TACi5WUw==
+canton: gAAAAABnmGa-OdJwhDaSxSuWbR9E_DZyiqhyhLdEaOld279CbkwHdnWGQrcb7zyjfRt4CznnbNDfAmMdaELMjI8Tqy7htrA-hQ==
+location: gAAAAABnmGa-bHtKwdAooJtkUGDQNeza2wMBBYkNlDkBjkvS1fSWQHPC8cr5WHESTgw7El5iMdhAZynt7cMpsOEQ71P7xiPcoK52BIHruU0NvqQIrbrKlCds-wU40iBx8iVcimqiJdUUuCgLj6OnDQ6UYPKnYiZpuw==
+photo_0: http://localhost:8000/images/house_1738041022_0.jpg
+amenities: ["Televisión por cable", "Wi-Fi gratuito", "Cocina equipada", "Calefacción", "Aire acondicionado"]
+--------------------

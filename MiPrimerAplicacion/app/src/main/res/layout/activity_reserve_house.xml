@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    android:elevation="8dp">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Reserva una Casa"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:layout_gravity="center"/>
+
+    <Button
+        android:id="@+id/buttonSelectDates"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Seleccionar Fechas"
+        android:textSize="10sp"
+        android:backgroundTint="@color/blue_dark"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/textViewSelectedDates"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Fechas no seleccionadas"
+        android:textSize="10sp"
+        android:textColor="@android:color/white"
+        android:gravity="center"
+        android:layout_marginTop="16dp"
+        android:padding="8dp"
+        android:background="@color/blue_dark"/>
+
+    <Button
+        android:id="@+id/buttonConfirmReservation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Confirmar Reserva"
+        android:textSize="10sp"
+        android:backgroundTint="@color/blue_dark"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="16dp"/>
+
+    <Button
+        android:id="@+id/buttonBack"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cerrar"
+        android:textSize="10sp"
+        android:backgroundTint="@color/blue_dark"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="16dp"/>
+</LinearLayout>

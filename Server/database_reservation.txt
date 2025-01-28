@@ -1,0 +1,85 @@
+reservation_id: 1738050569
+house_id: 1738041022
+userloged: yaritza
+check_in: 2024-02-10
+check_out: 2024-02-20
+--------------------
+reservation_id: 1738051946
+house_id: 1738039141
+userloged: yaritza
+check_in: 27/01/2025
+check_out: 29/01/2025
+--------------------
+reservation_id: 1738051981
+house_id: 1738039141
+userloged: yaritza
+check_in: 10/02/2025
+check_out: 12/02/2025
+--------------------
+reservation_id: 1738052120
+house_id: 1738039141
+userloged: yaritza
+check_in: 27/01/2025
+check_out: 30/01/2025
+--------------------
+reservation_id: 1738052836
+house_id: 1738039141
+userloged: yaritza
+check_in: 27/01/2025
+check_out: 30/01/2025
+--------------------
+reservation_id: 1738052840
+house_id: 1738039141
+userloged: yaritza
+check_in: 27/01/2025
+check_out: 30/01/2025
+--------------------
+reservation_id: 1738053248
+house_id: 1738039141
+userloged: yaritza
+check_in: 27/01/2025
+check_out: 30/01/2025
+--------------------
+
+reservation_id: 1738053439
+house_id: 1738039141
+userloged: yaritza
+check_in: 03/02/2025
+check_out: 05/02/2025
+--------------------
+reservation_id: 1738055159
+house_id: 1738039141
+userloged: yaritza
+check_in: 27/01/2025
+check_out: 30/01/2025
+--------------------
+reservation_id: 1738057022
+house_id: 1738039141
+userloged: hh
+check_in: 26/01/2025
+check_out: 28/01/2025
+--------------------
+reservation_id: 1738057825
+house_id: 1738039141
+userloged: hh
+check_in: 27/01/2025
+check_out: 29/01/2025
+--------------------
+reservation_id: 1738057911
+house_id: 1738039141
+userloged: hh
+check_in: 27/01/2025
+check_out: 29/01/2025
+--------------------
+reservation_id: 1738058331
+house_id: 1738039141
+userloged: hh
+check_in: 27/01/2025
+check_out: 29/01/2025
+--------------------
+reservation_id: 1738058938
+house_id: 1738039141
+userloged: hh
+check_in: 21/04/2025
+check_out: 23/04/2025
+--------------------

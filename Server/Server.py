@@ -1,11 +1,67 @@
-from cryptography.fernet import Fernet
+import io
 import os
 import json
 import socket
 import threading
 import time
 import base64
+import serial
 
+from cryptography.fernet import Fernet
+from PIL import Image
+from http.server import SimpleHTTPRequestHandler, HTTPServer
+
+# 🔹 Directorio donde se guardan las imágenes
+IMAGE_DIR = "house_images"
+PORT = 5000  # Puerto para servir imágenes
+
+# 🔹 Asegurar que la carpeta existe
+os.makedirs(IMAGE_DIR, exist_ok=True)
+
+
+# 🔹 Servidor HTTP para imágenes
+class ImageServer(SimpleHTTPRequestHandler):
+    def do_GET(self):
+        if self.path.startswith("/images/"):
+            image_path = self.path.replace("/images/", "")
+            full_path = os.path.join(IMAGE_DIR, image_path)
+
+            if os.path.exists(full_path):
+                try:
+                    with open(full_path, "rb") as file:
+                        self.send_response(200)
+                        self.send_header("Content-type", "image/jpeg")
+                        self.end_headers()
+                        self.wfile.write(file.read())
+                except Exception as e:
+                    self.send_response(500)
+                    self.end_headers()
+                    print(f"Error al servir la imagen {image_path}: {e}")
+            else:
+                self.send_response(404)
+                self.end_headers()
+                print(f" Imagen no encontrada: {image_path}")
+        else:
+            self.send_response(404)
+            self.end_headers()
+
+
+def run_image_server():
+    try:
+        server_address = ("", PORT)
+        httpd = HTTPServer(server_address, ImageServer)
+        print(f" Servidor de imágenes corriendo en http://localhost:{PORT}/images/")
+        httpd.serve_forever()
+    except Exception as e:
+        print(f"⚠ Error al iniciar el servidor de imágenes: {e}")
+
+
+# 🔹 Iniciar servidor de imágenes en un hilo separado
+image_server_thread = threading.Thread(target=run_image_server, daemon=True)
+image_server_thread.start()
+
+
+# 🔹 Clase principal del servidor
 class ChatServer:
     def __init__(self, host='0.0.0.0', port=1717):
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -14,6 +70,9 @@ class ChatServer:
         self.clients = []
         self.failed_attempts = {}  # Diccionario de intentos fallidos
         self.block_duration = 120  # Tiempo de bloqueo en segundos
+        self.arduino=None
+        self.serial_port='COM8'
+        self.conexion_exitosa=False
 
         # Generar clave de encriptación si no existe
         if not os.path.exists("secret.key"):
@@ -23,6 +82,15 @@ class ChatServer:
 
         print("Servidor iniciado y esperando conexiones...")
         threading.Thread(target=self.accept_connections).start()
+
+    def conectar_arduino(self):
+        try:
+            self.arduino=serial.Serial(self.serial_port,9600)
+            print(f"Conectando al puerto {self.serial_port}")
+            self.conexion_exitosa=True
+        except serial.SerialException as e:
+            print(f"Error al conectarse al puerto serial {e}")
+            self.conexion_exitosa=False
 
     def generate_key(self):
         """ Genera una clave de cifrado y la guarda en un archivo. """
@@ -79,8 +147,21 @@ class ChatServer:
                     response = self.register_user(data)
                 elif action == "login":
                     response = self.login_user(data["username"], data["password"])
+                elif action == "luces":
+                    response= self.controlar_luces(data)
+                elif action == "addHouse":
+                    response = self.add_house(data)  # Llamar la nueva función
+                elif action == "get_houses":
+                    response = self.get_houses()
+                elif action == "reserveHouse":
+                    response = self.reserve_house(data)
+                elif action == "get_reservations":
+                    response = self.get_reservations()
+                elif action == "getBlockedDates":
+                    response = self.get_blocked_dates(data)
                 else:
                     response = {"status": "error", "message": "Acción no válida"}
+
 
                 response_json = json.dumps(response) + "\n"
                 client_socket.send(response_json.encode("utf-8"))
@@ -94,6 +175,16 @@ class ChatServer:
             client_socket.close()  # Cerrar solo cuando el cliente se desconecte.
 
 
+    def controlar_luces(self,data):
+        habitacion = data["habitacion"]
+        self.conectar_arduino()
+        if self.conexion_exitosa:
+            if self.arduino!=None:
+                self.arduino.write(habitacion.encode("utf-8"))
+                self.conexion_exitosa=False
+                self.arduino.close()
+        else:
+            print("No se pudo establecer conexion con el arduino")
 
     def register_user(self, data):
         """ Registra un usuario en la base de datos con encriptación. """
@@ -227,9 +318,257 @@ class ChatServer:
             print(f"Error al cargar usuarios: {e}")
         return users
 
+    def get_houses(self):
+        houses = []
+        try:
+            with open("database_houses.txt", "r", encoding="utf-8") as file:
+                house_data = {}
+                for line in file:
+                    line = line.strip()
+                    if not line or line.startswith("-"):
+                        if house_data:
+                            houses.append(house_data)
+                        house_data = {}
+                        continue
+
+                    key, value = line.split(":", 1)
+                    key = key.strip()
+                    value = value.strip()
+
+                    # 🔹 Modificar para devolver **URL de imagen en lugar de Base64**
+                    if key.startswith("photo_"):
+                        image_name = os.path.basename(value)  # Obtener solo el nombre del archivo
+                        image_url = f"http://192.168.0.152:{PORT}/images/{image_name}"  # URL de la imagen Olman
+                        #image_url = f"http://192.168.0.106:{PORT}/images/{image_name}"  # URL de la imagen Yaritza
+                        house_data.setdefault("imagenes", []).append(image_url)
+                        print(f"📸 Imagen agregada: {image_url}")  # Depuración
+                    
+                    # 🔹 Si es "amenities", cargarlo como JSON
+                    elif key == "amenities":
+                        house_data[key] = json.loads(value)  
+                    
+                    # 🔹 Desencriptar los demás valores
+                    else:
+                        house_data[key] = self.decrypt(value)  
+
+            return {"status": "true", "houses": houses} if houses else {"status": "false", "message": "No hay casas registradas"}
+
+        except Exception as e:
+            print(f" Error al obtener casas: {e}")
+            return {"status": "false", "message": "Error al obtener casas"}
 
 
+
+
+
+    def add_house(self, data):
+        """ Registra una casa en la base de datos con encriptación. """
+        try:
+            username = self.encrypt(data.get("username", ""))
+            description = self.encrypt(data.get("description", ""))
+            rules = self.encrypt(data.get("rules", ""))
+            price = self.encrypt(data.get("price", ""))
+            capacity = self.encrypt(data.get("capacity", ""))
+            provincia = self.encrypt(data.get("provincia", ""))
+            canton = self.encrypt(data.get("canton", ""))
+            location = self.encrypt(data.get("location", ""))
+            photos_list = data.get("housePhotoBase64", [])
+            amenities_list = data.get("amenities", [])
+
+            if not isinstance(photos_list, list):
+                print("ERROR: `housePhotoBase64` no es una lista")
+                return {"status": "error", "message": "Formato incorrecto para imágenes"}
+            if not isinstance(amenities_list, list):
+                print("ERROR: `amenities` no es una lista")
+                return {"status": "error", "message": "Formato incorrecto para amenidades"}
+
+            # Crear el directorio para las imágenes si no existe
+            image_directory = "house_images"
+            os.makedirs(image_directory, exist_ok=True)
+
+            # Identificador único para la casa
+            house_id = int(time.time())
+
+            # Guardar cada imagen y generar URL
+            image_urls = []
+            for index, photo_base64 in enumerate(photos_list):
+                try:
+                    image_data = base64.b64decode(photo_base64)
+                    image_filename = f"house_{house_id}_{index}.jpg"
+                    image_path = os.path.join(image_directory, image_filename)
+                    
+                    with open(image_path, "wb") as image_file:
+                        image_file.write(image_data)
+
+                    # Generar URL de la imagen
+                    image_url = f"http://localhost:8000/images/{image_filename}"
+                    image_urls.append(image_url)
+
+                except Exception as e:
+                    print(f"Error al guardar la imagen {index}: {e}")
+                    return {"status": "error", "message": "Error al guardar las imágenes"}
+
+            # Guardar la información en database_houses.txt con encriptación
+            try:
+                with open("database_houses.txt", "a", encoding="utf-8") as db_file:
+                    db_file.write(f"id: {house_id}\n")
+                    db_file.write(f"username: {username}\n")
+                    db_file.write(f"description: {description}\n")
+                    db_file.write(f"rules: {rules}\n")
+                    db_file.write(f"price: {price}\n")
+                    db_file.write(f"capacity: {capacity}\n")
+                    db_file.write(f"provincia: {provincia}\n")
+                    db_file.write(f"canton: {canton}\n")
+                    db_file.write(f"location: {location}\n")
+
+                    # Guardar las URLs de las imágenes en database_houses.txt
+                    for i, image_url in enumerate(image_urls):
+                        db_file.write(f"photo_{i}: {image_url}\n")
+
+                    # Guardar amenidades en formato JSON para facilitar su recuperación
+                    db_file.write(f"amenities: {json.dumps(amenities_list, ensure_ascii=False)}\n")
+
+                    db_file.write(f"{'-' * 20}\n")
+
+            except Exception as e:
+                print(f"Error al guardar la casa en database_houses.txt: {e}")
+                return {"status": "error", "message": "Error al registrar la casa"}
+
+            print(f" Casa guardada correctamente con ID {house_id}")
+            return {"status": "true", "message": "Casa añadida correctamente"}
+
+        except Exception as e:
+            print(f"Error al registrar casa: {e}")
+            return {"status": "error", "message": "Error al registrar la casa"}
+
+
+
+    def reserve_house(self, data):
+        """ Registra una reserva en la base de datos de reservas. """
+        try:
+            # Extraer los datos del JSON recibido
+            house_id = data.get("houseId")
+            userloged = data.get("userloged")
+            check_in = data.get("checkIn")
+            check_out = data.get("checkOut")
+
+            # Validar que los datos existen
+            if not house_id or not userloged or not check_in or not check_out:
+                return {"status": "error", "message": "Datos incompletos para la reserva"}
+
+            # Generar un ID único para la reserva
+            reservation_id = int(time.time())
+
+            # Guardar la información en la base de datos
+            with open("database_reservation.txt", "a", encoding="utf-8") as db_file:
+                db_file.write(f"reservation_id: {reservation_id}\n")
+                db_file.write(f"house_id: {house_id}\n")
+                db_file.write(f"userloged: {userloged}\n")
+                db_file.write(f"check_in: {check_in}\n")
+                db_file.write(f"check_out: {check_out}\n")
+                db_file.write(f"{'-' * 20}\n")
+
+            print(f"✅ Reserva registrada correctamente con ID {reservation_id} para la casa {house_id} por {userloged}")
+            return {"status": "success", "message": "Reserva registrada correctamente", "reservation_id": reservation_id}
+
+        except Exception as e:
+            print(f"❌ Error al registrar reserva: {e}")
+            return {"status": "error", "message": "Error al registrar la reserva"}
+
+    def get_reservations(self):
+        """ Obtiene todas las reservas de la base de datos y las devuelve en formato JSON """
+
+        reservations = []
+        reservation_file = "database_reservation.txt"  # Archivo donde se guardan las reservas
+
+        try:
+            with open(reservation_file, "r", encoding="utf-8") as db_file:
+                lines = db_file.readlines()
+
+                reservation = {}  # Diccionario temporal para cada reserva
+                for line in lines:
+                    line = line.strip()
+                    print(f"Procesando línea: {line}")  # 🚀 DEBUG: Ver qué se está leyendo
+
+                    if line.startswith("reservation_id:"):
+                        reservation["id"] = line.split(": ")[1]
+                    elif line.startswith("house_id:"):
+                        reservation["house_id"] = self.decrypt(line.split(": ")[1])
+                    elif line.startswith("userloged:"):
+                        reservation["userloged"] = self.decrypt(line.split(": ")[1])
+                    elif line.startswith("check_in:"):  # 🔹 Corrección aquí
+                        reservation["checkIn"] = self.decrypt(line.split(": ")[1])
+                    elif line.startswith("check_out:"):  # 🔹 Corrección aquí
+                        reservation["checkOut"] = self.decrypt(line.split(": ")[1])
+
+                    # Si encontramos el separador, agregamos la reserva completa y la reiniciamos
+                    elif line == "--------------------":
+                        if reservation:  # Asegurarnos de que no es un diccionario vacío
+                            print(f"Reserva guardada: {reservation}")  # 🚀 DEBUG
+                            reservations.append(reservation)
+                        reservation = {}  # Reiniciar para la siguiente reserva
+
+        except Exception as e:
+            print(f"Error al leer {reservation_file}: {e}")
+            return {"status": "error", "message": "Error al obtener reservas"}
+
+        return {"status": "success", "reservations": reservations}
+
+    def get_blocked_dates(self, house_id):
+        """ Devuelve un JSON con las fechas bloqueadas de una casa específica """
+        reservations = []
+        reservation_file = "database_reservation.txt"  # Archivo donde se guardan las reservas
+
+        try:
+            # 🔹 Verificar si `house_id` es un diccionario (posible error desde Java)
+            if isinstance(house_id, dict):  
+                house_id = house_id.get("houseId", "")  # Extrae el `houseId` correctamente
+
+            house_id_str = str(house_id)  # Asegurar que sea un string
+            print(f"📌 Buscando reservas bloqueadas para la casa: {house_id_str}")
+
+            with open(reservation_file, "r", encoding="utf-8") as db_file:
+                lines = db_file.readlines()
+                reservation = {}  # Diccionario temporal para cada reserva
+
+                for line in lines:
+                    line = line.strip()
+                    print(f"🔎 Procesando línea: {line}")  # Log de cada línea procesada
+
+                    if line.startswith("reservation_id:"):
+                        reservation["id"] = line.split(": ")[1]
+                    elif line.startswith("house_id:"):
+                        reservation["house_id"] = line.split(": ")[1]  # ⚠️ No encriptar aquí para comparar directamente
+                    elif line.startswith("check_in:"):
+                        reservation["check_in"] = line.split(": ")[1]
+                    elif line.startswith("check_out:"):
+                        reservation["check_out"] = line.split(": ")[1]
+
+                    elif line == "--------------------":
+                        # ✅ Comparación corregida
+                        if reservation.get("house_id") == house_id_str:
+                            print(f"✅ Reserva encontrada: {reservation}")
+                            reservations.append({
+                                "check_in": reservation["check_in"],
+                                "check_out": reservation["check_out"]
+                            })
+                        else:
+                            print(f"❌ Reserva ignorada, no coincide con la casa {house_id_str}")
+
+                        reservation = {}  # Reiniciar para la siguiente reserva
+
+            print(f"📋 Fechas bloqueadas encontradas: {reservations}")
+            return {"status": "success", "blocked_dates": reservations}
+
+        except Exception as e:
+            print(f"❌ Error al leer reservas: {e}")
+            return {"status": "error", "message": "Error al obtener las fechas bloqueadas"}
+
+
+
+
+
+
+    
 if __name__ == "__main__":
     ChatServer()
-
-

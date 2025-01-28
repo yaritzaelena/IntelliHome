@@ -15,7 +15,7 @@ import java.util.Scanner;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-
+import org.json.JSONArray; // Asegúrate de importar esto
 
 
 // Recordar que dar los permisos del HW para utilizar los componentes por ejemplo la red
@@ -41,7 +41,10 @@ public class MainActivity extends AppCompatActivity {
         // Iniciar el hilo para conectarse al servidor y recibir mensajes
         new Thread(() -> {
             try {
+
                 socket = new Socket("192.168.0.152", 1717); //Olman
+                //socket = new Socket("192.168.68.104", 1717); //Daniel
+
                 //socket = new Socket("192.168.0.106", 1717); //Yaritza
                 out = new PrintWriter(socket.getOutputStream(), true);
                 in = new Scanner(socket.getInputStream());
@@ -62,10 +65,64 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
 
-
-
     }
 
+    /**
+     * Enviar una solicitud para obtener los datos de las casas disponibles.
+     */
+    public static void requestHouseData(HouseDataCallback callback) {
+        new Thread(() -> {
+            try {
+                if (socket == null || socket.isClosed()) {
+                    callback.onError("Socket no inicializado o cerrado.");
+                    return;
+                }
+
+                // Enviar solicitud al servidor
+                JSONObject jsonRequest = new JSONObject();
+                jsonRequest.put("action", "get_houses");
+
+                out.println(jsonRequest.toString());
+                out.flush();
+                System.out.println("📤 Solicitud de casas enviada: " + jsonRequest.toString());
+
+                // Leer la respuesta del servidor
+                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                String response = reader.readLine();
+
+                if (response != null) {
+                    System.out.println("📥 Respuesta recibida: " + response);
+
+                    try {
+                        JSONObject jsonResponse = new JSONObject(response);
+                        boolean status = jsonResponse.optBoolean("status", false);
+
+                        if (status) {
+                            JSONArray housesArray = jsonResponse.getJSONArray("houses");
+                            callback.onSuccess(housesArray);
+                        } else {
+                            callback.onError(jsonResponse.optString("message", "Error desconocido"));
+                        }
+
+                    } catch (Exception e) {
+                        System.err.println("LOG: Error al analizar el JSON: " + e.getMessage());
+                        callback.onError("Respuesta inválida del servidor.");
+                    }
+                } else {
+                    callback.onError("No se recibió respuesta del servidor.");
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                callback.onError("Error: " + e.getMessage());
+            }
+        }).start();
+    }
+
+    public interface HouseDataCallback {
+        void onSuccess(JSONArray houses);
+        void onError(String error);
+    }
 
     public static void sendAndReceiveRegister(String firstName, String lastName, String address, String username, String password, String hobby, String cardnumber, String cardexpiry, String cardcvv, String cuentaiban, String houseStyle, String transport,  String birthDate, String userType, String photoBase64, RegisterResponseCallback callback) {
 
@@ -185,6 +242,155 @@ public class MainActivity extends AppCompatActivity {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                callback.onError("Error: " + e.getMessage());
+            }
+        }).start();
+    }
+    public static void sendHouseData(String username, String description, String rules, String price, String capacity, String provincia,String canton,String location, JSONArray housePhotoBase64, JSONArray jsonAmenities, RegisterResponseCallback callback) {
+        new Thread(() -> {
+            try {
+                if (socket == null || socket.isClosed()) {
+                    callback.onError("Socket no inicializado o cerrado.");
+                    return;
+                }
+
+                // Construir el JSON correctamente
+                JSONObject json = new JSONObject();
+                json.put("action", "addHouse");
+                json.put("username", username);
+                json.put("description", description);
+                json.put("rules", rules);
+                json.put("price", price);
+                json.put("capacity", capacity);
+                json.put("provincia", provincia);
+                json.put("canton", canton);
+                json.put("location", location);
+                json.put("housePhotoBase64", housePhotoBase64);  // ✅ Ahora es un JSONArray real
+                json.put("amenities", jsonAmenities);
+
+                String houseDataMessage = json.toString();
+                out.println(houseDataMessage);
+                out.flush();
+                System.out.println("📤 JSON enviado al servidor: " + houseDataMessage);
+
+                // Recibir la respuesta del servidor
+                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                String response = reader.readLine();
+
+                if (response != null) {
+                    System.out.println("📥 Respuesta recibida: " + response);
+
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean status = jsonResponse.optBoolean("status", false);
+                    String message = jsonResponse.optString("message", "Sin mensaje");
+
+                    if (status) {
+                        callback.onSuccess(message);
+                    } else {
+                        callback.onError(message);
+                    }
+                } else {
+                    callback.onError("No se recibió respuesta del servidor.");
+                }
+            } catch (Exception e) {
+                callback.onError("Error: " + e.getMessage());
+            }
+        }).start();
+    }
+
+
+
+
+    public static void sendHabitacionLuz(String habitacion) {
+        new Thread(() -> {
+            try {
+                if (socket == null || socket.isClosed()) {
+                    System.err.println("Socket no inicializado o cerrado.");
+                    return;
+                }
+
+                // Crear el mensaje en formato JSON
+                JSONObject jsonMessage = new JSONObject();
+                jsonMessage.put("action", "luces");  // Acción que el servidor espera
+                jsonMessage.put("habitacion", habitacion);
+
+                // Convertir el mensaje a String
+                String message = jsonMessage.toString();
+
+                // Enviar el mensaje
+                out.println(message);
+                out.flush();
+                System.out.println("LOG: Datos enviados: " + message);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.err.println("Error al enviar el mensaje: " + e.getMessage());
+            }
+        }).start();
+    }
+
+
+
+    public static void reserveHouse(String userloged,String houseId, String checkIn, String checkOut, LoginResponseCallback callback) {
+        new Thread(() -> {
+            try {
+                if (socket == null || socket.isClosed()) {
+                    callback.onError("Socket no inicializado o cerrado.");
+                    return;
+                }
+
+                JSONObject jsonRequest = new JSONObject();
+                jsonRequest.put("action", "reserveHouse");
+                jsonRequest.put("userloged",userloged);
+                jsonRequest.put("houseId", houseId);
+                jsonRequest.put("checkIn", checkIn);
+                jsonRequest.put("checkOut", checkOut);
+
+                out.println(jsonRequest.toString());
+                out.flush();
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                String response = reader.readLine();
+
+                if (response != null) {
+                    callback.onSuccess(response);
+                } else {
+                    callback.onError("No se recibió respuesta del servidor.");
+                }
+            } catch (Exception e) {
+                callback.onError("Error: " + e.getMessage());
+            }
+        }).start();
+    }
+
+
+    public static void getBlockedDates(String houseId, LoginResponseCallback callback) {
+        new Thread(() -> {
+            try {
+                if (socket == null || socket.isClosed()) {
+                    callback.onError("Socket no inicializado o cerrado.");
+                    return;
+                }
+
+                // Construir solicitud JSON
+                JSONObject jsonRequest = new JSONObject();
+                jsonRequest.put("action", "getBlockedDates");
+                jsonRequest.put("houseId", houseId);
+
+                // Enviar la solicitud al servidor
+                out.println(jsonRequest.toString());
+                out.flush();
+
+                // Recibir respuesta del servidor
+                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                String response = reader.readLine();
+
+                if (response != null) {
+                    callback.onSuccess(response);
+                } else {
+                    callback.onError("No se recibió respuesta del servidor.");
+                }
+            } catch (Exception e) {
                 callback.onError("Error: " + e.getMessage());
             }
         }).start();

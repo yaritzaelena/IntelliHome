@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/blue_very_light"
+    android:padding="16dp">
+
+    <!-- 🏡 Encabezado con Logo, Barra de Búsqueda y Botón de Filtrado -->
+    <include layout="@layout/header_search"/>
+
+    <!-- 📜 ScrollView para la lista de casas -->
+    <ScrollView
+        android:id="@+id/scrollViewHouses"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:contentDescription="Lista de casas disponibles">
+
+        <LinearLayout
+            android:id="@+id/houseContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"/>
+    </ScrollView>
+</LinearLayout>
+

@@ -1,0 +1,582 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:background="@drawable/popup_background"
+    android:elevation="10dp">
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Capacidad -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Capacidad mínima:" />
+
+        <EditText
+            android:id="@+id/editTextCapacityFilter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Número de personas"
+            android:inputType="number"
+            android:background="@drawable/border_rectangle"
+            android:padding="10dp"
+            android:layout_marginBottom="10dp"/>
+
+        <!-- Rango de Precios -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rango de Precio ($)" />
+
+        <com.google.android.material.slider.RangeSlider
+            android:id="@+id/sliderPriceRange"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:valueFrom="0"
+            android:valueTo="1000"
+            android:stepSize="10"
+            app:haloColor="@color/blue"
+            app:thumbTint="@color/blue"
+            app:trackTint="@color/blue_dark" />
+
+
+
+
+        <TextView
+            android:id="@+id/textSelectedPriceRange"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Rango seleccionado: $0 - $1000"
+            android:textAlignment="center"
+            android:padding="10dp"/>
+
+        <!-- Amenidades -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Seleccionar amenidades:" />
+
+        <GridLayout
+            android:id="@+id/amenitiesSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="3"
+            android:padding="16dp"
+            android:layout_marginBottom="20dp">
+
+            <!-- Cocina equipada -->
+            <LinearLayout
+                style="@style/AmenityContainer">
+
+                <ImageView
+                    style="@style/AmenityIcon"
+                    android:src="@drawable/a1" />
+
+                <CheckBox
+                    style="@style/AmenityCheckBox"
+                    android:id="@+id/check_cocina"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cocina equipada" />
+            </LinearLayout>
+
+            <!-- Aire acondicionado -->
+            <LinearLayout
+                style="@style/AmenityContainer">
+
+                <ImageView
+                    style="@style/AmenityIcon"
+                    android:src="@drawable/a2" />
+
+                <CheckBox
+                    android:id="@+id/check_aire"
+                    style="@style/AmenityCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Aire Acondicionado" />
+            </LinearLayout>
+
+            <!-- Calefacción -->
+            <LinearLayout
+                style="@style/AmenityContainer">
+
+                <ImageView
+                    style="@style/AmenityIcon"
+                    android:src="@drawable/a3" />
+
+                <CheckBox
+                    android:id="@+id/check_calefaccion"
+                    style="@style/AmenityCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Calefacción" />
+            </LinearLayout>
+
+            <!-- Wi-Fi gratuito -->
+            <LinearLayout
+                style="@style/AmenityContainer">
+
+                <ImageView
+                    style="@style/AmenityIcon"
+                    android:src="@drawable/a4" />
+
+                <CheckBox
+                    android:id="@+id/check_wifi"
+                    style="@style/AmenityCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Wi-Fi gratuito" />
+            </LinearLayout>
+
+            <!-- Televisión por cable o satélite -->
+            <LinearLayout
+                style="@style/AmenityContainer">
+
+                <ImageView
+                    style="@style/AmenityIcon"
+                    android:src="@drawable/a5" />
+
+                <CheckBox
+                    android:id="@+id/check_tv"
+                    style="@style/AmenityCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Televisión por cable" />
+            </LinearLayout>
+
+            <!-- Lavadora y secadora -->
+            <LinearLayout
+                style="@style/AmenityContainer">
+
+                <ImageView
+                    style="@style/AmenityIcon"
+                    android:src="@drawable/a6" />
+
+                <CheckBox
+                    android:id="@+id/check_lavadora"
+                    style="@style/AmenityCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Lavadora y secadora" />
+            </LinearLayout>
+
+            <!-- Piscina -->
+            <LinearLayout
+                style="@style/AmenityContainer">
+
+                <ImageView
+                    style="@style/AmenityIcon"
+                    android:src="@drawable/a7" />
+
+                <CheckBox
+                    android:id="@+id/check_piscina"
+                    style="@style/AmenityCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Piscina" />
+            </LinearLayout>
+
+            <!-- Jardín o patio -->
+            <LinearLayout
+                style="@style/AmenityContainer">
+
+                <ImageView
+                    style="@style/AmenityIcon"
+                    android:src="@drawable/a8" />
+
+                <CheckBox
+                    android:id="@+id/check_jardin"
+                    style="@style/AmenityCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Jardín/Patio" />
+            </LinearLayout>
+
+            <!-- Barbacoa -->
+            <LinearLayout
+                style="@style/AmenityContainer">
+
+                <ImageView
+                    style="@style/AmenityIcon"
+                    android:src="@drawable/a9" />
+
+                <CheckBox
+                    android:id="@+id/check_barbacoa"
+                    style="@style/AmenityCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Barbacoa/Parrilla" />
+            </LinearLayout>
+
+            <!-- Terraza o balcón -->
+            <LinearLayout
+                style="@style/AmenityContainer">
+
+                <ImageView
+                    style="@style/AmenityIcon"
+                    android:src="@drawable/a10" />
+
+                <CheckBox
+                    android:id="@+id/check_terraza"
+                    style="@style/AmenityCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Terraza/Balcón" />
+            </LinearLayout>
+
+            <!-- Gimnasio en casa -->
+            <LinearLayout
+                style="@style/AmenityContainer">
+
+                <ImageView
+                    style="@style/AmenityIcon"
+                    android:src="@drawable/a11" />
+
+                <CheckBox
+                    android:id="@+id/check_gimnasio"
+                    style="@style/AmenityCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Gimnasio en casa" />
+            </LinearLayout>
+
+            <!-- Garaje o espacio de estacionamiento -->
+            <LinearLayout
+                style="@style/AmenityContainer">
+
+                <ImageView
+                    style="@style/AmenityIcon"
+                    android:src="@drawable/a12" />
+
+                <CheckBox
+                    android:id="@+id/check_garaje"
+                    style="@style/AmenityCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Garaje o estacionamiento" />
+            </LinearLayout>
+
+            <!-- Sistema de seguridad -->
+            <LinearLayout
+                style="@style/AmenityContainer">
+
+                <ImageView
+                    style="@style/AmenityIcon"
+                    android:src="@drawable/a13" />
+
+                <CheckBox
+                    android:id="@+id/check_seguridad"
+                    style="@style/AmenityCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sistema de seguridad" />
+            </LinearLayout>
+
+            <!-- Habitaciones con baño en suite -->
+            <LinearLayout
+                style="@style/AmenityContainer">
+
+                <ImageView
+                    style="@style/AmenityIcon"
+                    android:src="@drawable/a14" />
+
+                <CheckBox
+                    android:id="@+id/check_habitaciones_bano"
+                    style="@style/AmenityCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Habitaciones con baño en suite" />
+            </LinearLayout>
+
+            <!-- Muebles de exterior -->
+            <LinearLayout
+                style="@style/AmenityContainer">
+
+                <ImageView
+                    style="@style/AmenityIcon"
+                    android:src="@drawable/a15" />
+
+                <CheckBox
+                    android:id="@+id/check_muebles_exterior"
+                    style="@style/AmenityCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Muebles de exterior" />
+            </LinearLayout>
+
+            <!-- Microondas -->
+            <LinearLayout
+                style="@style/AmenityContainer">
+
+                <ImageView
+                    style="@style/AmenityIcon"
+                    android:src="@drawable/a16" />
+
+                <CheckBox
+                    android:id="@+id/check_microondas"
+                    style="@style/AmenityCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Microondas" />
+            </LinearLayout>
+
+            <!-- Lavavajillas -->
+            <LinearLayout
+                style="@style/AmenityContainer">
+
+                <ImageView
+                    style="@style/AmenityIcon"
+                    android:src="@drawable/a17" />
+
+                <CheckBox
+                    android:id="@+id/check_lavavajillas"
+                    style="@style/AmenityCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Lavavajillas" />
+            </LinearLayout>
+
+            <!-- Cafetera -->
+            <LinearLayout
+                style="@style/AmenityContainer">
+
+                <ImageView
+                    style="@style/AmenityIcon"
+                    android:src="@drawable/a18" />
+
+                <CheckBox
+                    android:id="@+id/check_cafetera"
+                    style="@style/AmenityCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cafetera" />
+            </LinearLayout>
+
+            <!-- Ropa de cama y toallas incluidas -->
+            <LinearLayout
+                style="@style/AmenityContainer">
+
+                <ImageView
+                    style="@style/AmenityIcon"
+                    android:src="@drawable/a19" />
+
+                <CheckBox
+                    android:id="@+id/check_ropa_cama"
+                    style="@style/AmenityCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ropa de cama y toallas" />
+            </LinearLayout>
+
+            <!-- Acceso a áreas comunes -->
+            <LinearLayout
+                style="@style/AmenityContainer">
+
+                <ImageView
+                    style="@style/AmenityIcon"
+                    android:src="@drawable/a20" />
+
+                <CheckBox
+                    android:id="@+id/check_areas_comunes"
+                    style="@style/AmenityCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Áreas comunes (piscina, gimnasio)" />
+            </LinearLayout>
+
+            <!-- Camas adicionales o sofá cama -->
+            <LinearLayout
+                style="@style/AmenityContainer">
+
+                <ImageView
+                    style="@style/AmenityIcon"
+                    android:src="@drawable/a21" />
+
+                <CheckBox
+                    android:id="@+id/check_sofa_cama"
+                    style="@style/AmenityCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sofá cama" />
+            </LinearLayout>
+
+            <!-- Servicios de limpieza opcionales -->
+            <LinearLayout
+                style="@style/AmenityContainer">
+
+                <ImageView
+                    style="@style/AmenityIcon"
+                    android:src="@drawable/a22" />
+
+                <CheckBox
+                    android:id="@+id/check_limpieza"
+                    style="@style/AmenityCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Servicios de limpieza" />
+            </LinearLayout>
+
+            <!-- Acceso a transporte público -->
+            <LinearLayout
+                style="@style/AmenityContainer">
+
+                <ImageView
+                    style="@style/AmenityIcon"
+                    android:src="@drawable/a23" />
+
+                <CheckBox
+                    android:id="@+id/check_transporte"
+                    style="@style/AmenityCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Transporte público cercano" />
+            </LinearLayout>
+
+            <!-- Mascotas permitidas -->
+            <LinearLayout
+                style="@style/AmenityContainer">
+
+                <ImageView
+                    style="@style/AmenityIcon"
+                    android:src="@drawable/a24" />
+
+                <CheckBox
+                    android:id="@+id/check_mascotas"
+                    style="@style/AmenityCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Mascotas permitidas" />
+            </LinearLayout>
+
+            <!-- Cercanía a tiendas y restaurantes -->
+            <LinearLayout
+                style="@style/AmenityContainer">
+
+                <ImageView
+                    style="@style/AmenityIcon"
+                    android:src="@drawable/a25" />
+
+                <CheckBox
+                    android:id="@+id/check_tiendas"
+                    style="@style/AmenityCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tiendas y restaurantes" />
+            </LinearLayout>
+
+            <!-- Calefacción por suelo radiante -->
+            <LinearLayout
+                style="@style/AmenityContainer">
+
+                <ImageView
+                    style="@style/AmenityIcon"
+                    android:src="@drawable/a26" />
+
+                <CheckBox
+                    android:id="@+id/check_calefaccion_suelo"
+                    style="@style/AmenityCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Calefacción por suelo" />
+            </LinearLayout>
+
+            <!-- Escritorio o área de trabajo -->
+            <LinearLayout
+                style="@style/AmenityContainer">
+
+                <ImageView
+                    style="@style/AmenityIcon"
+                    android:src="@drawable/a27" />
+
+                <CheckBox
+                    android:id="@+id/check_escritorio"
+                    style="@style/AmenityCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Escritorio/Área de trabajo" />
+            </LinearLayout>
+
+            <!-- Sistemas de entretenimiento -->
+            <LinearLayout
+                style="@style/AmenityContainer">
+
+                <ImageView
+                    style="@style/AmenityIcon"
+                    android:src="@drawable/a28" />
+
+                <CheckBox
+                    android:id="@+id/check_entretenimiento"
+                    style="@style/AmenityCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Entretenimiento" />
+            </LinearLayout>
+
+            <!-- Chimenea -->
+            <LinearLayout
+                style="@style/AmenityContainer">
+
+                <ImageView
+                    style="@style/AmenityIcon"
+                    android:src="@drawable/a29" />
+
+                <CheckBox
+                    android:id="@+id/check_chimenea"
+                    style="@style/AmenityCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Chimenea" />
+            </LinearLayout>
+
+            <!-- Acceso a internet de alta velocidad -->
+            <LinearLayout
+                style="@style/AmenityContainer">
+
+                <ImageView
+                    style="@style/AmenityIcon"
+                    android:src="@drawable/a30" />
+
+                <CheckBox
+                    android:id="@+id/check_internet"
+                    style="@style/AmenityCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Internet de alta velocidad" />
+            </LinearLayout>
+
+
+
+
+
+        </GridLayout>
+
+        <!-- Botones -->
+        <Button
+            android:id="@+id/buttonApplyFilter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Aplicar Filtro"
+            android:background="@drawable/rounded_button"
+            android:textColor="@color/white"
+            android:layout_marginTop="10dp"/>
+
+        <Button
+            android:id="@+id/buttonClearFilter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Quitar Filtro"
+            android:background="@drawable/rounded_button"
+            android:textColor="@color/white"
+            android:layout_marginTop="5dp"/>
+    </LinearLayout>
+
+</ScrollView>
+
