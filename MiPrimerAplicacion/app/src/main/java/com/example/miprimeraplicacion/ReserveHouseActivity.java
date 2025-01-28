@@ -1,5 +1,4 @@
 package com.example.miprimeraplicacion;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.LayoutInflater;
@@ -42,7 +41,6 @@ import java.util.ArrayList;
 public class ReserveHouseActivity extends DialogFragment {
     private String houseId, userLogged, checkInDate, checkOutDate;
     private TextView textViewSelectedDates;
-    private List<Long> disabledDays = new ArrayList<>();
 
     public static ReserveHouseActivity newInstance(String houseId, String userLogged) {
         ReserveHouseActivity fragment = new ReserveHouseActivity();
@@ -101,19 +99,16 @@ public class ReserveHouseActivity extends DialogFragment {
     }
 
     private void loadBlockedDates() {
-        Log.d("Reserva", "📌 Cargando fechas bloqueadas para casa ID: " + houseId);
         MainActivity.getBlockedDates(houseId, new MainActivity.LoginResponseCallback() {
             @Override
             public void onSuccess(String response) {
                 try {
-                    Log.d("Reserva", "📥 Respuesta del servidor: " + response);
                     JSONObject jsonResponse = new JSONObject(response);
-
                     if (jsonResponse.getString("status").equals("success")) {
                         JSONArray blockedDates = jsonResponse.getJSONArray("blocked_dates");
 
-                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-                        disabledDays.clear(); // Limpiar fechas previas
+                        List<Long> disabledDays = new ArrayList<>();
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
                         for (int i = 0; i < blockedDates.length(); i++) {
                             JSONObject dateRange = blockedDates.getJSONObject(i);
@@ -121,28 +116,28 @@ public class ReserveHouseActivity extends DialogFragment {
                                 long start = sdf.parse(dateRange.getString("check_in")).getTime();
                                 long end = sdf.parse(dateRange.getString("check_out")).getTime();
 
-                                Log.d("Reserva", "🔎 Bloqueado: " + dateRange.getString("check_in") + " - " + dateRange.getString("check_out"));
-
-                                for (long date = start; date <= end; date += 86400000) {
+                                // Agregar todos los días entre check-in y check-out a la lista de días bloqueados
+                                for (long date = start; date <= end; date += 86400000) {  // 86400000 ms = 1 día
                                     disabledDays.add(date);
                                 }
                             } catch (java.text.ParseException e) {
-                                Log.e("Reserva", "❌ Error al parsear fechas bloqueadas", e);
+                                e.printStackTrace();  // Manejar error de conversión de fecha
                             }
                         }
 
                         requireActivity().runOnUiThread(() -> showDateRangePicker(disabledDays));
                     } else {
-                        Log.e("Reserva", "⚠️ Error en la respuesta del servidor: " + jsonResponse.optString("message"));
+                        requireActivity().runOnUiThread(() -> textViewSelectedDates.setText("Error: " + jsonResponse.optString("message", "No se pudo obtener el mensaje de error")));
+
                     }
-                } catch (JSONException e) {
-                    Log.e("Reserva", "❌ Error al procesar la respuesta JSON", e);
+                } catch (org.json.JSONException e) {
+                    e.printStackTrace();  // Manejar error de JSON
                 }
             }
 
             @Override
             public void onError(String error) {
-                Log.e("Reserva", "🚨 Error al cargar fechas bloqueadas: " + error);
+                requireActivity().runOnUiThread(() -> textViewSelectedDates.setText("Error al cargar fechas bloqueadas: " + error));
             }
         });
     }
@@ -150,16 +145,6 @@ public class ReserveHouseActivity extends DialogFragment {
     private void showConfirmationDialog() {
         if (houseId == null || checkInDate == null || checkOutDate == null) {
             textViewSelectedDates.setText("Error: Falta información para la reserva.");
-            return;
-        }
-
-        if (isDateBlocked(checkInDate, checkOutDate)) {
-            Log.e("Reserva", "🚨 Error: Intento de reserva en fechas bloqueadas.");
-            new AlertDialog.Builder(requireContext())
-                    .setTitle("Reserva no permitida")
-                    .setMessage("Las fechas seleccionadas ya están ocupadas. Elija otras fechas.")
-                    .setPositiveButton("Aceptar", (dialog, which) -> dialog.dismiss())
-                    .show();
             return;
         }
 
@@ -171,39 +156,17 @@ public class ReserveHouseActivity extends DialogFragment {
                 .show();
     }
 
-    private boolean isDateBlocked(String checkIn, String checkOut) {
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-            long start = sdf.parse(checkIn).getTime();
-            long end = sdf.parse(checkOut).getTime();
-
-            for (long date = start; date <= end; date += 86400000) {
-                if (disabledDays.contains(date)) {
-                    Log.d("Reserva", "⛔ Fecha bloqueada detectada: " + sdf.format(new Date(date)));
-                    return true; // Encontró una fecha bloqueada
-                }
-            }
-        } catch (java.text.ParseException e) {
-            Log.e("Reserva", "❌ Error al verificar fechas bloqueadas", e);
-        }
-        return false;
-    }
-
     private void sendReservationRequest() {
         if (houseId == null || checkInDate == null || checkOutDate == null) {
-            Log.e("Reserva", "❌ Faltan datos para la reserva.");
             textViewSelectedDates.setText("Error: Falta información para la reserva.");
             return;
         }
-
-        Log.d("Reserva", "📤 Enviando solicitud de reserva para casa " + houseId + " (" + checkInDate + " - " + checkOutDate + ")");
 
         MainActivity.reserveHouse(userLogged, houseId, checkInDate, checkOutDate, new MainActivity.LoginResponseCallback() {
             @Override
             public void onSuccess(String response) {
                 try {
                     if (response == null || response.isEmpty()) {
-                        Log.e("Reserva", "❌ Respuesta vacía del servidor.");
                         getActivity().runOnUiThread(() ->
                                 textViewSelectedDates.setText("Error: Respuesta vacía del servidor")
                         );
@@ -211,7 +174,6 @@ public class ReserveHouseActivity extends DialogFragment {
                     }
 
                     JSONObject jsonResponse = new JSONObject(response);
-                    Log.d("Reserva", "📥 Respuesta recibida: " + response);
 
                     if (jsonResponse.optString("status").equals("success")) {
                         if (jsonResponse.has("reservation_id")) {  // ✅ Verificar si la clave existe
@@ -223,7 +185,6 @@ public class ReserveHouseActivity extends DialogFragment {
                     }
 
                 } catch (JSONException e) {
-                    Log.e("Reserva", "❌ Error al procesar la respuesta JSON", e);
                     e.printStackTrace();
                     getActivity().runOnUiThread(() ->
                             textViewSelectedDates.setText("Error al procesar la respuesta del servidor")
@@ -234,7 +195,6 @@ public class ReserveHouseActivity extends DialogFragment {
 
             @Override
             public void onError(String error) {
-                Log.e("Reserva", "🚨 Error en la reserva: " + error);
                 getActivity().runOnUiThread(() -> textViewSelectedDates.setText("Error en la reserva: " + error));
             }
         });
