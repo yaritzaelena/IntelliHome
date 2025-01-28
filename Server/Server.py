@@ -308,6 +308,7 @@ class ChatServer:
                         image_url = f"http://192.168.0.152:{PORT}/images/{image_name}"  # URL de la imagen Olman
                         #image_url = f"http://192.168.0.106:{PORT}/images/{image_name}"  # URL de la imagen Yaritza
                         house_data.setdefault("imagenes", []).append(image_url)
+                        print(f"📸 Imagen agregada: {image_url}")  # Depuración
                     
                     # 🔹 Si es "amenities", cargarlo como JSON
                     elif key == "amenities":

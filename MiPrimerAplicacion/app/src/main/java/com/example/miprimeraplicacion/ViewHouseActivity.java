@@ -77,7 +77,6 @@ public class ViewHouseActivity extends AppCompatActivity {
     private void loadHouses(String housesData) {
         try {
             houseContainer.removeAllViews();
-
             JSONArray housesArray = new JSONArray(housesData);
             for (int i = 0; i < housesArray.length(); i++) {
                 JSONObject house = housesArray.getJSONObject(i);
@@ -87,23 +86,12 @@ public class ViewHouseActivity extends AppCompatActivity {
                 String owner = house.getString("username");
                 String capacidad = house.getString("capacity");
                 JSONArray imagesArray = house.getJSONArray("imagenes");
-                JSONArray amenitiesArray = house.getJSONArray("amenities");
 
                 View houseView = LayoutInflater.from(this).inflate(R.layout.item_house, houseContainer, false);
                 TextView textDetails = houseView.findViewById(R.id.textHouseDetails);
                 ViewPager2 viewPager = houseView.findViewById(R.id.viewPagerImages);
                 TabLayout tabLayout = houseView.findViewById(R.id.tabLayoutIndicator);
 
-                // Convertir amenidades a lista de Strings
-                List<String> amenitiesList = new ArrayList<>();
-                for (int j = 0; j < amenitiesArray.length(); j++) {
-                    amenitiesList.add(amenitiesArray.getString(j).trim().toLowerCase()); // Normalizar
-                }
-
-                // Guardar la lista de amenidades en el Tag de la vista
-                houseView.setTag(amenitiesList);
-
-                // Asegurar que la capacidad está en los detalles
                 textDetails.setText(provincia + ", " + canton + "\nCapacidad: " + capacidad + "\nPrecio: $" + price + "\nDueño: " + owner);
 
                 List<String> imageList = new ArrayList<>();
@@ -111,6 +99,7 @@ public class ViewHouseActivity extends AppCompatActivity {
                     imageList.add(imagesArray.getString(j));
                 }
 
+                // Usar la nueva versión de HouseImageAdapter sin Glide
                 HouseImageAdapter adapter = new HouseImageAdapter(this, imageList);
                 viewPager.setAdapter(adapter);
                 new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {}).attach();
@@ -121,6 +110,7 @@ public class ViewHouseActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
 
 
 
