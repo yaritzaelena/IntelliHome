@@ -6,6 +6,7 @@ import threading
 import time
 import base64
 import serial
+from twilio.rest import Client
 
 from cryptography.fernet import Fernet
 from PIL import Image
@@ -73,6 +74,9 @@ class ChatServer:
         self.arduino=None
         self.serial_port='COM8'
         self.conexion_exitosa=False
+        
+        self.client = Client(self.account_sid, self.auth_token)
+        self.mensajeFrom='whatsapp:+14155238886',
 
         # Generar clave de encriptación si no existe
         if not os.path.exists("secret.key"):
@@ -159,6 +163,8 @@ class ChatServer:
                     response = self.get_reservations()
                 elif action == "getBlockedDates":
                     response = self.get_blocked_dates(data)
+                elif action == "notificacionWhatsapp":
+                    response=self.enviar_whatsapp(data)
                 else:
                     response = {"status": "error", "message": "Acción no válida"}
 
@@ -185,6 +191,17 @@ class ChatServer:
                 self.arduino.close()
         else:
             print("No se pudo establecer conexion con el arduino")
+
+    def enviar_whatsapp(self, data):
+        mensaje=data["mensaje"]
+        mensajePara='whatsapp:+506'+data["telefono"]
+
+        mensaje=self.client.messages.create(
+            body=mensaje,
+            from_=self.mensajeFrom,
+            to=mensajePara
+        )
+
 
     def register_user(self, data):
         """ Registra un usuario en la base de datos con encriptación. """
