@@ -41,9 +41,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import android.util.Log;
 import java.util.HashMap;
+import android.content.Intent;
+import android.widget.Toast;
+import android.widget.Button;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class ViewHouseActivity extends AppCompatActivity {
-
+    private House house;
     private PopupWindow filterPopup;
     private int minPrice = 0, maxPrice = 1000;
     private int selectedCapacity = 0;
@@ -64,6 +68,12 @@ public class ViewHouseActivity extends AppCompatActivity {
         ImageButton filterButton = findViewById(R.id.filterButton);
 
         filterButton.setOnClickListener(v -> showFilterPopup());
+
+        // Obtener el nombre de usuario desde el intent
+        String userloged = getIntent().getStringExtra("USERNAME");
+
+        // Mostrar en el log para verificar que se pasó correctamente
+        Log.d("ViewHouseActivity", "Usuario que inició sesión: " + userloged);
 
         // Cargar casas y datos de cantones/provincias
         String housesData = getIntent().getStringExtra("houses_data");
@@ -91,18 +101,19 @@ public class ViewHouseActivity extends AppCompatActivity {
     private void loadHouses(String housesData) {
         try {
             houseContainer.removeAllViews();
-            allHouses.clear();
 
             JSONArray housesArray = new JSONArray(housesData);
             for (int i = 0; i < housesArray.length(); i++) {
                 JSONObject house = housesArray.getJSONObject(i);
-                allHouses.add(house);
+                String houseid = house.getString("id");
                 String canton = house.getString("canton");
                 String provincia = house.getString("provincia");
                 String price = house.getString("price");
                 String owner = house.getString("username");
                 String capacidad = house.getString("capacity");
                 JSONArray imagesArray = house.getJSONArray("imagenes");
+                String description = house.has("description") ? house.getString("description") : "No disponible";
+                String rules = house.has("rules") ? house.getString("rules") : "No disponible";
                 JSONArray amenitiesArray = house.getJSONArray("amenities");
 
                 View houseView = LayoutInflater.from(this).inflate(R.layout.item_house, houseContainer, false);
@@ -115,7 +126,6 @@ public class ViewHouseActivity extends AppCompatActivity {
                 for (int j = 0; j < amenitiesArray.length(); j++) {
                     amenitiesList.add(amenitiesArray.getString(j).trim().toLowerCase()); // Normalizar
                 }
-
 
                 // 🔹 Guardar la lista de amenidades en el Tag de la vista de la casa para que el filtro pueda acceder a ellas
                 houseView.setTag(amenitiesList);
@@ -132,13 +142,120 @@ public class ViewHouseActivity extends AppCompatActivity {
                 viewPager.setAdapter(adapter);
                 new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {}).attach();
 
-                houseContainer.addView(houseView);
+                // Configurar el click para abrir la ventana emergente con información detallada
+                textDetails.setOnClickListener(v -> showHousePopup(houseid,provincia, canton, price, owner, capacidad, description, rules, amenitiesArray));
 
+                houseContainer.addView(houseView);
             }
-            displayHouses(allHouses);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+    private void showHousePopup(String houseid, String provincia, String canton, String price, String owner, String capacidad, String description, String rules, JSONArray amenitiesArray) {
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.popup_house_details, null);
+
+        // Configurar la ventana emergente
+        PopupWindow housePopup = new PopupWindow(popupView,
+                (int) (getResources().getDisplayMetrics().widthPixels * 0.9),
+                ViewGroup.LayoutParams.WRAP_CONTENT, true);
+
+        housePopup.setFocusable(true);
+        housePopup.setOutsideTouchable(true);
+        housePopup.setBackgroundDrawable(getDrawable(R.drawable.popup_background));
+
+        // Mostrar en el centro de la pantalla
+        housePopup.showAtLocation(findViewById(android.R.id.content), Gravity.CENTER, 0, 0);
+
+        // Referencias a los elementos de la ventana emergente
+        TextView textTitle = popupView.findViewById(R.id.textHouseTitle);
+        TextView textDescription = popupView.findViewById(R.id.textHouseDescription);
+        TextView textRules = popupView.findViewById(R.id.textHouseRules);
+        TextView textPrice = popupView.findViewById(R.id.textHousePrice);
+        TextView textTaxDetails = popupView.findViewById(R.id.textHouseTaxDetails);
+        TextView textCapacity = popupView.findViewById(R.id.textHouseCapacity);
+        TextView textOwner = popupView.findViewById(R.id.textHouseOwner);
+        TextView textLocation = popupView.findViewById(R.id.textHouseLocation);
+        LinearLayout amenitiesContainer = popupView.findViewById(R.id.amenitiesContainer);
+        Button buttonClose = popupView.findViewById(R.id.buttonClosePopup);
+        Button buttonRent = popupView.findViewById(R.id.buttonRentHouse);
+
+        String userloged = getIntent().getStringExtra("USERNAME");
+
+        // Convertir precio a número y agregar el 23%
+        double originalPrice = Double.parseDouble(price);
+        double taxIVA = originalPrice * 0.13;  // 13% de IVA
+        double taxCleaning = originalPrice * 0.10;  // 10% de limpieza
+        double finalPrice = originalPrice + taxIVA + taxCleaning;  // Precio total con impuestos
+
+        String formattedPrice = String.format("%.2f", finalPrice); // Redondear a 2 decimales
+        String formattedTaxIVA = String.format("%.2f", taxIVA);
+        String formattedTaxCleaning = String.format("%.2f", taxCleaning);
+
+
+        // Asignar valores
+        textTitle.setText("Detalles de la Casa");
+        textDescription.setText("Descripción: " + description);
+        textRules.setText("Reglas: " + rules);
+        textPrice.setText("Precio: $" + formattedPrice + " por noche (con impuestos)");
+        textTaxDetails.setText("Incluye:\n • 13% impuesto IVA: $" + formattedTaxIVA + "\n • 10% impuesto limpieza: $" + formattedTaxCleaning);
+        textCapacity.setText("Capacidad: " + capacidad + " personas");
+        textOwner.setText("Dueño: " + owner);
+        textLocation.setText("Ubicación: " + provincia + ", " + canton);
+
+        // Agregar amenidades dinámicamente
+        amenitiesContainer.removeAllViews();
+        for (int i = 0; i < amenitiesArray.length(); i++) {
+            try {
+                String amenity = amenitiesArray.getString(i);
+                TextView amenityTextView = new TextView(this);
+                amenityTextView.setText("• " + amenity);
+                amenitiesContainer.addView(amenityTextView);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Evento para alquilar la casa
+        buttonRent.setOnClickListener(v -> {
+            Log.d("Alquiler", "Usuario: " + userloged + " seleccionó la casa con ID: " + houseid);
+            ReserveHouseActivity dialogFragment = ReserveHouseActivity.newInstance(houseid, userloged);
+            dialogFragment.show(getSupportFragmentManager(), "ReserveHouseDialog");
+
+           // showRentConfirmation(houseid, provincia, canton, price, owner, userloged);
+
+            /*
+            // Verificar que la casa tiene un ID válido
+            if (houseid != null && !houseid.isEmpty()) {
+                Intent intent = new Intent(ViewHouseActivity.this, ReserveHouseActivity.class);
+                intent.putExtra("id", houseid);  // ✅ Enviar ID de la casa seleccionada
+                intent.putExtra("USERNAME", userloged); // También enviar el usuario que inició sesión
+                startActivity(intent);
+            } else {
+                Toast.makeText(ViewHouseActivity.this, "Error: No se encontró el ID de la casa", Toast.LENGTH_SHORT).show();
+            }
+            */
+
+        });
+
+        // Cerrar popup al presionar el botón
+        buttonClose.setOnClickListener(v -> housePopup.dismiss());
+    }
+
+    private void showRentConfirmation(String houseid, String provincia, String canton, String price, String owner, String userloged) {
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Confirmar Alquiler")
+                .setMessage("¿Deseas alquilar esta casa en " + provincia + ", " + canton + " por $" + price + "?")
+                .setPositiveButton("Sí", (dialog, which) -> {
+                    Log.d("Alquiler", "Casa alquilada correctamente");
+
+                    // Aquí puedes agregar la lógica para procesar el alquiler, como actualizar la base de datos
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss())
+                .show();
     }
 
 
@@ -227,15 +344,6 @@ public class ViewHouseActivity extends AppCompatActivity {
     }
 
 
-
-
-
-
-
-
-
-
-
     private void filterHouses(String query) {
         if (query.isEmpty()) {
             displayHouses(allHouses);
@@ -284,16 +392,6 @@ public class ViewHouseActivity extends AppCompatActivity {
 
         displayHouses(sortedList);
     }
-
-
-
-
-
-
-
-
-
-
 
     private void showFilterPopup() {
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -390,11 +488,6 @@ public class ViewHouseActivity extends AppCompatActivity {
             filterPopup.dismiss();
         });
     }
-
-
-
-
-
 
     private void filterHouses() {
         Log.d("Filtro", "Aplicando filtros con capacidad: " + selectedCapacity +

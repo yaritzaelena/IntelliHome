@@ -83,7 +83,7 @@ public class Login extends AppCompatActivity {
                             if (propietario) {
                                 intent = new Intent(Login.this, LoginActivity.class); // Redirigir a LoginActivity si es propietario
                             } else {
-                                intent = new Intent(Login.this, ExitActivity.class); // Redirigir a ExitActivity si es inquilino
+                                intent = new Intent(Login.this, ViewHouseActivity.class); // Redirigir a ExitActivity si es inquilino
                             }
                             // Pasar el nombre de usuario a la siguiente actividad
                             intent.putExtra("USERNAME", username);
@@ -120,6 +120,9 @@ public class Login extends AppCompatActivity {
         buttonRegisterGoogle.setOnClickListener(v -> {
             // Acción para registrar con Google
             Toast.makeText(Login.this, "Registrar con Google", Toast.LENGTH_SHORT).show();
+            // Acción para el botón de Registrarse
+            Intent intent = new Intent(Login.this, ReserveHouseActivity.class);
+            startActivity(intent);
         });
 
         buttonRegisterFacebook.setOnClickListener(v -> {

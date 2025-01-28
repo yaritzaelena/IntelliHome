@@ -43,8 +43,6 @@ public class MainActivity extends AppCompatActivity {
             try {
 
                 socket = new Socket("192.168.0.152", 1717); //Olman
-
-                //socket = new Socket("192.168.0.152", 1717); //Olman
                 //socket = new Socket("192.168.68.104", 1717); //Daniel
 
                 //socket = new Socket("192.168.0.106", 1717); //Yaritza
@@ -332,6 +330,71 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
+    public static void reserveHouse(String userloged,String houseId, String checkIn, String checkOut, LoginResponseCallback callback) {
+        new Thread(() -> {
+            try {
+                if (socket == null || socket.isClosed()) {
+                    callback.onError("Socket no inicializado o cerrado.");
+                    return;
+                }
+
+                JSONObject jsonRequest = new JSONObject();
+                jsonRequest.put("action", "reserveHouse");
+                jsonRequest.put("userloged",userloged);
+                jsonRequest.put("houseId", houseId);
+                jsonRequest.put("checkIn", checkIn);
+                jsonRequest.put("checkOut", checkOut);
+
+                out.println(jsonRequest.toString());
+                out.flush();
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                String response = reader.readLine();
+
+                if (response != null) {
+                    callback.onSuccess(response);
+                } else {
+                    callback.onError("No se recibió respuesta del servidor.");
+                }
+            } catch (Exception e) {
+                callback.onError("Error: " + e.getMessage());
+            }
+        }).start();
+    }
+
+
+    public static void getBlockedDates(String houseId, LoginResponseCallback callback) {
+        new Thread(() -> {
+            try {
+                if (socket == null || socket.isClosed()) {
+                    callback.onError("Socket no inicializado o cerrado.");
+                    return;
+                }
+
+                // Construir solicitud JSON
+                JSONObject jsonRequest = new JSONObject();
+                jsonRequest.put("action", "getBlockedDates");
+                jsonRequest.put("houseId", houseId);
+
+                // Enviar la solicitud al servidor
+                out.println(jsonRequest.toString());
+                out.flush();
+
+                // Recibir respuesta del servidor
+                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                String response = reader.readLine();
+
+                if (response != null) {
+                    callback.onSuccess(response);
+                } else {
+                    callback.onError("No se recibió respuesta del servidor.");
+                }
+            } catch (Exception e) {
+                callback.onError("Error: " + e.getMessage());
+            }
+        }).start();
+    }
 
 
 

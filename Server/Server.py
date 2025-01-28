@@ -153,6 +153,12 @@ class ChatServer:
                     response = self.add_house(data)  # Llamar la nueva función
                 elif action == "get_houses":
                     response = self.get_houses()
+                elif action == "reserveHouse":
+                    response = self.reserve_house(data)
+                elif action == "get_reservations":
+                    response = self.get_reservations()
+                elif action == "getBlockedDates":
+                    response = self.get_blocked_dates(data)
                 else:
                     response = {"status": "error", "message": "Acción no válida"}
 
@@ -405,6 +411,7 @@ class ChatServer:
             # Guardar la información en database_houses.txt con encriptación
             try:
                 with open("database_houses.txt", "a", encoding="utf-8") as db_file:
+                    db_file.write(f"id: {house_id}\n")
                     db_file.write(f"username: {username}\n")
                     db_file.write(f"description: {description}\n")
                     db_file.write(f"rules: {rules}\n")
@@ -434,7 +441,134 @@ class ChatServer:
             print(f"Error al registrar casa: {e}")
             return {"status": "error", "message": "Error al registrar la casa"}
 
+
+
+    def reserve_house(self, data):
+        """ Registra una reserva en la base de datos de reservas. """
+        try:
+            # Extraer los datos del JSON recibido
+            house_id = data.get("houseId")
+            userloged = data.get("userloged")
+            check_in = data.get("checkIn")
+            check_out = data.get("checkOut")
+
+            # Validar que los datos existen
+            if not house_id or not userloged or not check_in or not check_out:
+                return {"status": "error", "message": "Datos incompletos para la reserva"}
+
+            # Generar un ID único para la reserva
+            reservation_id = int(time.time())
+
+            # Guardar la información en la base de datos
+            with open("database_reservation.txt", "a", encoding="utf-8") as db_file:
+                db_file.write(f"reservation_id: {reservation_id}\n")
+                db_file.write(f"house_id: {house_id}\n")
+                db_file.write(f"userloged: {userloged}\n")
+                db_file.write(f"check_in: {check_in}\n")
+                db_file.write(f"check_out: {check_out}\n")
+                db_file.write(f"{'-' * 20}\n")
+
+            print(f"✅ Reserva registrada correctamente con ID {reservation_id} para la casa {house_id} por {userloged}")
+            return {"status": "success", "message": "Reserva registrada correctamente", "reservation_id": reservation_id}
+
+        except Exception as e:
+            print(f"❌ Error al registrar reserva: {e}")
+            return {"status": "error", "message": "Error al registrar la reserva"}
+
+    def get_reservations(self):
+        """ Obtiene todas las reservas de la base de datos y las devuelve en formato JSON """
+
+        reservations = []
+        reservation_file = "database_reservation.txt"  # Archivo donde se guardan las reservas
+
+        try:
+            with open(reservation_file, "r", encoding="utf-8") as db_file:
+                lines = db_file.readlines()
+
+                reservation = {}  # Diccionario temporal para cada reserva
+                for line in lines:
+                    line = line.strip()
+                    print(f"Procesando línea: {line}")  # 🚀 DEBUG: Ver qué se está leyendo
+
+                    if line.startswith("reservation_id:"):
+                        reservation["id"] = line.split(": ")[1]
+                    elif line.startswith("house_id:"):
+                        reservation["house_id"] = self.decrypt(line.split(": ")[1])
+                    elif line.startswith("userloged:"):
+                        reservation["userloged"] = self.decrypt(line.split(": ")[1])
+                    elif line.startswith("check_in:"):  # 🔹 Corrección aquí
+                        reservation["checkIn"] = self.decrypt(line.split(": ")[1])
+                    elif line.startswith("check_out:"):  # 🔹 Corrección aquí
+                        reservation["checkOut"] = self.decrypt(line.split(": ")[1])
+
+                    # Si encontramos el separador, agregamos la reserva completa y la reiniciamos
+                    elif line == "--------------------":
+                        if reservation:  # Asegurarnos de que no es un diccionario vacío
+                            print(f"Reserva guardada: {reservation}")  # 🚀 DEBUG
+                            reservations.append(reservation)
+                        reservation = {}  # Reiniciar para la siguiente reserva
+
+        except Exception as e:
+            print(f"Error al leer {reservation_file}: {e}")
+            return {"status": "error", "message": "Error al obtener reservas"}
+
+        return {"status": "success", "reservations": reservations}
+
+    def get_blocked_dates(self, house_id):
+        """ Devuelve un JSON con las fechas bloqueadas de una casa específica """
+        reservations = []
+        reservation_file = "database_reservation.txt"  # Archivo donde se guardan las reservas
+
+        try:
+            # 🔹 Verificar si `house_id` es un diccionario (posible error desde Java)
+            if isinstance(house_id, dict):  
+                house_id = house_id.get("houseId", "")  # Extrae el `houseId` correctamente
+
+            house_id_str = str(house_id)  # Asegurar que sea un string
+            print(f"📌 Buscando reservas bloqueadas para la casa: {house_id_str}")
+
+            with open(reservation_file, "r", encoding="utf-8") as db_file:
+                lines = db_file.readlines()
+                reservation = {}  # Diccionario temporal para cada reserva
+
+                for line in lines:
+                    line = line.strip()
+                    print(f"🔎 Procesando línea: {line}")  # Log de cada línea procesada
+
+                    if line.startswith("reservation_id:"):
+                        reservation["id"] = line.split(": ")[1]
+                    elif line.startswith("house_id:"):
+                        reservation["house_id"] = line.split(": ")[1]  # ⚠️ No encriptar aquí para comparar directamente
+                    elif line.startswith("check_in:"):
+                        reservation["check_in"] = line.split(": ")[1]
+                    elif line.startswith("check_out:"):
+                        reservation["check_out"] = line.split(": ")[1]
+
+                    elif line == "--------------------":
+                        # ✅ Comparación corregida
+                        if reservation.get("house_id") == house_id_str:
+                            print(f"✅ Reserva encontrada: {reservation}")
+                            reservations.append({
+                                "check_in": reservation["check_in"],
+                                "check_out": reservation["check_out"]
+                            })
+                        else:
+                            print(f"❌ Reserva ignorada, no coincide con la casa {house_id_str}")
+
+                        reservation = {}  # Reiniciar para la siguiente reserva
+
+            print(f"📋 Fechas bloqueadas encontradas: {reservations}")
+            return {"status": "success", "blocked_dates": reservations}
+
+        except Exception as e:
+            print(f"❌ Error al leer reservas: {e}")
+            return {"status": "error", "message": "Error al obtener las fechas bloqueadas"}
+
+
+
+
+
+
+    
 if __name__ == "__main__":
     ChatServer()
-
-
