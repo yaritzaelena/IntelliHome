@@ -47,6 +47,7 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(JSONArray houses) {
                     Intent intent = new Intent(LoginActivity.this, ViewHouseActivity.class);
+                    intent.putExtra("USERNAME", username);
                     intent.putExtra("houses_data", houses.toString());
                     startActivity(intent);
                 }
