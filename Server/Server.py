@@ -1,11 +1,67 @@
-from cryptography.fernet import Fernet
+import io
 import os
 import json
 import socket
 import threading
 import time
 import base64
+import serial
 
+from cryptography.fernet import Fernet
+from PIL import Image
+from http.server import SimpleHTTPRequestHandler, HTTPServer
+
+# 🔹 Directorio donde se guardan las imágenes
+IMAGE_DIR = "house_images"
+PORT = 5000  # Puerto para servir imágenes
+
+# 🔹 Asegurar que la carpeta existe
+os.makedirs(IMAGE_DIR, exist_ok=True)
+
+
+# 🔹 Servidor HTTP para imágenes
+class ImageServer(SimpleHTTPRequestHandler):
+    def do_GET(self):
+        if self.path.startswith("/images/"):
+            image_path = self.path.replace("/images/", "")
+            full_path = os.path.join(IMAGE_DIR, image_path)
+
+            if os.path.exists(full_path):
+                try:
+                    with open(full_path, "rb") as file:
+                        self.send_response(200)
+                        self.send_header("Content-type", "image/jpeg")
+                        self.end_headers()
+                        self.wfile.write(file.read())
+                except Exception as e:
+                    self.send_response(500)
+                    self.end_headers()
+                    print(f"Error al servir la imagen {image_path}: {e}")
+            else:
+                self.send_response(404)
+                self.end_headers()
+                print(f" Imagen no encontrada: {image_path}")
+        else:
+            self.send_response(404)
+            self.end_headers()
+
+
+def run_image_server():
+    try:
+        server_address = ("", PORT)
+        httpd = HTTPServer(server_address, ImageServer)
+        print(f" Servidor de imágenes corriendo en http://localhost:{PORT}/images/")
+        httpd.serve_forever()
+    except Exception as e:
+        print(f"⚠ Error al iniciar el servidor de imágenes: {e}")
+
+
+# 🔹 Iniciar servidor de imágenes en un hilo separado
+image_server_thread = threading.Thread(target=run_image_server, daemon=True)
+image_server_thread.start()
+
+
+# 🔹 Clase principal del servidor
 class ChatServer:
     def __init__(self, host='0.0.0.0', port=1717):
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -14,6 +70,9 @@ class ChatServer:
         self.clients = []
         self.failed_attempts = {}  # Diccionario de intentos fallidos
         self.block_duration = 120  # Tiempo de bloqueo en segundos
+        self.arduino=None
+        self.serial_port='COM8'
+        self.conexion_exitosa=False
 
         # Generar clave de encriptación si no existe
         if not os.path.exists("secret.key"):
@@ -23,6 +82,15 @@ class ChatServer:
 
         print("Servidor iniciado y esperando conexiones...")
         threading.Thread(target=self.accept_connections).start()
+
+    def conectar_arduino(self):
+        try:
+            self.arduino=serial.Serial(self.serial_port,9600)
+            print(f"Conectando al puerto {self.serial_port}")
+            self.conexion_exitosa=True
+        except serial.SerialException as e:
+            print(f"Error al conectarse al puerto serial {e}")
+            self.conexion_exitosa=False
 
     def generate_key(self):
         """ Genera una clave de cifrado y la guarda en un archivo. """
@@ -79,8 +147,12 @@ class ChatServer:
                     response = self.register_user(data)
                 elif action == "login":
                     response = self.login_user(data["username"], data["password"])
+                elif action == "luces":
+                    response= self.controlar_luces(data)
                 elif action == "addHouse":
                     response = self.add_house(data)  # Llamar la nueva función
+                elif action == "get_houses":
+                    response = self.get_houses()
                 else:
                     response = {"status": "error", "message": "Acción no válida"}
 
@@ -97,6 +169,16 @@ class ChatServer:
             client_socket.close()  # Cerrar solo cuando el cliente se desconecte.
 
 
+    def controlar_luces(self,data):
+        habitacion = data["habitacion"]
+        self.conectar_arduino()
+        if self.conexion_exitosa:
+            if self.arduino!=None:
+                self.arduino.write(habitacion.encode("utf-8"))
+                self.conexion_exitosa=False
+                self.arduino.close()
+        else:
+            print("No se pudo establecer conexion con el arduino")
 
     def register_user(self, data):
         """ Registra un usuario en la base de datos con encriptación. """
@@ -230,6 +312,49 @@ class ChatServer:
             print(f"Error al cargar usuarios: {e}")
         return users
 
+    def get_houses(self):
+        houses = []
+        try:
+            with open("database_houses.txt", "r", encoding="utf-8") as file:
+                house_data = {}
+                for line in file:
+                    line = line.strip()
+                    if not line or line.startswith("-"):
+                        if house_data:
+                            houses.append(house_data)
+                        house_data = {}
+                        continue
+
+                    key, value = line.split(":", 1)
+                    key = key.strip()
+                    value = value.strip()
+
+                    # 🔹 Modificar para devolver **URL de imagen en lugar de Base64**
+                    if key.startswith("photo_"):
+                        image_name = os.path.basename(value)  # Obtener solo el nombre del archivo
+                        image_url = f"http://192.168.0.152:{PORT}/images/{image_name}"  # URL de la imagen Olman
+                        #image_url = f"http://192.168.0.106:{PORT}/images/{image_name}"  # URL de la imagen Yaritza
+                        house_data.setdefault("imagenes", []).append(image_url)
+                        print(f"📸 Imagen agregada: {image_url}")  # Depuración
+                    
+                    # 🔹 Si es "amenities", cargarlo como JSON
+                    elif key == "amenities":
+                        house_data[key] = json.loads(value)  
+                    
+                    # 🔹 Desencriptar los demás valores
+                    else:
+                        house_data[key] = self.decrypt(value)  
+
+            return {"status": "true", "houses": houses} if houses else {"status": "false", "message": "No hay casas registradas"}
+
+        except Exception as e:
+            print(f" Error al obtener casas: {e}")
+            return {"status": "false", "message": "Error al obtener casas"}
+
+
+
+
+
     def add_house(self, data):
         """ Registra una casa en la base de datos con encriptación. """
         try:
@@ -258,27 +383,30 @@ class ChatServer:
             # Identificador único para la casa
             house_id = int(time.time())
 
-            # Guardar cada imagen
-            image_paths = []
+            # Guardar cada imagen y generar URL
+            image_urls = []
             for index, photo_base64 in enumerate(photos_list):
                 try:
                     image_data = base64.b64decode(photo_base64)
-                    image_path = os.path.join(image_directory, f"house_{house_id}_{index}.jpg")
+                    image_filename = f"house_{house_id}_{index}.jpg"
+                    image_path = os.path.join(image_directory, image_filename)
                     
                     with open(image_path, "wb") as image_file:
                         image_file.write(image_data)
 
-                    image_paths.append(image_path)
+                    # Generar URL de la imagen
+                    image_url = f"http://localhost:8000/images/{image_filename}"
+                    image_urls.append(image_url)
 
                 except Exception as e:
                     print(f"Error al guardar la imagen {index}: {e}")
                     return {"status": "error", "message": "Error al guardar las imágenes"}
 
-            # Guardar la información en database.txt con encriptación
+            # Guardar la información en database_houses.txt con encriptación
             try:
                 with open("database_houses.txt", "a", encoding="utf-8") as db_file:
-                    db_file.write(f"id: {house_id}\n")
                     db_file.write(f"username: {username}\n")
+                    db_file.write(f"id: {house_id}\n")
                     db_file.write(f"description: {description}\n")
                     db_file.write(f"rules: {rules}\n")
                     db_file.write(f"price: {price}\n")
@@ -287,19 +415,17 @@ class ChatServer:
                     db_file.write(f"canton: {canton}\n")
                     db_file.write(f"location: {location}\n")
 
-                    # Guardar las rutas de las imágenes en database.txt
-                    for i, image_path in enumerate(image_paths):
-                        db_file.write(f"photo_{i}: {image_path}\n")
+                    # Guardar las URLs de las imágenes en database_houses.txt
+                    for i, image_url in enumerate(image_urls):
+                        db_file.write(f"photo_{i}: {image_url}\n")
 
                     # Guardar amenidades en formato JSON para facilitar su recuperación
                     db_file.write(f"amenities: {json.dumps(amenities_list, ensure_ascii=False)}\n")
 
                     db_file.write(f"{'-' * 20}\n")
 
-                    
-
             except Exception as e:
-                print(f"Error al guardar la casa en database.txt: {e}")
+                print(f"Error al guardar la casa en database_houses.txt: {e}")
                 return {"status": "error", "message": "Error al registrar la casa"}
 
             print(f" Casa guardada correctamente con ID {house_id}")
@@ -308,5 +434,6 @@ class ChatServer:
         except Exception as e:
             print(f"Error al registrar casa: {e}")
             return {"status": "error", "message": "Error al registrar la casa"}
+
 if __name__ == "__main__":
     ChatServer()
