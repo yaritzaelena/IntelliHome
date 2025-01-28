@@ -105,6 +105,7 @@ public class ViewHouseActivity extends AppCompatActivity {
             JSONArray housesArray = new JSONArray(housesData);
             for (int i = 0; i < housesArray.length(); i++) {
                 JSONObject house = housesArray.getJSONObject(i);
+                String houseid = house.getString("id");
                 String canton = house.getString("canton");
                 String provincia = house.getString("provincia");
                 String price = house.getString("price");
@@ -142,7 +143,7 @@ public class ViewHouseActivity extends AppCompatActivity {
                 new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {}).attach();
 
                 // Configurar el click para abrir la ventana emergente con información detallada
-                textDetails.setOnClickListener(v -> showHousePopup(provincia, canton, price, owner, capacidad, description, rules, amenitiesArray));
+                textDetails.setOnClickListener(v -> showHousePopup(houseid,provincia, canton, price, owner, capacidad, description, rules, amenitiesArray));
 
                 houseContainer.addView(houseView);
             }
@@ -152,7 +153,7 @@ public class ViewHouseActivity extends AppCompatActivity {
     }
 
 
-    private void showHousePopup(String provincia, String canton, String price, String owner, String capacidad, String description, String rules, JSONArray amenitiesArray) {
+    private void showHousePopup(String houseid, String provincia, String canton, String price, String owner, String capacidad, String description, String rules, JSONArray amenitiesArray) {
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.popup_house_details, null);
 
@@ -206,19 +207,19 @@ public class ViewHouseActivity extends AppCompatActivity {
 
         // Evento para alquilar la casa
         buttonRent.setOnClickListener(v -> {
-            Log.d("Alquiler", "Casa alquilada: " + provincia + ", " + canton + " - Dueño: " + owner);
+            Log.d("Alquiler", "Usuario: " + userloged + " seleccionó la casa con ID: " + houseid);
 
-            showRentConfirmation(provincia, canton, price, owner, userloged);
+            showRentConfirmation(houseid, provincia, canton, price, owner, userloged);
             // Verificar que la casa tiene un ID válido
-            if (house != null && house.getId() != null) {
+            if (houseid != null && !houseid.isEmpty()) {
                 Intent intent = new Intent(ViewHouseActivity.this, ReserveHouseActivity.class);
-                intent.putExtra("HOUSE_ID", house.getId());  // ✅ Enviar ID de la casa seleccionada
+                intent.putExtra("id", houseid);  // ✅ Enviar ID de la casa seleccionada
+                intent.putExtra("USERNAME", userloged); // También enviar el usuario que inició sesión
                 startActivity(intent);
             } else {
                 Toast.makeText(ViewHouseActivity.this, "Error: No se encontró el ID de la casa", Toast.LENGTH_SHORT).show();
             }
 
-            showRentConfirmation(provincia, canton, price, owner, userloged);
 
         });
 
@@ -226,7 +227,7 @@ public class ViewHouseActivity extends AppCompatActivity {
         buttonClose.setOnClickListener(v -> housePopup.dismiss());
     }
 
-    private void showRentConfirmation(String provincia, String canton, String price, String owner, String userloged) {
+    private void showRentConfirmation(String houseid, String provincia, String canton, String price, String owner, String userloged) {
         new androidx.appcompat.app.AlertDialog.Builder(this)
                 .setTitle("Confirmar Alquiler")
                 .setMessage("¿Deseas alquilar esta casa en " + provincia + ", " + canton + " por $" + price + "?")
