@@ -1,5 +1,6 @@
 package com.example.miprimeraplicacion;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -27,13 +28,19 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import android.util.Log;
+import java.util.HashMap;
 
 public class ViewHouseActivity extends AppCompatActivity {
 
@@ -43,6 +50,9 @@ public class ViewHouseActivity extends AppCompatActivity {
     private List<String> selectedAmenities = new ArrayList<>();
     private LinearLayout houseContainer;
     private Map<String, CheckBox> amenitiesMap = new LinkedHashMap<>();
+    private List<JSONObject> allHouses = new ArrayList<>();
+    private Map<String, String> cantonToProvinciaMap = new HashMap<>();
+    private EditText searchBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,11 +60,20 @@ public class ViewHouseActivity extends AppCompatActivity {
         setContentView(R.layout.activity_view_house);
 
         houseContainer = findViewById(R.id.houseContainer);
-        EditText searchBar = findViewById(R.id.searchEditText);
+        searchBar = findViewById(R.id.searchEditText);
         ImageButton filterButton = findViewById(R.id.filterButton);
 
         filterButton.setOnClickListener(v -> showFilterPopup());
 
+        // Cargar casas y datos de cantones/provincias
+        String housesData = getIntent().getStringExtra("houses_data");
+        if (housesData != null) {
+            loadHouses(housesData);
+        }
+
+        loadProvinceCantonData();
+
+        // Búsqueda en vivo mientras se escribe en la barra de búsqueda
         searchBar.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -67,20 +86,17 @@ public class ViewHouseActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {}
         });
-
-        String housesData = getIntent().getStringExtra("houses_data");
-        if (housesData != null) {
-            loadHouses(housesData);
-        }
     }
 
     private void loadHouses(String housesData) {
         try {
             houseContainer.removeAllViews();
+            allHouses.clear();
 
             JSONArray housesArray = new JSONArray(housesData);
             for (int i = 0; i < housesArray.length(); i++) {
                 JSONObject house = housesArray.getJSONObject(i);
+                allHouses.add(house);
                 String canton = house.getString("canton");
                 String provincia = house.getString("provincia");
                 String price = house.getString("price");
@@ -100,6 +116,7 @@ public class ViewHouseActivity extends AppCompatActivity {
                     amenitiesList.add(amenitiesArray.getString(j).trim().toLowerCase()); // Normalizar
                 }
 
+
                 // 🔹 Guardar la lista de amenidades en el Tag de la vista de la casa para que el filtro pueda acceder a ellas
                 houseView.setTag(amenitiesList);
 
@@ -116,11 +133,101 @@ public class ViewHouseActivity extends AppCompatActivity {
                 new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {}).attach();
 
                 houseContainer.addView(houseView);
+
             }
+            displayHouses(allHouses);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+
+
+    private void displayHouses(List<JSONObject> housesList) {
+        houseContainer.removeAllViews();
+
+        for (JSONObject house : housesList) {
+            try {
+                String canton = house.getString("canton");
+                String provincia = house.getString("provincia");
+                String price = house.getString("price");
+                String owner = house.getString("username");
+                String capacidad = house.getString("capacity");
+                JSONArray imagesArray = house.getJSONArray("imagenes");
+
+                View houseView = LayoutInflater.from(this).inflate(R.layout.item_house, houseContainer, false);
+                TextView textDetails = houseView.findViewById(R.id.textHouseDetails);
+                ViewPager2 viewPager = houseView.findViewById(R.id.viewPagerImages);
+                TabLayout tabLayout = houseView.findViewById(R.id.tabLayoutIndicator);
+
+                textDetails.setText(provincia + ", " + canton + "\nCapacidad: " + capacidad + "\nPrecio: $" + price + "\nDueño: " + owner);
+
+                List<String> imageList = new ArrayList<>();
+                for (int j = 0; j < imagesArray.length(); j++) {
+                    imageList.add(imagesArray.getString(j));
+                }
+
+                HouseImageAdapter adapter = new HouseImageAdapter(this, imageList);
+                viewPager.setAdapter(adapter);
+                new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {}).attach();
+
+                houseContainer.addView(houseView);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void loadProvinceCantonData() {
+        try {
+            String json = loadJSONFromRaw(this, R.raw.provincias_cantones_distritos_costa_rica);
+            if (json == null) {
+                Log.e("CargaProvincias", "Error: JSON no cargado.");
+                return;
+            }
+
+            JSONObject rootObject = new JSONObject(json); // ✅ Se usa `json`, no `jsonString`
+
+            if (!rootObject.has("provincias")) {
+                Log.e("CargaProvincias", "Error: No se encontró la clave 'provincias' en el JSON");
+                return;
+            }
+
+            JSONObject provinciasObject = rootObject.getJSONObject("provincias");
+
+            for (Iterator<String> provinceIt = provinciasObject.keys(); provinceIt.hasNext(); ) {
+                String provinceKey = provinceIt.next();
+                JSONObject province = provinciasObject.getJSONObject(provinceKey);
+                String provinceName = province.getString("nombre").trim().toLowerCase();
+
+                if (!province.has("cantones")) {
+                    Log.e("CargaProvincias", "Error: La provincia " + provinceName + " no tiene cantones");
+                    continue;
+                }
+
+                JSONObject cantons = province.getJSONObject("cantones");
+
+                for (Iterator<String> cantonIt = cantons.keys(); cantonIt.hasNext(); ) {
+                    String cantonKey = cantonIt.next();
+                    JSONObject canton = cantons.getJSONObject(cantonKey);
+                    String cantonName = canton.getString("nombre").trim().toLowerCase();
+
+                    // ✅ Guardamos la relación cantón -> provincia
+                    cantonToProvinciaMap.put(cantonName, provinceName);
+
+                    Log.d("CargaProvincias", "Cargado Cantón: " + cantonName + " -> Provincia: " + provinceName);
+                }
+            }
+
+            Log.d("CargaProvincias", "Mapa Final: " + cantonToProvinciaMap);
+
+        } catch (Exception e) {
+            Log.e("CargaProvincias", "Error al cargar el JSON", e);
+        }
+    }
+
+
+
 
 
 
@@ -130,18 +237,63 @@ public class ViewHouseActivity extends AppCompatActivity {
 
 
     private void filterHouses(String query) {
-        for (int i = 0; i < houseContainer.getChildCount(); i++) {
-            View houseView = houseContainer.getChildAt(i);
-            TextView textDetails = houseView.findViewById(R.id.textHouseDetails);
-            String details = textDetails.getText().toString().toLowerCase();
+        if (query.isEmpty()) {
+            displayHouses(allHouses);
+            return;
+        }
 
-            if (details.contains(query.toLowerCase())) {
-                houseView.setVisibility(View.VISIBLE);
-            } else {
-                houseView.setVisibility(View.GONE);
+        query = query.trim().toLowerCase();
+
+        if (cantonToProvinciaMap == null || cantonToProvinciaMap.isEmpty()) {
+            Log.e("FiltroBusqueda", "Error: Mapa cantonToProvinciaMap no está cargado.");
+            return;
+        }
+
+        String provinceMatch = cantonToProvinciaMap.get(query);
+        Log.d("FiltroBusqueda", "Query: " + query + " -> Provincia encontrada: " + provinceMatch);
+
+        List<JSONObject> matchingCanton = new ArrayList<>();
+        List<JSONObject> matchingProvince = new ArrayList<>();
+
+        for (JSONObject house : allHouses) {
+            try {
+                String houseCanton = house.getString("canton").trim().toLowerCase();
+                String houseProvince = house.getString("provincia").trim().toLowerCase();
+
+                Log.d("FiltroCasas", "Casa: " + houseCanton + ", " + houseProvince);
+
+                if (houseCanton.equals(query)) {
+                    matchingCanton.add(house);
+                    Log.d("FiltroCasas", "✔ Coincide con cantón: " + houseCanton);
+                } else if (provinceMatch != null && houseProvince.equals(provinceMatch)) {
+                    matchingProvince.add(house);
+                    Log.d("FiltroCasas", "✔ Coincide con provincia: " + houseProvince);
+                }
+            } catch (Exception e) {
+                Log.e("FiltroCasas", "Error procesando casa", e);
             }
         }
+
+        // 🔥❗️EXCLUSIÓN: Si no coincide ni por cantón ni por provincia, NO SE AGREGA
+        List<JSONObject> sortedList = new ArrayList<>();
+        sortedList.addAll(matchingCanton);
+        sortedList.addAll(matchingProvince);
+
+        Log.d("FiltroFinal", "Casas ordenadas: Cantón=" + matchingCanton.size() +
+                ", Provincia=" + matchingProvince.size());
+
+        displayHouses(sortedList);
     }
+
+
+
+
+
+
+
+
+
+
 
     private void showFilterPopup() {
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -316,6 +468,27 @@ public class ViewHouseActivity extends AppCompatActivity {
             }
         }
     }
+    private static String loadJSONFromRaw(Context context, int rawResourceId) {
+        InputStream is = null;
+        try {
+            is = context.getResources().openRawResource(rawResourceId);
+            Scanner scanner = new Scanner(is).useDelimiter("\\A");
+            return scanner.hasNext() ? scanner.next() : "";
+        } catch (Exception e) {
+            Log.e("JSONLoader", "Error al cargar el archivo JSON: " + rawResourceId, e);
+            return null;
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    Log.e("JSONLoader", "Error al cerrar el InputStream", e);
+                }
+            }
+        }
+    }
+
+
 
 
 }
