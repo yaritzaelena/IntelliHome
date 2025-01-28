@@ -101,12 +101,12 @@ public class ViewHouseActivity extends AppCompatActivity {
     private void loadHouses(String housesData) {
         try {
             houseContainer.removeAllViews();
-            allHouses.clear();  // ✅ Asegurar que `allHouses` se vacíe antes de cargar
+            allHouses.clear();  // ✅ Asegurar que allHouses se vacíe antes de cargar
 
             JSONArray housesArray = new JSONArray(housesData);
             for (int i = 0; i < housesArray.length(); i++) {
                 JSONObject house = housesArray.getJSONObject(i);
-                allHouses.add(house);  // ✅ Guardar en `allHouses` para búsqueda
+                allHouses.add(house);  // ✅ Guardar en allHouses para búsqueda
 
                 String houseid = house.getString("id");
                 String canton = house.getString("canton");
@@ -155,7 +155,6 @@ public class ViewHouseActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
 
 
     private void showHousePopup(String houseid, String provincia, String canton, String price, String owner, String capacidad, String description, String rules, JSONArray amenitiesArray) {
@@ -270,12 +269,15 @@ public class ViewHouseActivity extends AppCompatActivity {
 
         for (JSONObject house : housesList) {
             try {
+                String houseid = house.getString("id");
                 String canton = house.getString("canton");
                 String provincia = house.getString("provincia");
                 String price = house.getString("price");
                 String owner = house.getString("username");
                 String capacidad = house.getString("capacity");
                 JSONArray imagesArray = house.getJSONArray("imagenes");
+                String description = house.has("description") ? house.getString("description") : "No disponible";
+                String rules = house.has("rules") ? house.getString("rules") : "No disponible";
                 JSONArray amenitiesArray = house.getJSONArray("amenities");
 
                 View houseView = LayoutInflater.from(this).inflate(R.layout.item_house, houseContainer, false);
@@ -299,7 +301,15 @@ public class ViewHouseActivity extends AppCompatActivity {
                 for (int j = 0; j < amenitiesArray.length(); j++) {
                     amenitiesList.add(amenitiesArray.getString(j).trim().toLowerCase()); // Normalizar
                 }
-                houseView.setTag(amenitiesList);  // 🔹 Guardamos las amenidades correctamente
+                houseView.setTag(amenitiesList);
+
+                // 🔥 **REESTABLECER EL LISTENER PARA MOSTRAR DETALLES DE LA CASA**
+                textDetails.setClickable(true);
+                textDetails.setFocusable(true);
+                textDetails.setOnClickListener(v -> {
+                    Log.d("Popup", "Clic detectado en casa con ID: " + houseid);
+                    showHousePopup(houseid, provincia, canton, price, owner, capacidad, description, rules, amenitiesArray);
+                });
 
                 houseContainer.addView(houseView);
             } catch (Exception e) {
@@ -317,7 +327,8 @@ public class ViewHouseActivity extends AppCompatActivity {
                 return;
             }
 
-            JSONObject rootObject = new JSONObject(json);
+            JSONObject rootObject = new JSONObject(json); // ✅ Se usa `json`, no `jsonString`
+
             if (!rootObject.has("provincias")) {
                 Log.e("CargaProvincias", "Error: No se encontró la clave 'provincias' en el JSON");
                 return;
@@ -328,10 +339,7 @@ public class ViewHouseActivity extends AppCompatActivity {
             for (Iterator<String> provinceIt = provinciasObject.keys(); provinceIt.hasNext(); ) {
                 String provinceKey = provinceIt.next();
                 JSONObject province = provinciasObject.getJSONObject(provinceKey);
-                String provinceName = province.optString("nombre", "").trim().toLowerCase();
-                if (provinceName.isEmpty()) {
-                    continue;
-                }
+                String provinceName = province.getString("nombre").trim().toLowerCase();
 
                 if (!province.has("cantones")) {
                     Log.e("CargaProvincias", "Error: La provincia " + provinceName + " no tiene cantones");
@@ -343,10 +351,12 @@ public class ViewHouseActivity extends AppCompatActivity {
                 for (Iterator<String> cantonIt = cantons.keys(); cantonIt.hasNext(); ) {
                     String cantonKey = cantonIt.next();
                     JSONObject canton = cantons.getJSONObject(cantonKey);
-                    String cantonName = canton.optString("nombre", "").trim().toLowerCase();
-                    if (!cantonName.isEmpty()) {
-                        cantonToProvinciaMap.put(cantonName, provinceName);
-                    }
+                    String cantonName = canton.getString("nombre").trim().toLowerCase();
+
+                    // ✅ Guardamos la relación cantón -> provincia
+                    cantonToProvinciaMap.put(cantonName, provinceName);
+
+                    Log.d("CargaProvincias", "Cargado Cantón: " + cantonName + " -> Provincia: " + provinceName);
                 }
             }
 
@@ -356,7 +366,6 @@ public class ViewHouseActivity extends AppCompatActivity {
             Log.e("CargaProvincias", "Error al cargar el JSON", e);
         }
     }
-
 
 
     private void filterHouses(String query) {
@@ -407,7 +416,6 @@ public class ViewHouseActivity extends AppCompatActivity {
 
         displayHouses(sortedList);
     }
-
 
     private void showFilterPopup() {
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
