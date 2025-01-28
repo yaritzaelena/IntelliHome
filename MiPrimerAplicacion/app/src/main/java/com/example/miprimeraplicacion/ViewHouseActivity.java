@@ -91,12 +91,10 @@ public class ViewHouseActivity extends AppCompatActivity {
     private void loadHouses(String housesData) {
         try {
             houseContainer.removeAllViews();
-            allHouses.clear();
 
             JSONArray housesArray = new JSONArray(housesData);
             for (int i = 0; i < housesArray.length(); i++) {
                 JSONObject house = housesArray.getJSONObject(i);
-                allHouses.add(house);
                 String canton = house.getString("canton");
                 String provincia = house.getString("provincia");
                 String price = house.getString("price");
@@ -116,7 +114,6 @@ public class ViewHouseActivity extends AppCompatActivity {
                     amenitiesList.add(amenitiesArray.getString(j).trim().toLowerCase()); // Normalizar
                 }
 
-
                 // 🔹 Guardar la lista de amenidades en el Tag de la vista de la casa para que el filtro pueda acceder a ellas
                 houseView.setTag(amenitiesList);
 
@@ -133,13 +130,12 @@ public class ViewHouseActivity extends AppCompatActivity {
                 new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {}).attach();
 
                 houseContainer.addView(houseView);
-
             }
-            displayHouses(allHouses);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
 
 
