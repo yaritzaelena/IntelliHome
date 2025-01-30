@@ -30,6 +30,8 @@ public class TestLeds extends AppCompatActivity {
         View btnBano1 = findViewById(R.id.viewBano);
         View btnBano2 = findViewById(R.id.viewBano2);
         View btnCorredor = findViewById(R.id.viewCorredor);
+        Button buttonIncendio = findViewById(R.id.buttonIncendio);
+
 
         final boolean[] isHighlighted = {false, false, false, false, false, false, false, false};
 
@@ -37,6 +39,11 @@ public class TestLeds extends AppCompatActivity {
         botonRegresar.setOnClickListener(v -> {
             // Llama a una función cuando el botón Regresar es presionado
             botonRegresarFunction();
+        });
+
+        buttonIncendio.setOnClickListener(v -> {
+            showSensorAlert("¡Emergencia de incendio activada!");
+            Toast.makeText(this, "🔥 ¡Emergencia de incendio activada!", Toast.LENGTH_SHORT).show();
         });
 
         btnCocina.setOnClickListener(v -> {
@@ -189,6 +196,11 @@ public class TestLeds extends AppCompatActivity {
     private void btnCorredorFunction() {
         // Lógica para el botón Corredor
         MainActivity.sendHabitacionLuz("CORREDOR");
+    }
+
+    private void showSensorAlert(String message) {
+        SensorAlertDialog dialog = SensorAlertDialog.newInstance(message);
+        dialog.show(getSupportFragmentManager(), "SensorAlert");
     }
 
     private GradientDrawable createBorderDrawable(int borderWidth, int borderColor) {
