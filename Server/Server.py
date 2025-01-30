@@ -189,8 +189,9 @@ class ChatServer:
                 self.arduino.write(habitacion.encode("utf-8"))
                 self.conexion_exitosa=False
                 self.arduino.close()
+                return "Se encendio la luz de "+data["habitacion"]
         else:
-            print("No se pudo establecer conexion con el arduino")
+            return("No se pudo establecer conexion con el arduino")
 
     def enviar_whatsapp(self, data):
         mensaje=data["mensaje"]
@@ -201,6 +202,7 @@ class ChatServer:
             from_=self.mensajeFrom,
             to=mensajePara
         )
+        return "Enviado a "+data["telefono"]+data["mensaje"]
 
 
     def register_user(self, data):
