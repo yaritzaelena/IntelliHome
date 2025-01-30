@@ -5,8 +5,14 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,6 +36,7 @@ public class TestLeds extends AppCompatActivity {
         View btnBano1 = findViewById(R.id.viewBano);
         View btnBano2 = findViewById(R.id.viewBano2);
         View btnCorredor = findViewById(R.id.viewCorredor);
+        Button buttonAlertaSismo = findViewById(R.id.buttonAlertaSismo);
 
         final boolean[] isHighlighted = {false, false, false, false, false, false, false, false};
 
@@ -38,6 +45,8 @@ public class TestLeds extends AppCompatActivity {
             // Llama a una función cuando el botón Regresar es presionado
             botonRegresarFunction();
         });
+
+        buttonAlertaSismo.setOnClickListener(v -> mostrarAlertaSismo(6.5)); // Se puede cambiar la magnitud aquí
 
         btnCocina.setOnClickListener(v -> {
             if (!isHighlighted[0]) {
@@ -190,6 +199,40 @@ public class TestLeds extends AppCompatActivity {
         // Lógica para el botón Corredor
         MainActivity.sendHabitacionLuz("CORREDOR");
     }
+
+    private void mostrarAlertaSismo(double magnitud) {
+        // Inflar el diseño del popup
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.popup_alerta_sismo, null);
+
+        // Crear el popup
+        final PopupWindow popupWindow = new PopupWindow(
+                popupView,
+                ViewGroup.LayoutParams.MATCH_PARENT,  // Asegurar ancho
+                ViewGroup.LayoutParams.WRAP_CONTENT, // Ajustar altura
+                true
+        );
+
+        // ✅ Agregar fondo para que el clic fuera del popup lo cierre
+        popupWindow.setBackgroundDrawable(getDrawable(R.drawable.popup_background));
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.setFocusable(true);
+
+        // Configurar la imagen y el mensaje
+        ImageView imageView = popupView.findViewById(R.id.imageViewAlerta);
+        imageView.setImageResource(R.mipmap.alerta_sismo); // Cargar la imagen del sismo
+
+        TextView textView = popupView.findViewById(R.id.textViewMensaje);
+        textView.setText("⚠️ Alerta: Sismo detectado de magnitud " + magnitud + " ⚠️");
+
+        Button btnCerrar = popupView.findViewById(R.id.buttonCerrar);
+        btnCerrar.setOnClickListener(v -> popupWindow.dismiss());
+
+        // ✅ Mostrar el PopupWindow con actualización
+        popupWindow.showAtLocation(findViewById(android.R.id.content), Gravity.CENTER, 0, 0);
+        popupWindow.update(); // Actualizar el popup para asegurar visibilidad
+    }
+
 
     private GradientDrawable createBorderDrawable(int borderWidth, int borderColor) {
         GradientDrawable drawable = new GradientDrawable();
