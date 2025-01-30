@@ -104,13 +104,11 @@
 
     <TableRow
         android:id="@+id/tableRow"
-        android:layout_width="322dp"
-        android:layout_height="53dp"
-        android:layout_marginBottom="60dp"
-        app:layout_constraintBottom_toTopOf="@+id/frameLayout"
-        app:layout_constraintEnd_toEndOf="@+id/frameLayout"
-        app:layout_constraintHorizontal_bias="0.382"
-        app:layout_constraintStart_toStartOf="@+id/frameLayout">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <Button
             android:id="@+id/button4"
@@ -118,7 +116,16 @@
             android:layout_height="wrap_content"
             android:text="Regresar" />
 
+        <Button
+            android:id="@+id/buttonIncendio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🔥 Incendio"
+            android:backgroundTint="@android:color/holo_red_dark"
+            android:textColor="@android:color/white"
+            android:layout_marginStart="16dp" />
     </TableRow>
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="366dp"
