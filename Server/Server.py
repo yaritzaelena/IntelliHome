@@ -75,6 +75,8 @@ class ChatServer:
         self.serial_port='COM8'
         self.conexion_exitosa=False
         
+        
+        
         self.client = Client(self.account_sid, self.auth_token)
         self.mensajeFrom='whatsapp:+14155238886',
 
