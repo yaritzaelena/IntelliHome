@@ -36,7 +36,10 @@ public class TestLeds extends AppCompatActivity {
         View btnBano1 = findViewById(R.id.viewBano);
         View btnBano2 = findViewById(R.id.viewBano2);
         View btnCorredor = findViewById(R.id.viewCorredor);
+
         Button buttonAlertaSismo = findViewById(R.id.buttonAlertaSismo);
+        Button buttonIncendio = findViewById(R.id.buttonIncendio);
+
 
         final boolean[] isHighlighted = {false, false, false, false, false, false, false, false};
 
@@ -46,7 +49,13 @@ public class TestLeds extends AppCompatActivity {
             botonRegresarFunction();
         });
 
+
         buttonAlertaSismo.setOnClickListener(v -> mostrarAlertaSismo(6.5)); // Se puede cambiar la magnitud aquí
+        buttonIncendio.setOnClickListener(v -> {
+            showSensorAlert("¡Emergencia de incendio activada!");
+            Toast.makeText(this, "🔥 ¡Emergencia de incendio activada!", Toast.LENGTH_SHORT).show();
+        });
+
 
         btnCocina.setOnClickListener(v -> {
             if (!isHighlighted[0]) {
@@ -200,6 +209,7 @@ public class TestLeds extends AppCompatActivity {
         MainActivity.sendHabitacionLuz("CORREDOR");
     }
 
+
     private void mostrarAlertaSismo(double magnitud) {
         // Inflar el diseño del popup
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -231,6 +241,13 @@ public class TestLeds extends AppCompatActivity {
         // ✅ Mostrar el PopupWindow con actualización
         popupWindow.showAtLocation(findViewById(android.R.id.content), Gravity.CENTER, 0, 0);
         popupWindow.update(); // Actualizar el popup para asegurar visibilidad
+    }
+
+
+
+    private void showSensorAlert(String message) {
+        SensorAlertDialog dialog = SensorAlertDialog.newInstance(message);
+        dialog.show(getSupportFragmentManager(), "SensorAlert");
     }
 
 
