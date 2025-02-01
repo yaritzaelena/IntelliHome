@@ -74,6 +74,7 @@ class ChatServer:
         self.arduino=None
         self.serial_port='COM8'
         self.conexion_exitosa=False
+
         
         
         
@@ -167,6 +168,8 @@ class ChatServer:
                     response = self.get_blocked_dates(data)
                 elif action == "notificacionWhatsapp":
                     response=self.enviar_whatsapp(data)
+                elif action=="casaWhatsapp":
+                    response=self.registrar_whatsapp_arduino(data)    
                 else:
                     response = {"status": "error", "message": "Acción no válida"}
 
@@ -182,6 +185,10 @@ class ChatServer:
             print("Finalizando conexión con el cliente.")
             client_socket.close()  # Cerrar solo cuando el cliente se desconecte.
 
+    def registrar_whatsapp_arduino(self,data):
+        numero = data["numero"]
+
+        return f"Registrado exitosamente el numero {numero}"
 
     def controlar_luces(self,data):
         habitacion = data["habitacion"]
@@ -357,7 +364,8 @@ class ChatServer:
                     # 🔹 Modificar para devolver **URL de imagen en lugar de Base64**
                     if key.startswith("photo_"):
                         image_name = os.path.basename(value)  # Obtener solo el nombre del archivo
-                        image_url = f"http://192.168.0.152:{PORT}/images/{image_name}"  # URL de la imagen Olman
+                        image_url = f"http://192.168.68.104:{PORT}/images/{image_name}"  # URL de la imagen Olman
+                        #image_url = f"http://192.168.0.152:{PORT}/images/{image_name}"  # URL de la imagen Olman
                         #image_url = f"http://192.168.0.106:{PORT}/images/{image_name}"  # URL de la imagen Yaritza
                         house_data.setdefault("imagenes", []).append(image_url)
                         print(f"📸 Imagen agregada: {image_url}")  # Depuración

@@ -225,7 +225,6 @@ public class AddHouseActivity extends AppCompatActivity {
             return;
         }
 
-        //  Obtener amenidades seleccionadas
         // Obtener amenidades seleccionadas
         List<String> selectedAmenities = getSelectedAmenities();
 
@@ -253,6 +252,13 @@ public class AddHouseActivity extends AppCompatActivity {
                     new MainActivity.RegisterResponseCallback() {
                         @Override
                         public void onSuccess(String response) {
+                            //verificar si el usuario ya se registro en twilio, si no, mostrarle el qr
+                            //caso contrario, ignorar
+                            //enviar al servidor un json {action:"casaWhatsapp",telefono:0000000} numero
+                            
+                            Intent intent = new Intent(AddHouseActivity.this, QrTwilio.class);
+                            startActivity(intent);
+
                             runOnUiThread(() -> {
                                 Toast.makeText(AddHouseActivity.this, "Casa registrada exitosamente", Toast.LENGTH_SHORT).show();
                                 finish();
