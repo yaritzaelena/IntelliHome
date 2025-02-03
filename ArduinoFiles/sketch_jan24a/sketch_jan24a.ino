@@ -8,6 +8,14 @@ const int ledCuarto2 = 2; // GPIO27 conectado a D27 en la placa
 const int ledCocina = 26;  // GPIO26 conectado a D26 en la placa
 const int ledCorredor = 5;// GPIO25 conectado a D25 en la placa
 
+// Definir botón
+// Definir botón
+const int flamePin = 13;  // Cambia este valor si el botón está en otro pin
+const int sismoPin = 18;
+
+bool flameSensor;
+bool fire;
+
 // Variables to hold the states of each LED
 int ledStateGaraje = 0;
 int ledStateBano1 = 0;
@@ -18,8 +26,11 @@ int ledStateCuarto2 = 0;
 int ledStateCocina = 0;
 int ledStateCorredor = 0;
 
+String numero="";
+
 String mensajeServidor;
 void setup() {
+  numero="89869107";
   Serial.begin(9600);
   pinMode(ledGaraje, OUTPUT);
   pinMode(ledBano1, OUTPUT);
@@ -30,9 +41,27 @@ void setup() {
   pinMode(ledCocina, OUTPUT);
   pinMode(ledCorredor, OUTPUT);
 
+  //sensor de flama
+  pinMode(flamePin, INPUT);
+
+  //sensor de sismos
+
 }
 
 void loop() {
+  // Leer el estado del pin de sensor de llama
+  flameSensor= digitalRead(flamePin);
+  //que hacer con esta lectura
+  if(flameSensor && !fire){
+    Serial.println("Alerta de incendio-"+numero);
+    fire=true;
+  }
+  if(!flameSensor && fire){
+    Serial.println("Se ha mitigado el fuego en la propiedad-"+numero);
+    fire=false;
+  }
+  //fin flameSensor
+
   mensajeServidor=Serial.readStringUntil('\n');
   //puede recibir o GARAJE, BANO1, BANO2, SALA, CORREDOR, COCINA, CUARTO1, CUARTO2
   if (mensajeServidor == "GARAJE") {
