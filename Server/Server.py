@@ -74,9 +74,12 @@ class ChatServer:
         self.arduino=None
         self.serial_port='COM8'
         self.conexion_exitosa=False
+        self.leyendo_mensajes_arduino=False
+        self.asi = 'ACbb736c2252797ba5690a98bbb1a029f1'
+        self.auth_token = 'fa37fae92c4fda8a67a9ca5d8d199521'
 
         
-        self.client = Client(self.account_sid, self.auth_token)
+        self.client = Client(self.asi, self.auth_token)
         self.mensajeFrom='whatsapp:+14155238886',
 
         # Generar clave de encriptación si no existe
@@ -86,8 +89,23 @@ class ChatServer:
         self.cipher = Fernet(self.key)
 
         print("Servidor iniciado y esperando conexiones...")
+        threading.Thread(target=self.establecer_arduino).start()
         threading.Thread(target=self.accept_connections).start()
 
+    def establecer_arduino(self):
+        while True:
+            if not self.conexion_exitosa:
+                try:
+                    self.arduino=serial.Serial(self.serial_port,9600)
+                    print(f"Conectando al puerto {self.serial_port}")
+                    self.conexion_exitosa=True
+                except serial.SerialException as e:
+                    self.conexion_exitosa=False
+                    self.arduino=None
+                    self.leyendo_mensajes_arduino=False
+            elif self.conexion_exitosa and self.arduino!= None and not self.leyendo_mensajes_arduino:
+                threading.Thread(target=self.recibir_mensaje_arduino).start()
+        
     def conectar_arduino(self):
         try:
             self.arduino=serial.Serial(self.serial_port,9600)
@@ -96,6 +114,8 @@ class ChatServer:
         except serial.SerialException as e:
             print(f"Error al conectarse al puerto serial {e}")
             self.conexion_exitosa=False
+            self.arduino=None
+            self.leyendo_mensajes_arduino=False
 
     def generate_key(self):
         """ Genera una clave de cifrado y la guarda en un archivo. """
@@ -123,6 +143,28 @@ class ChatServer:
             client_socket, addr = self.server_socket.accept()
             print(f"Conexión aceptada de {addr}")
             threading.Thread(target=self.handle_client, args=(client_socket,)).start()
+
+    def recibir_mensaje_arduino(self):
+        self.leyendo_mensajes_arduino=True
+        while True:
+            try:
+                if self.arduino.in_waiting > 0:  # Si hay datos en el buffer serie
+                    mensaje = self.arduino.readline().decode('utf-8').strip()
+                    if "-" in mensaje:
+                        partes = mensaje.split("-", 1)  
+                        texto_mensaje = partes[0].strip() 
+                        numero_telefono = partes[1].strip()  
+
+                        self.enviar_whatsapp(texto_mensaje, numero_telefono)
+                    else:
+                        print("Mensaje recibido en formato incorrecto:", mensaje)
+            except serial.SerialException as e:
+                print(f"Error en la conexión serial: {e}")
+                self.arduino=None
+                self.conexion_exitosa=False
+                self.leyendo_mensajes_arduino=False
+                break
+
 
     def handle_client(self, client_socket):
         """ Maneja la comunicación con el cliente en un bucle para permitir múltiples solicitudes. """
@@ -164,8 +206,6 @@ class ChatServer:
                     response = self.get_reservations()
                 elif action == "getBlockedDates":
                     response = self.get_blocked_dates(data)
-                elif action == "notificacionWhatsapp":
-                    response=self.enviar_whatsapp(data)
                 elif action=="casaWhatsapp":
                     response=self.registrar_whatsapp_arduino(data)    
                 else:
@@ -190,7 +230,8 @@ class ChatServer:
 
     def controlar_luces(self,data):
         habitacion = data["habitacion"]
-        self.conectar_arduino()
+        if not self.conexion_exitosa and self.arduino ==None:
+            self.conectar_arduino()
         if self.conexion_exitosa:
             if self.arduino!=None:
                 self.arduino.write(habitacion.encode("utf-8"))
@@ -199,15 +240,16 @@ class ChatServer:
         else:
             print("No se pudo establecer conexion con el arduino")
 
-    def enviar_whatsapp(self, data):
-        mensaje=data["mensaje"]
-        mensajePara='whatsapp:+506'+data["telefono"]
+    def enviar_whatsapp(self, mensaje,numero):
+        mensajePara='whatsapp:+506'+numero
+        print("whatsapp para:\n"+mensajePara)
 
         mensaje=self.client.messages.create(
             body=mensaje,
             from_=self.mensajeFrom,
             to=mensajePara
         )
+        print(mensaje.sid)
 
 
     def register_user(self, data):
