@@ -285,6 +285,10 @@ public class Register extends AppCompatActivity {
             String houseStyle = spinnerHouseStyle.getSelectedItem().toString();
             String transportStyle = spinnerTransportStyle.getSelectedItem().toString();
             String birthDate = birthDateEditText.getText().toString().trim();
+            int transNum = spinnerTransportStyle.getSelectedItemPosition();
+            int vivNum = spinnerHouseStyle.getSelectedItemPosition();
+
+
 
             // Validar que la imagen fue tomada
             //String photoBase64 = userPhotoBitmap != null ? encodeToBase64(userPhotoBitmap) : "";
@@ -314,7 +318,7 @@ public class Register extends AppCompatActivity {
             }
             // Validar si todos los campos obligatorios están llenos
             if (firstName.isEmpty() || lastName.isEmpty() || address.isEmpty() || nickname.isEmpty() ||
-                    password.isEmpty() || confirmPassword.isEmpty() || hobby.isEmpty() ||  cardnumber.isEmpty() ||cardexpiry.isEmpty() ||cardcvv.isEmpty() ||houseStyle.isEmpty() || transportStyle.isEmpty()|| birthDate.isEmpty()) {
+                    password.isEmpty() || confirmPassword.isEmpty() || hobby.isEmpty() ||  cardnumber.isEmpty() ||cardexpiry.isEmpty() ||cardcvv.isEmpty() ||vivNum ==0 || transNum==0|| birthDate.isEmpty()) {
 
                 Toast.makeText(Register.this, "Por favor, completa todos los campos.", Toast.LENGTH_SHORT).show();
                 return;

@@ -48,3 +48,27 @@ location: gAAAAABnmGa-bHtKwdAooJtkUGDQNeza2wMBBYkNlDkBjkvS1fSWQHPC8cr5WHESTgw7El
 photo_0: http://localhost:8000/images/house_1738041022_0.jpg
 amenities: ["Televisión por cable", "Wi-Fi gratuito", "Cocina equipada", "Calefacción", "Aire acondicionado"]
 --------------------
+id: 1738077437
+username: gAAAAABnmPT9Awc_K0XIZjXtwjQlQ1QqJXSWbHbBIOc_mXLzpdzzGqyGTDVAdEF3Ydz0LbMTG3tI8tKGyKVus_ExdP0eZabx-Q==
+description: gAAAAABnmPT9YhDVG1rpqSpSDEhHeBpXupi-3iOt0qvAl4OMFRlYyohHDGaJIPfLq6vPN65Jh5pt3dwvU9nDJebz23S0ofm1hA==
+rules: gAAAAABnmPT93OluhPD6Ly9zL6nsdXHdLlAgtk5mEbthNhLVL1QRmZIzkK5ptO2cs-ZsfXdmmIQSo9khsY-bmDJhA1qO8Dj2Ug==
+price: gAAAAABnmPT95KJmrWlrePM1ZZ4cYAS4tG4fqw0g2_OgpMv5i3FK63Bc7_HR9Q3VnYzRvuvNoVjTH2ABorONXG1aWTjDB6M-Ng==
+capacity: gAAAAABnmPT9a15YobRlrpZqYFf3UKq51E7m0v-i-5wyDY2HX4etMtLIlam755Mk0hFmFEEcV3m532VDx6kB5xIJAubdAgWe9A==
+provincia: gAAAAABnmPT9fmf0Qu8sOgi_MqGo5u44k_SU-e9xNH6HlzCJwU_3qHpd42S4OrCR7-2KRqV-u9dtCevtcie50HaDjNS7YFrmeA==
+canton: gAAAAABnmPT941h8AMKwTWSBEv0tzSyJ_O9PJLeP-3j1QLULG3tX1ISZzFuYYlMynq4mab-9jSa0En5sJQoaFPknzz94kWFXQg==
+location: gAAAAABnmPT9raPLwPas5JNAuCq9Y9gpbgUD19U_U9nKFQqxURMo97UADCrz4c0Ke_Mj6MH0BH8SV7sbq3ZmmmhwtFhqpnz1dsAyJOsCf484fNOYxN5WvyQFBckyM7JTrG-wQSH9dEGsSWoPitlTerHZSoapwt1raA==
+photo_0: http://localhost:8000/images/house_1738077437_0.jpg
+amenities: ["Televisión por cable", "Cocina equipada", "Calefacción", "Aire acondicionado"]
+--------------------
+id: 1738079070
+username: gAAAAABnmPteEytW6WFjd98eIaKOYa_UbXQBxCld83HUGUDqv94r0rkEfNdWyWYLnVhNcr2p5rBNDsIYI9NW-IbSbteBGALsmA==
+description: gAAAAABnmPtePsgh98wMspBL_upKjACjtQ8pbK21LUV32C1Ldf7p03W3YupvKylZMVj0jDonWoevQ3-lG6zslwn_wm5MrpRzvjmnzK9oJPXw_zbEV9NDCU4=
+rules: gAAAAABnmPtebOE2xywT9_0OiwS9v4J0izyWRhioVfwTYwfJOkLBPdevbKRG4zuJys7M95tUiNBdF137bJzeRXOwbDHn3RmFSTEhvD5WITz9B2A8RnQBJGI=
+price: gAAAAABnmPteO5MgoKRuEKDOB6KdkXi2MaE9QGD-hRqqIerylkXNIrn4fnnUTeOFe9N19p82nNL3DnTaxG-0MOj5MxPtEoqpmw==
+capacity: gAAAAABnmPtekdRTjZAhruH9nO9uDRp_Ni9_OgWFA93Jbab5CKSFatEouSnf_tf4VEVE7X1gsVUFFjA2KT74Sp_1n8TKNISKVA==
+provincia: gAAAAABnmPtegwoWhK_Mmktq_MHoSZidV0Kd2tsYEC-zf-VHbBFKIWvCUZOxtxu0siScqcDteT76bqr7lpGxl_MVkQZT280NVw==
+canton: gAAAAABnmPteSyrdvYhkMJrdI0VIa9k2rVNaiCKven65MEo_8VWMFR9i2fg4IwHgFfDdF3NNHKRYaHd8M2sodZtb42JNlA6YVQ==
+location: gAAAAABnmPteyfmKND2QsoGeelNyBMPxZxOJvAvTI5fsvf-HwNHMSrxjdbPyvVl8bmMUZ9mUNDs_XzfGDdOlXpQETXUWst5Q9xIh3P7cM7Uzdk0Rt9VmE6Rs5xyyIwj7R69UFx5WjMJOIxB_zT5ljGqyZzFpsX4u9Q==
+photo_0: http://localhost:8000/images/house_1738079070_0.jpg
+amenities: ["Sofá cama", "Televisión por cable", "Cocina equipada", "Áreas comunes"]
+--------------------

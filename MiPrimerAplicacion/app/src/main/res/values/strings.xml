@@ -3,15 +3,22 @@
     <string name="contrase_a">Contraseña</string>
     <!-- Otras cadenas -->
     <string-array name="house_styles">
+        <item>Selecciona tu tipo de vivienda</item>
         <item>Aventurera</item>
         <item>Mansion</item>
         <item>Costera</item>
     </string-array>
 
     <string-array name="transport_styles">
+        <item>Selecciona tu transporte</item>
         <item>Sedan</item>
         <item>4x4</item>
         <item>Moto</item>
     </string-array>
+
+
+    <string name="menu_my_houses">Ver Mis Casas</string>
+    <string name="menu_register_house">Registrar Casa</string>
+
 
 </resources>

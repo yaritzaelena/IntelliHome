@@ -42,8 +42,9 @@
         <activity android:name=".Register" />
         <activity android:name=".TestLeds" />
         <activity android:name=".AddHouseActivity" />
-        <activity android:name=".ViewHouseActivity" />
-        <activity android:name=".ReserveHouseActivity" />
+        <activity android:name=".ViewHouseActivity"
+            android:theme="@style/Theme.MiPrimerAplicacion.NoActionBar" />
+        <activity android:name=".OwnerHousesActivity" />
         <activity android:name=".MapActivity" android:exported="true" />
 
 

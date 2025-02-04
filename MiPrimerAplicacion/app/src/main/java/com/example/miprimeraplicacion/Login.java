@@ -12,10 +12,12 @@ import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.view.MotionEvent;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 
 public class Login extends AppCompatActivity {
+
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -28,7 +30,7 @@ public class Login extends AppCompatActivity {
         passwordEditText.setTransformationMethod(new DiamondTransformationMethod());
         Button loginButton = findViewById(R.id.buttonLogin);
         Button registerButton = findViewById(R.id.buttonRegister);
-        Button btnTest = findViewById(R.id.button13);
+
         ImageButton buttonRegisterGoogle = findViewById(R.id.buttonRegisterGoogle);
         ImageButton buttonRegisterFacebook = findViewById(R.id.buttonRegisterFacebook);
 
@@ -78,16 +80,45 @@ public class Login extends AppCompatActivity {
 
                             Toast.makeText(Login.this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show();
 
-                            // Redirigir según el tipo de usuario
-                            Intent intent;
                             if (propietario) {
-                                intent = new Intent(Login.this, LoginActivity.class); // Redirigir a LoginActivity si es propietario
+                                // Redirigir a LoginActivity si es propietario
+                                MainActivity.requestHouseData(new MainActivity.HouseDataCallback() {
+                                    @Override
+                                    public void onSuccess(JSONArray houses) {
+                                        Intent intent = new Intent(Login.this, ViewHouseActivity.class);
+                                        intent.putExtra("USERNAME", username);
+                                        intent.putExtra("IS_OWNER", propietario);
+                                        intent.putExtra("houses_data", houses.toString());
+                                        startActivity(intent);
+                                    }
+
+                                    @Override
+                                    public void onError(String error) {
+                                        runOnUiThread(() ->
+                                                Toast.makeText(Login.this, "Error al obtener casas: " + error, Toast.LENGTH_LONG).show()
+                                        );
+                                    }
+                                });
                             } else {
-                                intent = new Intent(Login.this, ViewHouseActivity.class); // Redirigir a ExitActivity si es inquilino
+                                // Si es inquilino, obtener la lista de casas antes de abrir ViewHouseActivity
+                                MainActivity.requestHouseData(new MainActivity.HouseDataCallback() {
+                                    @Override
+                                    public void onSuccess(JSONArray houses) {
+                                        Intent intent = new Intent(Login.this, ViewHouseActivity.class);
+                                        intent.putExtra("USERNAME", username);
+                                        intent.putExtra("IS_OWNER", propietario);
+                                        intent.putExtra("houses_data", houses.toString());
+                                        startActivity(intent);
+                                    }
+
+                                    @Override
+                                    public void onError(String error) {
+                                        runOnUiThread(() ->
+                                                Toast.makeText(Login.this, "Error al obtener casas: " + error, Toast.LENGTH_LONG).show()
+                                        );
+                                    }
+                                });
                             }
-                            // Pasar el nombre de usuario a la siguiente actividad
-                            intent.putExtra("USERNAME", username);
-                            startActivity(intent);
                             finish();
                         } catch (Exception e) {
                             Toast.makeText(Login.this, "Error al procesar la respuesta del servidor.", Toast.LENGTH_SHORT).show();
@@ -104,18 +135,14 @@ public class Login extends AppCompatActivity {
         });
 
 
+
         // Botón de Registrarse
         registerButton.setOnClickListener(v -> {
             // Acción para el botón de Registrarse
             Intent intent = new Intent(Login.this, Register.class);
             startActivity(intent);
         });
-
-        btnTest.setOnClickListener(v -> {
-            // Acción para el botón de Registrarse
-            Intent intent = new Intent(Login.this, TestLeds.class);
-            startActivity(intent);
-        });
+        
 
         buttonRegisterGoogle.setOnClickListener(v -> {
             // Acción para registrar con Google

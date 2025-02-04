@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import org.json.JSONArray;
 
 public class LoginActivity extends AppCompatActivity {
-
+    private  boolean isOwner;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,7 +19,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // Recibir el nombre de usuario
         String username = getIntent().getStringExtra("USERNAME");
-
+        isOwner = getIntent().getBooleanExtra("IS_OWNER", true);
         // Mostrar mensaje de bienvenida
         Toast.makeText(this, "Bienvenido, " + username, Toast.LENGTH_LONG).show();
 
@@ -49,6 +49,7 @@ public class LoginActivity extends AppCompatActivity {
                     Intent intent = new Intent(LoginActivity.this, ViewHouseActivity.class);
                     intent.putExtra("USERNAME", username);
                     intent.putExtra("houses_data", houses.toString());
+                    intent.putExtra("IS_OWNER", isOwner);
                     startActivity(intent);
                 }
 

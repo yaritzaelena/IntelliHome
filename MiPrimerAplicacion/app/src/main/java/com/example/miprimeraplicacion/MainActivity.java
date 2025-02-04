@@ -43,9 +43,10 @@ public class MainActivity extends AppCompatActivity {
             try {
 
                 //socket = new Socket("192.168.0.152", 1717); //Olman
-                socket = new Socket("192.168.68.104", 1717); //Daniel
 
-                //socket = new Socket("192.168.0.106", 1717); //Yaritza
+                //socket = new Socket("192.168.68.104", 1717); //Daniel
+
+                socket = new Socket("192.168.0.100", 1717); //Yaritza
                 out = new PrintWriter(socket.getOutputStream(), true);
                 in = new Scanner(socket.getInputStream());
 
@@ -346,11 +347,6 @@ public class MainActivity extends AppCompatActivity {
                 jsonRequest.put("checkIn", checkIn);
                 jsonRequest.put("checkOut", checkOut);
 
-                JSONObject jsonRequestWhatsapp =new JSONObject();
-                jsonRequestWhatsapp.put("action","notificacionWhatsapp");
-                jsonRequestWhatsapp.put("mensaje","se ha realizado la reserva con exito! para "+checkIn);
-                jsonRequestWhatsapp.put("telefono","89869107");
-
                 out.println(jsonRequest.toString());
                 out.flush();
 
@@ -359,10 +355,6 @@ public class MainActivity extends AppCompatActivity {
 
                 if (response != null) {
                     callback.onSuccess(response);
-                    //envia el mensaje de confirmacion a whatsapp
-                    out.println(jsonRequestWhatsapp.toString());
-                    out.flush();
-                    BufferedReader reader2 = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
                 } else {
                     callback.onError("No se recibió respuesta del servidor.");
