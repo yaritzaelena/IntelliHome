@@ -76,8 +76,7 @@ class ChatServer:
         self.conexion_exitosa=False
 
         self.leyendo_mensajes_arduino=False
-        self.asi = 'ACbb736c2252797ba5690a98bbb1a029f1'
-        self.auth_token = 'fa37fae92c4fda8a67a9ca5d8d199521'
+        
 
 
         self.client = Client(self.asi, self.auth_token)

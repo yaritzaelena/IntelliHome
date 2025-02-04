@@ -9,14 +9,13 @@ const int ledCocina = 26;  // GPIO26 conectado a D26 en la placa
 const int ledCorredor = 5;// GPIO25 conectado a D25 en la placa
 
 // Definir botón
-// Definir botón
-const int flamePin = 13;  // Cambia este valor si el botón está en otro pin
+
+const int flamePin = 13;  
 const int sismoPin = 18;
 
 bool flameSensor;
 bool fire;
 
-// Variables to hold the states of each LED
 int ledStateGaraje = 0;
 int ledStateBano1 = 0;
 int ledStateBano2 = 0;
@@ -45,10 +44,18 @@ void setup() {
   pinMode(flamePin, INPUT);
 
   //sensor de sismos
-
+  pinMode(sismoPin, INPUT);
 }
 
 void loop() {
+  //ball switch
+  int switchState = digitalRead(sismoPin);
+    if (switchState == LOW) {
+    Serial.println("¡Alerta! Posible sismo detectado"+numero);
+  } else {
+    Serial.println("Todo normal, no hay movimiento."+numero);
+  }
+
   // Leer el estado del pin de sensor de llama
   flameSensor= digitalRead(flamePin);
   //que hacer con esta lectura
@@ -89,6 +96,7 @@ void loop() {
     ledStateCorredor = invertSignal(ledStateCorredor);
     digitalWrite(ledCorredor, ledStateCorredor);
   }
+  delay(500)
 
 }
 
