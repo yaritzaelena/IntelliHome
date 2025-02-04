@@ -1,0 +1,22 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <item
+        android:id="@+id/menu_my_houses"
+        android:title="Mis casas"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/menu_register_house"
+        android:title="Registrar casa"
+        android:icon="@drawable/ic_add"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/luces"
+        android:title="Controlar luces"
+        android:icon="@drawable/ic_add"
+        app:showAsAction="never"/>
+
+</menu>

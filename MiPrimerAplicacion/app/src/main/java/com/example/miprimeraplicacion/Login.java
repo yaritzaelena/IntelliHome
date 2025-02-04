@@ -12,10 +12,12 @@ import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.view.MotionEvent;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 
 public class Login extends AppCompatActivity {
+
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -28,7 +30,7 @@ public class Login extends AppCompatActivity {
         passwordEditText.setTransformationMethod(new DiamondTransformationMethod());
         Button loginButton = findViewById(R.id.buttonLogin);
         Button registerButton = findViewById(R.id.buttonRegister);
-        Button btnTest = findViewById(R.id.button13);
+
         ImageButton buttonRegisterGoogle = findViewById(R.id.buttonRegisterGoogle);
         ImageButton buttonRegisterFacebook = findViewById(R.id.buttonRegisterFacebook);
 
@@ -67,26 +69,29 @@ public class Login extends AppCompatActivity {
                 return;
             }
 
+
             // Llamada centralizada a MainActivity
             MainActivity.sendAndReceive(username, password, new MainActivity.LoginResponseCallback() {
                 @Override
-                public void onSuccess(String response) {
+                public void onSuccess(String response ) {
                     runOnUiThread(() -> {
                         try {
                             JSONObject jsonResponse = new JSONObject(response);
                             boolean propietario = jsonResponse.optString("propietario", "false").equalsIgnoreCase("true");
-
+                            JSONArray houses = jsonResponse.optJSONArray("houses");
                             Toast.makeText(Login.this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show();
 
                             // Redirigir según el tipo de usuario
                             Intent intent;
                             if (propietario) {
-                                intent = new Intent(Login.this, LoginActivity.class); // Redirigir a LoginActivity si es propietario
+                                intent = new Intent(Login.this,LoginActivity.class); // Redirigir a LoginActivity si es propietario
                             } else {
                                 intent = new Intent(Login.this, ViewHouseActivity.class); // Redirigir a ExitActivity si es inquilino
                             }
                             // Pasar el nombre de usuario a la siguiente actividad
                             intent.putExtra("USERNAME", username);
+                            intent.putExtra("IS_OWNER", propietario);
+
                             startActivity(intent);
                             finish();
                         } catch (Exception e) {
@@ -110,12 +115,7 @@ public class Login extends AppCompatActivity {
             Intent intent = new Intent(Login.this, Register.class);
             startActivity(intent);
         });
-
-        btnTest.setOnClickListener(v -> {
-            // Acción para el botón de Registrarse
-            Intent intent = new Intent(Login.this, TestLeds.class);
-            startActivity(intent);
-        });
+        
 
         buttonRegisterGoogle.setOnClickListener(v -> {
             // Acción para registrar con Google

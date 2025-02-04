@@ -6,6 +6,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -13,11 +14,13 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -45,6 +48,9 @@ import android.content.Intent;
 import android.widget.Toast;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
+import androidx.appcompat.widget.Toolbar;
 
 public class ViewHouseActivity extends AppCompatActivity {
     private House house;
@@ -58,6 +64,11 @@ public class ViewHouseActivity extends AppCompatActivity {
     private Map<String, String> cantonToProvinciaMap = new HashMap<>();
     private EditText searchBar;
 
+    private String housesData;
+    private String userloged;  // <- Asegúrate de que sea userloged si este es el usuario actual
+    private  boolean isOwner;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,20 +79,30 @@ public class ViewHouseActivity extends AppCompatActivity {
         ImageButton filterButton = findViewById(R.id.filterButton);
 
         filterButton.setOnClickListener(v -> showFilterPopup());
+        ImageView logoImage = findViewById(R.id.logoImage);
 
         // Obtener el nombre de usuario desde el intent
-        String userloged = getIntent().getStringExtra("USERNAME");
+        userloged = getIntent().getStringExtra("USERNAME");
+        isOwner = getIntent().getBooleanExtra("IS_OWNER", false);
+        Log.d("ViewHouseActivity", "Usuario: " + userloged + ", es propietario: " + isOwner);
+
+        // Configurar la Toolbar
+
+
+
 
         // Mostrar en el log para verificar que se pasó correctamente
         Log.d("ViewHouseActivity", "Usuario que inició sesión: " + userloged);
 
         // Cargar casas y datos de cantones/provincias
-        String housesData = getIntent().getStringExtra("houses_data");
+        housesData = getIntent().getStringExtra("houses_data");
         if (housesData != null) {
             loadHouses(housesData);
         }
 
         loadProvinceCantonData();
+        logoImage.setOnClickListener(v -> openOwnerHousesView());
+
 
         // Búsqueda en vivo mientras se escribe en la barra de búsqueda
         searchBar.addTextChangedListener(new TextWatcher() {
@@ -604,6 +625,61 @@ public class ViewHouseActivity extends AppCompatActivity {
             }
         }
     }
+
+    private void openOwnerHousesView() {
+        // Usamos la clase utilitaria para filtrar las casas
+        String filteredHouses = HouseUtils.filterUserHouses(housesData, userloged);
+
+
+        // Enviar solo las casas del usuario a la nueva actividad
+        Intent intent = new Intent(ViewHouseActivity.this, OwnerHousesActivity.class);
+        intent.putExtra("USERNAME", userloged);
+        intent.putExtra("houses_data", filteredHouses);
+        startActivity(intent);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (isOwner) {
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.menu_owner, menu);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:  // ← Acción cuando se presiona el menú hamburguesa
+                Toast.makeText(this, "Menú abierto", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.luces:
+                openLuces();
+                return true;
+
+            case R.id.menu_my_houses:
+                openOwnerHousesView();
+                return true;
+            case R.id.menu_register_house:
+                openRegisterHouseView();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void openLuces() {
+        Intent intent = new Intent(ViewHouseActivity.this, TestLeds.class);
+        startActivity(intent);
+    }
+
+
+    private void openRegisterHouseView() {
+        Intent intent = new Intent(ViewHouseActivity.this, AddHouseActivity.class);
+        intent.putExtra("USERNAME", userloged);
+        startActivity(intent);
+    }
+
 
 
 

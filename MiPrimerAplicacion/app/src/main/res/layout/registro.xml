@@ -3,6 +3,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="16dp"
     android:background="@color/background_color">
 
@@ -77,22 +78,23 @@
             android:padding="12dp"
             android:textColorHint="@color/text_color" />
 
-        <TextView
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="8dp"
+            app:cardBackgroundColor="#F8F8F8"
+            android:layout_margin="10dp"
+            app:cardElevation="4dp">
 
-            android:layout_width="296dp"
-            android:layout_height="46dp"
-            android:layout_gravity="center"
-            android:paddingBottom="16dp"
-            android:text="La contraseña debe tener al menos 8 caracteres.
-                            Debe contener al menos 2 tipos de caracteres:
-                                    Letras y números.
-Letras y símbolos especiales.
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:text="🔹 La contraseña debe tener al menos 8 caracteres.\n🔹 Debe contener al menos 2 tipos de caracteres:\n   - Letras y números.\n   - Letras y símbolos especiales.\n🔹 Los caracteres pueden repetirse."
+                android:textColor="@color/black"
+                android:textSize="14sp" />
+        </androidx.cardview.widget.CardView>
 
-                                                                                    Los caracteres pueden repetirse.
-             "
-            android:textColor="@color/primary_color"
-            android:textSize="12sp"
-            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/editTextConfirm"
