@@ -74,6 +74,8 @@ class ChatServer:
         self.arduino=None
         self.serial_port='COM8'
         self.conexion_exitosa=False
+        self.account_sid = 'ACbb736c2252797ba5690a98bbb1a029f1'
+        self.auth_token = 'fa37fae92c4fda8a67a9ca5d8d199521'
         
         self.client = Client(self.account_sid, self.auth_token)
         self.mensajeFrom='whatsapp:+14155238886',
@@ -355,8 +357,8 @@ class ChatServer:
                     # 🔹 Modificar para devolver **URL de imagen en lugar de Base64**
                     if key.startswith("photo_"):
                         image_name = os.path.basename(value)  # Obtener solo el nombre del archivo
-                        image_url = f"http://192.168.0.152:{PORT}/images/{image_name}"  # URL de la imagen Olman
-                        #image_url = f"http://192.168.0.106:{PORT}/images/{image_name}"  # URL de la imagen Yaritza
+                        #image_url = f"http://192.168.0.152:{PORT}/images/{image_name}"  # URL de la imagen Olman
+                        image_url = f"http://192.168.0.100:{PORT}/images/{image_name}"  # URL de la imagen Yaritza
                         house_data.setdefault("imagenes", []).append(image_url)
                         print(f"📸 Imagen agregada: {image_url}")  # Depuración
                     

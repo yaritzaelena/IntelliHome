@@ -43,9 +43,9 @@ public class MainActivity extends AppCompatActivity {
             try {
 
                 //socket = new Socket("192.168.0.152", 1717); //Olman
-                socket = new Socket("192.168.68.104", 1717); //Daniel
+                //socket = new Socket("192.168.68.104", 1717); //Daniel
 
-                //socket = new Socket("192.168.0.106", 1717); //Yaritza
+                socket = new Socket("192.168.0.100", 1717); //Yaritza
                 out = new PrintWriter(socket.getOutputStream(), true);
                 in = new Scanner(socket.getInputStream());
 
