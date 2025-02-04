@@ -69,30 +69,56 @@ public class Login extends AppCompatActivity {
                 return;
             }
 
-
             // Llamada centralizada a MainActivity
             MainActivity.sendAndReceive(username, password, new MainActivity.LoginResponseCallback() {
                 @Override
-                public void onSuccess(String response ) {
+                public void onSuccess(String response) {
                     runOnUiThread(() -> {
                         try {
                             JSONObject jsonResponse = new JSONObject(response);
                             boolean propietario = jsonResponse.optString("propietario", "false").equalsIgnoreCase("true");
-                            JSONArray houses = jsonResponse.optJSONArray("houses");
+
                             Toast.makeText(Login.this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show();
 
-                            // Redirigir según el tipo de usuario
-                            Intent intent;
                             if (propietario) {
-                                intent = new Intent(Login.this,LoginActivity.class); // Redirigir a LoginActivity si es propietario
-                            } else {
-                                intent = new Intent(Login.this, ViewHouseActivity.class); // Redirigir a ExitActivity si es inquilino
-                            }
-                            // Pasar el nombre de usuario a la siguiente actividad
-                            intent.putExtra("USERNAME", username);
-                            intent.putExtra("IS_OWNER", propietario);
+                                // Redirigir a LoginActivity si es propietario
+                                MainActivity.requestHouseData(new MainActivity.HouseDataCallback() {
+                                    @Override
+                                    public void onSuccess(JSONArray houses) {
+                                        Intent intent = new Intent(Login.this, ViewHouseActivity.class);
+                                        intent.putExtra("USERNAME", username);
+                                        intent.putExtra("IS_OWNER", propietario);
+                                        intent.putExtra("houses_data", houses.toString());
+                                        startActivity(intent);
+                                    }
 
-                            startActivity(intent);
+                                    @Override
+                                    public void onError(String error) {
+                                        runOnUiThread(() ->
+                                                Toast.makeText(Login.this, "Error al obtener casas: " + error, Toast.LENGTH_LONG).show()
+                                        );
+                                    }
+                                });
+                            } else {
+                                // Si es inquilino, obtener la lista de casas antes de abrir ViewHouseActivity
+                                MainActivity.requestHouseData(new MainActivity.HouseDataCallback() {
+                                    @Override
+                                    public void onSuccess(JSONArray houses) {
+                                        Intent intent = new Intent(Login.this, ViewHouseActivity.class);
+                                        intent.putExtra("USERNAME", username);
+                                        intent.putExtra("IS_OWNER", propietario);
+                                        intent.putExtra("houses_data", houses.toString());
+                                        startActivity(intent);
+                                    }
+
+                                    @Override
+                                    public void onError(String error) {
+                                        runOnUiThread(() ->
+                                                Toast.makeText(Login.this, "Error al obtener casas: " + error, Toast.LENGTH_LONG).show()
+                                        );
+                                    }
+                                });
+                            }
                             finish();
                         } catch (Exception e) {
                             Toast.makeText(Login.this, "Error al procesar la respuesta del servidor.", Toast.LENGTH_SHORT).show();
@@ -107,6 +133,7 @@ public class Login extends AppCompatActivity {
                 }
             });
         });
+
 
 
         // Botón de Registrarse
